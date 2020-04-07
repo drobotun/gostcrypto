@@ -1,0 +1,166 @@
+import unittest
+import gostcrypto
+
+class Test(unittest.TestCase):
+    
+    TEST_MSG_SHORT = bytearray([
+        0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+        0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+        0x36, 0x37, 0x38, 0x39, 0x30, 0x31, 0x32, 0x33,
+        0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30, 0x31,
+        0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+        0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+        0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+        0x36, 0x37, 0x38, 0x39, 0x30, 0x31, 0x32
+        ])
+
+    TEST_MSG_LONG = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
+
+    def test_hash_add_512(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        op_a = self.TEST_MSG_SHORT + b'\x01'
+        op_b = test_hasher.block_size * b'\xaf'
+        test_result = ('dfe0e1e2e3e4e5e6e7e8dfe0e1e2e3e4e5e6e7e8dfe0e1e2e3e4e5e6e7e8dfe0e1e2e3e4e5e6e7e8dfe0e1e2e3e4e5e6e7e8dfe0e1e2e3e4e5e6e7e8dfe0e1b0')
+        result = gostcrypto.gosthash.GOST34112012._hash_add_512(op_a, op_b)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hash_p(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_msg = self.TEST_MSG_SHORT + b'\x01'
+        test_result = ('30383634323038363139373533313937323038363432303833313937353331393432303836343230353331393735333136343230383634323735333139373501')
+        result = test_hasher._hash_p(test_msg)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hash_l(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_msg = self.TEST_MSG_SHORT + b'\x01'
+        test_result = ('5e2a7862ae04af3627e702c039be3e73b9f661a6d680831976840907c18e8c907380b2ad67509bc15e2a7862ae04af3627e702c039be3e736350d1f348630177')
+        result = test_hasher._hash_l(test_msg)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hash_s(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_msg = self.TEST_MSG_SHORT + b'\x01'
+        test_result = ('058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402ee')
+        result = test_hasher._hash_s(test_msg)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hash_get_key(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_msg = self.TEST_MSG_SHORT + b'\x01'
+        test_result = ('6d897244067f1c66de4deaa188aaf436db4af5cae20e688bd5f8848aa13dcbd54f07aadbc4869a662b70a3082d5701b5fc78715327ec5fc5898136507ff251d2')
+        result = test_hasher._hash_get_key(test_msg, 1)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hash_e(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_msg = self.TEST_MSG_SHORT + b'\x01'
+        test_result = ('44c0a9aeea44c9852d4434191482da6c7eabac88b279e82526ec6f61580caca61939f4cbff1d4c9aa8518313d393271009b38fedf1c8690ce3556bbb04e82f49')
+        result = test_hasher._hash_e(test_msg, test_msg)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hash_g(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_msg = self.TEST_MSG_SHORT + b'\x01'
+        test_h = test_hasher.block_size * b'\x00'
+        test_n = test_hasher.block_size * b'\x00'
+        test_result = ('e2da3b6b73e4fe05d9f5b13f793541955c81502c520fedd3c5babb8c90f65427bd8e7333db8a4826a6a95a444166a817384f3921af34ea9111cb2c81f82c10fd')
+        result = test_hasher._hash_g(test_h, test_n, test_msg)
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_new(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        _test_hasher = gostcrypto.gosthash.GOST34112012('streebog256')
+        self.assertEqual(test_hasher._name, _test_hasher._name)
+        self.assertEqual(test_hasher._buff, _test_hasher._buff)
+        self.assertEqual(test_hasher._num_block, _test_hasher._num_block)
+        self.assertEqual(test_hasher._pad_block_size, _test_hasher._pad_block_size)
+        self.assertEqual(test_hasher._hash_h, _test_hasher._hash_h)
+        self.assertEqual(test_hasher._hash_n, _test_hasher._hash_n)
+        self.assertEqual(test_hasher._hash_sigma, _test_hasher._hash_sigma)
+
+    def test_init_raises(self):
+        with self.assertRaises(ValueError) as context:
+            test_hasher =  gostcrypto.gosthash.GOST34112012('test_name')
+        self.assertTrue('unsupported hash type' in str(context.exception))
+
+    def test_digest_size(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        self.assertEqual(test_hasher.digest_size, 32)
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        self.assertEqual(test_hasher.digest_size, 64)
+
+    def test_block_size(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        self.assertEqual(test_hasher.block_size, 64)
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        self.assertEqual(test_hasher.block_size, 64)
+
+    def test_name(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        result = test_hasher.name
+        self.assertEqual(result, 'streebog256')
+
+    def test_update(self):
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        test_hasher.update(self.TEST_MSG_LONG)
+        test_result = 'afc707c4da6c812e85ea2c8e1e225d2e481f7389883b84a76aa4c7f79e77ef987b510c9b45acb727e1f8108f934e91e25d399597cd4cbbe365a4fa1223607fcd'
+        self.assertEqual(''.join(format(x, '02x') for x in test_hasher._hash_h), test_result)
+
+    def test_reset_512(self):
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        test_hasher.update(self.TEST_MSG_LONG)
+        test_hasher.digest()
+        test_hasher.reset()
+        self.assertEqual(test_hasher._hash_h, bytearray(test_hasher.block_size))
+        self.assertEqual(test_hasher._hash_n, bytearray(test_hasher.block_size))
+        self.assertEqual(test_hasher._hash_sigma, bytearray(test_hasher.block_size))
+        self.assertEqual(test_hasher._num_block, 0)
+        self.assertEqual(test_hasher._pad_block_size, 0)
+
+    def test_reset_256(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_hasher.update(self.TEST_MSG_LONG)
+        test_hasher.digest()
+        test_hasher.reset()
+        self.assertEqual(test_hasher._hash_h, test_hasher.block_size * b'\x01')
+        self.assertEqual(test_hasher._hash_n, bytearray(test_hasher.block_size))
+        self.assertEqual(test_hasher._hash_sigma, bytearray(test_hasher.block_size))
+        self.assertEqual(test_hasher._num_block, 0)
+        self.assertEqual(test_hasher._pad_block_size, 0)
+
+    def test_digest(self):
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        test_hasher.update(self.TEST_MSG_LONG)
+        result = test_hasher.digest()
+        test_result = '1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28'
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_digest_double_update(self):
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        test_hasher.update(u'Се ветри, Стрибожи внуци, веютъ с моря '.encode('cp1251'))
+        test_hasher.digest()
+        test_hasher.update(u'стрелами на храбрыя плъкы Игоревы'.encode('cp1251'))
+        result = test_hasher.digest()
+        test_result = '1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28'
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+
+    def test_hexdigest(self):
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        test_hasher.update(self.TEST_MSG_LONG)
+        result = test_hasher.hexdigest()
+        test_result = '1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28'
+        self.assertEqual(result, test_result)
+
+    def test_habr_144(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        test_hasher.update(bytearray.fromhex('d0cf11e0a1b11ae1000000000000000000000000000000003e000300feff0900060000000000000000000000010000000100\
+                                              000000000000001000002400000001000000feffffff0000000000000000ffffffffffffffffffffffffffffffffffffffff\
+                                              ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'))
+        result = test_hasher.hexdigest()
+        test_result = 'c766085540caaa8953bfcf7a1ba220619cee50d65dc242f82f23ba4b180b18e0'
+        self.assertEqual(result, test_result)
+
+if __name__ == '__main__':
+    unittest.main()
+
