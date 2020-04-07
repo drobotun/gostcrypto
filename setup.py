@@ -17,10 +17,12 @@ setup(
     zip_safe=False,
     license=gostcrypto.__license__,
     keywords='cryptography, hash function, encryption, digital signature',
+    """
     project_urls={
         'Documentation': ,
         'Source': 
     },
+    """
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
