@@ -18,7 +18,7 @@ setup(
     license=gostcrypto.__license__,
     keywords='cryptography, hash function, encryption, digital signature',
     project_urls={
-        'Source': https://github.com/drobotun/gostcrypto
+        'Source': 'https://github.com/drobotun/gostcrypto'
     },
     classifiers=[
         'Development Status :: 4 - Beta',
