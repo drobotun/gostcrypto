@@ -149,8 +149,7 @@ Usage:
              '2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019
-                                            ['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
     signature = sign_obj.sign(private_key, digest)
 
 .. rubric:: **Verify:**
@@ -167,8 +166,7 @@ Usage:
                 '41aa28d2f1ab148280cd9ed56feda41974053554a42767b83ad043fd39dc049301456c64ba4642a1653c235a98a60249bcd6d3f746b631df928014f6c5bf9c40')
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019
-                                            ['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
     if sign_obj.verify(public_key, digest, signature):
         print('Signature is correct')
     else:
@@ -184,8 +182,7 @@ Usage:
                   '7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019
-                                            ['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
     public_key = sign_obj.public_key_generate(private_key)
 
 The 'gostrandom' module.
