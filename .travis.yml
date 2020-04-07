@@ -1,0 +1,18 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+
+install:
+  - pip install codecov
+  - pip install coveralls
+  - pip install pytest pytest-cov
+
+script:
+  - python setup.py install
+  - pytest --cov=gostcrypto
+
+after_success:
+  - codecov
+  - coveralls
