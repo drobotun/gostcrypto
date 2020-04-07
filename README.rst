@@ -3,6 +3,8 @@ GOST cryptographic functions
 
 .. image:: https://img.shields.io/github/license/drobotun/virustotalapi3?style=flat
     :target: http://doge.mit-license.org
+.. image:: https://img.shields.io/travis/drobotun/gostcrypto   :alt: Travis (.org)
+    :target: https://travis-ci.org/drobotun/gostcrypto
 
 The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
