@@ -5,6 +5,8 @@ GOST cryptographic functions
     :target: http://doge.mit-license.org
 .. image:: https://img.shields.io/travis/drobotun/gostcrypto
     :target: https://travis-ci.org/drobotun/gostcrypto
+.. image:: https://ci.appveyor.com/api/projects/status/3inl1huy5unq1q60?svg=true
+    :target: https://ci.appveyor.com/project/drobotun/gostcrypto
 .. image:: https://img.shields.io/coveralls/github/drobotun/gostcrypto
     :target: https://coveralls.io/github/drobotun/gostcrypto
 
