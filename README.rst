@@ -5,6 +5,8 @@ GOST cryptographic functions
     :target: http://doge.mit-license.org
 .. image:: https://img.shields.io/travis/drobotun/gostcrypto
     :target: https://travis-ci.org/drobotun/gostcrypto
+.. image:: https://img.shields.io/coveralls/github/drobotun/gostcrypto
+    :target: https://coveralls.io/github/drobotun/gostcrypto
 
 The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
