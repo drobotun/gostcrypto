@@ -13,16 +13,13 @@ setup(
     long_description = readme + '\n\n' + history,
     author = gostcrypto.__author__,
     author_email = gostcrypto.__author_email__,
-    url='',
+    url='https://github.com/drobotun/gostcrypto',
     zip_safe=False,
     license=gostcrypto.__license__,
     keywords='cryptography, hash function, encryption, digital signature',
-    """
     project_urls={
-        'Documentation': ,
-        'Source': 
+        'Source': https://github.com/drobotun/gostcrypto
     },
-    """
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
