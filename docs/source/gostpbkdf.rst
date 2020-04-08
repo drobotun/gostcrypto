@@ -4,7 +4,7 @@
 The module implementing the password-based key derivation function in accordance with R 50.1.111-2016. The module includes the R5011112016 class and the ``new`` function.
 
 new(password, salt, counter)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""
     Creates a new object for the password-based key derivation function and returns it.
 
 .. code-block:: python
@@ -31,6 +31,10 @@ new(password, salt, counter)
 - ValueError('invalid password value') - in case of invalid password value.
 
 *****
+
+R5011112016
+"""""""""""
+    Class that implementing the calculating the password-based key derivation function in accordance with R 50.1.111-2016.
 
 Methods:
 --------

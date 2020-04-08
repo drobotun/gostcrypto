@@ -47,7 +47,7 @@ def new(password, salt=None, counter=1000):
         sys_exit()
 
 class R5011112016:
-    """Class that implementing the calculating the password-based key derivation functione
+    """Class that implementing the calculating the password-based key derivation function
        in accordance with R 50.1.111-2016.
 
        Methods:

@@ -66,7 +66,7 @@ All parameters of the elliptic curve must be set as integers. In this case the `
 
 .. rubric:: **Example of simultaneously setting an elliptic curve in canonical form and as twisted Edwards curves**
 
-.. code-block::
+.. code-block:: python
 
     'id-tc26-gost-3410-2012-256-paramSetA': dict(
         p=bytearray_to_int(bytearray([
@@ -133,7 +133,7 @@ All parameters of the elliptic curve must be set as integers. In this case the `
 
 .. rubric:: **Example of setting an elliptic curve as a twisted Edwards curves**
 
-.. code-block::
+.. code-block:: python
 
     'id-gost-3410-2012-256-twisted-Edwards-param': dict(
         p=bytearray_to_int(bytearray([
