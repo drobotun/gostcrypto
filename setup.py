@@ -16,7 +16,7 @@ setup(
     url='https://github.com/drobotun/gostcrypto',
     zip_safe=False,
     license=gostcrypto.__license__,
-    keywords='cryptography, hash function, encryption, digital signature',
+    keywords='cryptography, hash function, encryption, digital signature, gost-r-34-12-2015, gost-r-34-10-2012, gost-r-34-13-2015, gost-r-34-11-2012',
     project_urls={
         'Documentation': 'https://gostcrypto.readthedocs.io/',
         'Source': 'https://github.com/drobotun/gostcrypto'

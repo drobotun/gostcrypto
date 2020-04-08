@@ -10,6 +10,7 @@ install:
   - pip install pytest pytest-cov
 
 script:
+  - python setup.py install
   - pytest --cov=gostcrypto
 
 after_success:
