@@ -9,6 +9,8 @@ GOST cryptographic functions
     :target: https://ci.appveyor.com/project/drobotun/gostcrypto
 .. image:: https://img.shields.io/coveralls/github/drobotun/gostcrypto
     :target: https://coveralls.io/github/drobotun/gostcrypto
+.. image:: https://readthedocs.org/projects/gostcrypto/badge/?version=latest
+    :target: https://gostcrypto.readthedocs.io/en/latest/?badge=latest
 
 The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
@@ -67,8 +69,6 @@ String encryption in ECB mode
 -----------------------------
 
 .. code-block:: python
-
-    .. code-block:: python
 
     import gostcrypto
 
@@ -283,7 +283,7 @@ MIT Copyright (c) 2020 Evgeny Drobotun
 Documentation
 """""""""""""
 
-Documentation for using this package:
+Documentation for using this package: https://gostcrypto.readthedocs.io/
 
 Release History
 """""""""""""""
