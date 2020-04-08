@@ -248,7 +248,7 @@ class GOST34132015:
             result = self._pad_mode_1(data)
         elif self._pad_mode == PAD_MODE_2:
             result = self._pad_mode_2(data)
-        elif self._pad_mode == PAD_MODE_3:
+        else:
             result = self._pad_mode_3(data)
         return result
 
@@ -266,7 +266,7 @@ class GOST34132015:
         #Generating final keys for MAC mode
         if self.block_size == 16:
             value_b = _B_128
-        elif self.block_size == 8:
+        else:
             value_b = _B_64
         if msb(value_r) == 0:
             int_value = bytearray_to_int(value_r) << 1
@@ -502,7 +502,7 @@ class GOST34132015:
             result = self._cfb_decrypt(data)
         elif self._mode == MODE_OFB:
             result = self._ofb_decrypt(data)
-        elif self._mode == MODE_CTR:
+        else:
             result = self._ctr_decrypt(data)
         return result
 
@@ -532,7 +532,7 @@ class GOST34132015:
             result = self._cfb_encrypt(data)
         elif self._mode == MODE_OFB:
             result = self._ofb_encrypt(data)
-        elif self._mode == MODE_CTR:
+        else:
             result = self._ctr_encrypt(data)
         return result
 

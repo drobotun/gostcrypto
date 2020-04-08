@@ -420,7 +420,7 @@ class GOST34112012:
         """
         if self._name == 'streebog512':
             result = 64
-        elif self._name == 'streebog256':
+        else:
             result = 32
         return result
 

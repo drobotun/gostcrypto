@@ -237,6 +237,7 @@ class GOST34122015Magma:
               :key: Cipher key.
         """
         self._cipher_iter_key = []
+        iter_key = b''
         for j in range(8):
             iter_key = bytearray(4)
             for i in range(4):

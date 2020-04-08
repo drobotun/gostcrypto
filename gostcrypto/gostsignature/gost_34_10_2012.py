@@ -702,6 +702,7 @@ class GOST34102012:
             sign_e = 1
         sign_r = 0
         sign_s = 0
+        sign_k = 0
         while compare_to_zero(int_to_bytearray(sign_s, self._size)):
             while compare_to_zero(int_to_bytearray(sign_r, self._size)):
                 if rand_k is None:

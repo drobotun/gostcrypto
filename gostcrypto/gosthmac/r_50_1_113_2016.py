@@ -195,6 +195,6 @@ class R5011132016:
         """
         if self._hasher_obj.name == 'streebog256':
             result = 'HMAC_GOSTR3411_2012_256'
-        elif self._hasher_obj.name == 'streebog512':
+        else:
             result = 'HMAC_GOSTR3411_2012_512'
         return result
