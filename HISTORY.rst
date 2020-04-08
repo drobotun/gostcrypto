@@ -1,7 +1,6 @@
 Release History
-===============
+"""""""""""""""
 
-0.0.1 (08.04.2020)
-""""""""""""""""""
+.. rubric:: 1.0.0 (08.04.2020)
 
-- First release of gostcrypto
+- First release of **'gostcrypto'**
