@@ -20,7 +20,7 @@
                    accordance with R 50.1.111-2016.
 """
 __title__ = 'GOSTCrypto'
-__version__ = '0.0.1'
+__version__ = '1.0.0'
 __author__ = 'Evgeny Drobotun'
 __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'

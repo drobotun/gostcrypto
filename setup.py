@@ -7,7 +7,7 @@ with open('HISTORY.rst', 'r', encoding='utf-8') as history_file:
     history = history_file.read()
 
 setup(
-    name='gostcrypto3',
+    name='gostcrypto',
     version = gostcrypto.__version__,
     description = 'GOST cryptographic functions',
     long_description = readme + '\n\n' + history,
@@ -18,6 +18,7 @@ setup(
     license=gostcrypto.__license__,
     keywords='cryptography, hash function, encryption, digital signature',
     project_urls={
+        'Documentation': 'https://gostcrypto.readthedocs.io/',
         'Source': 'https://github.com/drobotun/gostcrypto'
     },
     classifiers=[
