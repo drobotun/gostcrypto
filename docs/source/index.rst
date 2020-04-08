@@ -18,10 +18,3 @@ This guide describes how to use the gostcrypto Python module.
    gostrandom
    gosthmac
    gostpbkdf
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
