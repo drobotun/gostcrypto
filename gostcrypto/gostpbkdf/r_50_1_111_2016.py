@@ -99,50 +99,50 @@ class R5011112016:
             _t = add_xor(_t, internal)
         return _t
 
-    def _calculate_pbkdf(self, dklen):
+    def _calculate_pbkdf(self, dk_len):
         #Function for final calculation of the PBKDF value
         result = b''
-        self._num_block = dklen // _BLOCK_SIZE
-        if dklen % _BLOCK_SIZE != 0:
+        self._num_block = dk_len // _BLOCK_SIZE
+        if dk_len % _BLOCK_SIZE != 0:
             self._num_block = self._num_block + 1
         for i in range(1, self._num_block + 1):
             self._counter = i
             result = result + self._f()
         return result
 
-    def derive(self, dklen):
+    def derive(self, dk_len):
         """Returns a derived key as a byte object.
 
            Args:
-              :dklen: Required length of the output sequence (in bytes).
+              :dk_len: Required length of the output sequence (in bytes).
 
            Return:
-              Derived key as a byte object with the length 'dklen'.
+              Derived key as a byte object with the length 'dk_len'.
 
            Exception:
               ValueError('invalid size of the derived key') - in case of invalid size of the
                 derived key.
         """
-        if dklen > (2 ** 32 - 1) * 64:
+        if dk_len > (2 ** 32 - 1) * 64:
             raise ValueError('ValueError: invalid size of the derived key')
-        return self._calculate_pbkdf(dklen)[:dklen]
+        return self._calculate_pbkdf(dk_len)[:dk_len]
 
-    def hexderive(self, dklen):
+    def hexderive(self, dk_len):
         """Returns a derived key as a hexadecimal string.
 
            Args:
-              :dklen: Required length of the output sequence (in bytes).
+              :dk_len: Required length of the output sequence (in bytes).
 
            Return:
-              Derived key as a hexadecimal string with the length 'dklen'.
+              Derived key as a hexadecimal string with the length 'dk_len'.
 
            Exception:
               ValueError('invalid size of the derived key') - in case of invalid size of the
                  derived key.
         """
-        if dklen > (2 ** 32 - 1) * 64:
+        if dk_len > (2 ** 32 - 1) * 64:
             raise ValueError('ValueError: invalid size of the derived key')
-        return self._calculate_pbkdf(dklen)[:dklen].hex()
+        return self._calculate_pbkdf(dk_len)[:dk_len].hex()
 
     def clear(self):
         """Сlears the password value.

@@ -57,6 +57,8 @@ class R132356510062017:
 
        Methods:
           :random(): generating the next value from a pseudo-random sequence.
+          :reset(): resetting the counter and setting a new initial filling.
+          :clear(): clearing the counter value.
     """
     def __init__(self, rand_size, rand_k, size_s):
         #Initialize the random object
@@ -125,6 +127,9 @@ class R132356510062017:
            Args:
               :rand_k: New initial filling (seed). If this argument is not passed to the function,
                  the 'os.urandom' function is used to generate the initial filling.
+
+           Exception:
+              ValueError('invalid seed value size') - in case of invalid size of  initial filling.
         """
         if rand_k is None:
             self._rand_u = os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1)

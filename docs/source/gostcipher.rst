@@ -1,0 +1,695 @@
+**'gostcipher'** module
+=======================
+
+The module implements block encryption functions in accordance with GOST R 34.12-2015 and their use modes in accordance with GOST R 34.13-2015. The module includes the GOST34122015Kuznechik, GOST34122015Magma and GOST34132015 classes ,the ``new`` function and constants.
+
+Constants
+"""""""""
+
+- **MODE_ECB** - Electronic Codebook mode.
+- **MODE_CBC** - Cipher Block Chaining mode
+- **MODE_CFB** - Cipher Feedback mode
+- **MODE_OFB** - OutputFeedback mode
+- **MODE_CTR** - Counter mode
+- **MODE_MAC** - Message Authentication Code algorithm
+- **PAD_MODE_1** - Padding a message according to procedure 1 (it can be used in ECB and CBC modes).
+- **PAD_MODE_2** - Padding a message according to procedure 2 (it can be used in ECB and CBC modes).
+- **PAD_MODE_3** - Padding a message according to procedure 3 (for use in MAC mode).
+
+new(algorithm, key, mode, \**kwargs)
+""""""""""""""""""""""""""""""""""""
+    The function creates a new cipher object and returns it.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+    hash_obj = gostcrypto.gostcipher.new('kuznechik',
+                                          key,
+                                          gostcrypto.gostcipher.MODE_ECB,
+                                          pad_mode=PAD_MODE_2)
+
+.. rubric:: **Arguments:**
+
+- **algorithm** - the string with the name of the ciphering algorithm of the GOST R 34.12-201 (``'kuznechik'`` with block size 128 bit or ``'magma'`` with block size 64 bit).
+- **key** - byte object with 256-bit encryption key.
+- **mode** - mode of operation of the block encryption algorithm (valid value: ``MODE_CBC``, ``MODE_CFB``, ``MODE_CTR``, ``MODE_ECB``, ``MODE_OFB`` or ``MODE_MAC``).
+
+.. rubric:: **Keywords arguments:**
+
+- **init_vect** - byte object with initialization vector. Used in CTR, OFB, CBC and CFB modes. For CTR mode, the initialization vector length is equal to half the block size. For CBC, OFB and CFB modes, it is a multiple of the block size. The default value is ``None``.
+- **pad_mode** - padding mode for ECB, CBC, and MAC modes . For ECB and CBC modes, the acceptable values are ``PAD_MODE_1`` or ``PAD_MODE_2``. For MAC mode, the acceptable value is ``PAD_MODE_3``. The default value is ``PAD_MODE_1``.
+
+.. rubric:: **Return:**
+
+- New cipher object (as an instance of the GOST34132015 class).
+
+.. rubric:: **Exceptions:**
+
+- ValueError('unsupported algorithm') - in case of invalid value 'algorithm'.
+- ValueError('invalid key size') - in case of invalid key value.
+- ValueError('invalid key value') - in case of invalid key value.
+- ValueError('invalid IV value') - in case of invalid initialization vector value.
+
+*****
+
+GOST34122015Kuznechik
+"""""""""""""""""""""
+    Class that implements block encryption in accordance with GOST 34.12-2015 with a block size of 128 bits ('Kuznechik').
+
+.. rubric:: **Initialization parameter:**
+
+- **key** - byte object with 256-bit encryption key.
+
+Methods:
+--------
+
+encrypt(block)
+~~~~~~~~~~~~~~
+    Encrypting a block of plaintext.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    plain_block = bytearray([
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
+    cipher_block = cipher_obj.encrypt(plain_block)
+
+.. rubric:: **Arguments:**
+
+- **block** - the block of plaintext to be encrypted (the block size is 16 bytes).
+
+.. rubric:: **Return:**
+
+- The block of ciphertext (as a byte object).
+
+*****
+
+decrypt(block)
+~~~~~~~~~~~~~~
+    Decrypting a block of ciphertext.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_block = bytearray([
+        0x7f, 0x67, 0x9d, 0x90, 0xbe, 0xbc, 0x24, 0x30, 0x5a, 0x46, 0x8d, 0x42, 0xb9, 0xd4, 0xed, 0xcd,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
+    plain_block = cipher_obj.encrypt(cipher_block)
+
+.. rubric:: **Arguments:**
+
+- **block** - the block of ciphertext to be decrypted (the block size is 16 bytes).
+
+.. rubric:: **Return:**
+
+- The block of plaintext (as a byte object).
+
+clear()
+~~~~~~~
+    Сlearing the values of iterative encryption keys.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_block = bytearray([
+        0x7f, 0x67, 0x9d, 0x90, 0xbe, 0xbc, 0x24, 0x30, 0x5a, 0x46, 0x8d, 0x42, 0xb9, 0xd4, 0xed, 0xcd,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
+    plain_block = cipher_obj.encrypt(cipher_block)
+    cipher_obj.clear()
+
+Attributes:
+-----------
+
+block_size
+~~~~~~~~~~
+    An integer value the internal block size of the cipher algorithm in bytes. For the 'Kuznechik' algorithm this value is 16.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
+    block_size = cipher_obj.block_size
+
+key_size
+~~~~~~~~
+    An integer value the cipher key size.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
+    key_size = cipher_obj.key_size
+
+GOST34122015Magma
+"""""""""""""""""
+    Class that implements block encryption in accordance with GOST 34.12-2015 with a block size of 64 bits ('Magma').
+
+.. rubric:: **Initialization parameter:**
+
+- **key** - byte object with 256-bit encryption key.
+
+Methods:
+--------
+
+encrypt(block)
+~~~~~~~~~~~~~~
+    Encrypting a block of plaiintext.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00,
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
+    ])
+
+    plain_block = bytearray([
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
+    cipher_block = cipher_obj.encrypt(plain_block)
+
+.. rubric:: **Arguments:**
+
+- **block** - the block of plaintext to be encrypted (the block size is 8 bytes).
+
+.. rubric:: **Return:**
+
+- The block of ciphertext (as a byte object).
+
+*****
+
+decrypt(block)
+~~~~~~~~~~~~~~
+    Decrypting a block of ciphertext.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00,
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
+    ])
+
+    cipher_block = bytearray([
+        0x4e, 0xe9, 0x01, 0xe5, 0xc2, 0xd8, 0xca, 0x3d,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
+    plain_block = cipher_obj.encrypt(cipher_block)
+
+.. rubric:: **Arguments:**
+
+- **block** - the block of ciphertext to be decrypted (the block size is 8 bytes).
+
+.. rubric:: **Return:**
+
+- The block of plaintext (as a byte object).
+
+clear()
+~~~~~~~
+    Сlearing the values of iterative encryption keys.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00,
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
+    ])
+
+    cipher_block = bytearray([
+        0x4e, 0xe9, 0x01, 0xe5, 0xc2, 0xd8, 0xca, 0x3d,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
+    plain_block = cipher_obj.encrypt(cipher_block)
+    cipher_obj.clear()
+
+Attributes:
+-----------
+
+block_size
+~~~~~~~~~~
+    An integer value the internal block size of the cipher algorithm in bytes. For the 'Magma' algorithm this value is 8.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00,
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
+    block_size = cipher_obj.block_size
+
+key_size
+~~~~~~~~
+    An integer value the cipher key size.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00,
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
+    key_size = cipher_obj.key_size
+
+GOST34132015
+""""""""""""
+    Сlass that implements various block encryption modes in accordance with GOST 34.13-2015.
+
+Methods:
+--------
+
+encrypt(data)
+~~~~~~~~~~~~~
+    Encrypting a plaintext.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    plain_text = = bytearray([
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
+        0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00, 0x11,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_ECB,
+                                            pad_mode=PAD_MODE_1)
+    cipher_text = cipher_obj.encrypt(plain_text)
+
+.. rubric:: **Arguments:**
+
+- **data** - plaintext data to be encrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- Ciphertext data (as a byte object).
+
+.. rubric:: **Exceptions:**
+
+- ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
+- ValueError('unsupported padding mode') - in case of the unsupported padding mode.
+- ValueError('invalid initialization vector size') - in case of the invalid initialization vector size.
+
+decrypt(data)
+~~~~~~~~~~~~~
+    Decrypting a ciphertext.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_text = = bytearray([
+        0x7f, 0x67, 0x9d, 0x90, 0xbe, 0xbc, 0x24, 0x30, 0x5a, 0x46, 0x8d, 0x42, 0xb9, 0xd4, 0xed, 0xcd,
+        0xb4, 0x29, 0x91, 0x2c, 0x6e, 0x00, 0x32, 0xf9, 0x28, 0x54, 0x52, 0xd7, 0x67, 0x18, 0xd0, 0x8b,
+        0xf0, 0xca, 0x33, 0x54, 0x9d, 0x24, 0x7c, 0xee, 0xf3, 0xf5, 0xa5, 0x31, 0x3b, 0xd4, 0xb1, 0x57,
+        0xd0, 0xb0, 0x9c, 0xcd, 0xe8, 0x30, 0xb9, 0xeb, 0x3a, 0x02, 0xc4, 0xc5, 0xaa, 0x8a, 0xda, 0x98,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_ECB,
+                                            pad_mode=PAD_MODE_1)
+    plain_text = cipher_obj.encrypt(cipher_text)
+
+.. rubric:: **Arguments:**
+
+- **data** - ciphertext data to be decrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- Plaintext data (as a byte object).
+
+.. rubric:: **Exceptions:**
+
+- ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
+- ValueError('unsupported padding mode') - in case of the unsupported padding mode.
+- ValueError('invalid initialization vector size') - in case of the invalid initialization vector size.
+
+update(data)
+~~~~~~~~~~~~
+    Update the MAC object with the bytes-like object.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    plain_text = = bytearray([
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
+        0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00, 0x11,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_MAC,
+                                            pad_mode=PAD_MODE_3)
+    cipher_obj.update(plain_text)
+
+.. rubric:: **Arguments:**
+
+- **data** - the string from which to get the MAC. Repeated calls are equivalent to a single call with the concatenation of all the arguments: ``m.update(a)``; ``m.update(b)`` is equivalent to ``m.update(a+b)``.
+
+.. rubric:: **Exceptions:**
+
+- ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
+- ValueError('unsupported padding mode') - in case of the unsupported padding mode.
+
+digest(mac_size)
+~~~~~~~~~~~~~~~~
+    Calculating the ``data`` message authentication code (MAC) after applying the ``update(data)`` method.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    plain_text = = bytearray([
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
+        0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00, 0x11,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_MAC,
+                                            pad_mode=PAD_MODE_3)
+    cipher_obj.update(plain_text)
+    mac_result = cipher_obj.digest(8)
+
+.. rubric:: **Arguments:**
+
+- **mac_size** - message authentication code size (in bytes).
+
+.. rubric:: **Return:**
+
+- Message authentication code value (as a byte object).
+
+.. rubric:: **Exceptions:**
+
+- ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
+- ValueError('unsupported padding mode') - in case of the unsupported padding mode.
+- ValueError('invalid message authentication code size') - in case of the invalid message authentication code size.
+
+hexdigest(mac_size)
+~~~~~~~~~~~~~~~~~~~
+    Calculating the ``data`` message authentication code (MAC) after applying the ``update(data)`` method.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    plain_text = = bytearray([
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
+        0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00, 0x11,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_MAC,
+                                            pad_mode=PAD_MODE_3)
+    cipher_obj.update(plain_text)
+    mac_result = cipher_obj.hexdigest(8)
+
+.. rubric:: **Arguments:**
+
+- **mac_size** - message authentication code size (in bytes).
+
+.. rubric:: **Return:**
+
+- Message authentication code value (as a hexadecimal string).
+
+.. rubric:: **Exceptions:**
+
+- ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
+- ValueError('unsupported padding mode') - in case of the unsupported padding mode.
+- ValueError('invalid message authentication code size') - in case of the invalid message authentication code size.
+
+clear()
+~~~~~~~
+    Сlearing the values of iterative encryption keys.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_MAC,
+                                            pad_mode=PAD_MODE_3)
+    cipher_obj.clear()
+
+Attributes:
+-----------
+
+iv
+~~
+    Contains the initial value which will be used to start a cipher feedback mode (CBC, CFB or OFB mode only).
+	
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    init_vect = bytearray([
+        0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0, 0xa1, 0xb2, 0xc3, 0xd4, 0xe5, 0xf0, 0x01, 0x12,
+        0x23, 0x34, 0x45, 0x56, 0x67, 0x78, 0x89, 0x90, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_CBC,
+                                            init_vect=init_vect)
+    init_vect_result = cipher_obj.iv
+
+counter
+~~~~~~~
+    Contains counter blocks (CTR mode only).
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    init_vect = bytearray([
+        0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_CTR,
+                                            init_vect=init_vect)
+    counter_result = cipher_obj.counter
+
+block_size
+~~~~~~~~~~
+     An integer value the internal block size of the cipher algorithm in bytes. For the 'Kuznechik' algorithm this value is 16 and the 'Magma' algorithm, this value is 8.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_ECB,
+                                            pad_mode=PAD_MODE_2)
+    block_size = cipher_obj.block_size
+
+*****
+
+Example of use
+""""""""""""""
+
+String encryption in ECB mode
+-----------------------------
+
+.. code-block:: python
+
+    .. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    plain_text = = bytearray([
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
+        0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
+        0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00, 0x11,
+    ])
+
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_ECB,
+                                            pad_mode=PAD_MODE_1)
+
+    cipher_text = cipher_obj.encrypt(plain_text)
+
+File encryption in CTR mode
+---------------------------
+
+.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    init_vect = bytearray([
+        0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0,
+    ])
+
+    plain_file_path = 'd:/plain file.txt'
+	cipher_file_path = 'd:/cipher file.txt'
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_CTR,
+                                            init_vect=init_vect)
+
+    buffer_size = 128
+    plain_file = open(plain_file_path, 'rb')
+    cipher_file = open(cipher_file_path', 'wb')
+    buffer = plain_file.read(buffer_size)
+    while len(buffer) > 0:
+        cipher_data = cipher.decrypt(buffer)
+        cipher_file.write(cipher_data)
+        buffer = plain_file.read(buffer_size)
+
+Calculating MAC of the file
+---------------------------
+
+.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray([
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    ])
+
+    file_path = 'd:/file.txt'
+    cipher = gostcrypto.gostcipher.new('kuznechik',
+                                        key,
+                                        gostcrypto.gostcipher.MODE_MAC,
+                                        pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+    
+	buffer_size = 128
+	file = open(file_path, 'rb')
+    buffer = file.read(buffer_size)
+    while len(buffer) > 0:
+        cipher.update(buffer)
+        buffer = file.read(buffer_size)
+    mac_result = cipher.digest(8)

@@ -266,7 +266,7 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
         0x7f, 0x67, 0x9d, 0x90, 0xbe, 0xbc, 0x24, 0x30, 0x5a, 0x46, 0x8d, 0x42, 0xb9, 0xd4, 0xed, 0xcd,
         0xb4, 0x29, 0x91, 0x2c, 0x6e, 0x00, 0x32, 0xf9, 0x28, 0x54, 0x52, 0xd7, 0x67, 0x18, 0xd0, 0x8b,
         0xf0, 0xca, 0x33, 0x54, 0x9d, 0x24, 0x7c, 0xee, 0xf3, 0xf5, 0xa5, 0x31, 0x3b, 0xd4, 0xb1, 0x57,
-        0xd0, 0xb0, 0x9c, 0xcd, 0xe8, 0x30, 0xb9, 0xeb, 0x3a, 0x02, 0xc4, 0xc5, 0xaa, 0x8a, 0xda, 0x98
+        0xd0, 0xb0, 0x9c, 0xcd, 0xe8, 0x30, 0xb9, 0xeb, 0x3a, 0x02, 0xc4, 0xc5, 0xaa, 0x8a, 0xda, 0x98,
     ])
 
     TEST_CIPHER_TEXT_CBC = bytearray([
@@ -619,21 +619,6 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         with self.assertRaises(ValueError) as context:
             test_counter =  test_obj.counter
-        self.assertTrue('ValueError: invalid counter value' in str(context.exception))
-
-    def test_set_counter(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
-        test_counter = self.TEST_INIT_VECT_CTR
-        test_counter[len(test_counter) - 1] = 0xff
-        test_obj.set_counter(test_counter)
-        self.assertEqual(test_obj.counter, test_counter)
-
-    def test_set_counter_raises(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
-        test_counter = self.TEST_INIT_VECT_CTR
-        test_counter[len(test_counter) - 1] = 0xff
-        with self.assertRaises(ValueError) as context:
-            test_obj.set_counter(test_counter)
         self.assertTrue('ValueError: invalid counter value' in str(context.exception))
 
 class TestGOST34132015Magma(unittest.TestCase):

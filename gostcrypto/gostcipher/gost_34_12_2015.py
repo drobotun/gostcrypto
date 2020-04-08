@@ -49,8 +49,8 @@ class GOST34122015Kuznechik:
     """Class that implements block encryption in accordance with GOST 34.12-2015 ('Kuznechik').
 
        Methods:
-          :decrypt(): decrypting a block of plaintext.
-          :encrypt(): encrypting a block of ciphertext.
+          :decrypt(): decrypting a block of ciphertext.
+          :encrypt(): encrypting a block of plaintext.
           :clear(): Сlearing the values of iterative encryption keys.
 
        Attributes:
@@ -179,13 +179,13 @@ class GOST34122015Kuznechik:
         return _KEY_SIZE
 
     def decrypt(self, block):
-        """Decrypting a block of plaintext.
+        """Decrypting a block of ciphertext.
 
            Args:
-             :block: The block of plaintext to be encrypted (the block size is 16 bytes).
+             :block: The block of ciphertext to be decrypted (the block size is 16 bytes).
 
            Return:
-              The block of ciphertext.
+              The block of plaintext.
         """
         block = bytearray(block)
         block = add_xor(self._cipher_iter_key[9], block)
@@ -196,13 +196,13 @@ class GOST34122015Kuznechik:
         return block
 
     def encrypt(self, block):
-        """Encrypting a block of ciphertext.
+        """Encrypting a block of plaintext.
 
            Args:
-             :block: The block of ciphertext to be decrypted (the block size is 16 bytes).
+             :block: The block of plaintext to be encrypted (the block size is 16 bytes).
 
            Return:
-              The block of plaintext.
+              The block of ciphertext.
         """
         block = bytearray(block)
         for i in range(9):
@@ -222,8 +222,8 @@ class GOST34122015Magma:
     """Class that implements block encryption in accordance with GOST 34.12-2012 ('Magma').
 
        Methods:
-          :decrypt(): decrypting a block of plaintext.
-          :encrypt(): encrypting a block of ciphertext.
+          :decrypt(): decrypting a block of ciphertext.
+          :encrypt(): encrypting a block of plaintext.
           :clear(): Сlearing the values of iterative encryption keys.
 
        Attributes:

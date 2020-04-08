@@ -128,12 +128,12 @@ def new(algorithm, key, mode, **kwargs):
           :mode: Mode of operation of the block encryption algorithm (valid
              value: MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB, MODE_OFB or MODE_MAC).
        Keyword args:
-          :init_vect: Byte object with initialization vector. used in CTR, OFB,
-             CBC, and CFB modes. for CTR mode, the initialization vector length
-             is equal to half the block size. for CBC, OFB, and CFB modes, it
+          :init_vect: Byte object with initialization vector. Used in CTR, OFB,
+             CBC and CFB modes. For CTR mode, the initialization vector length
+             is equal to half the block size. For CBC, OFB and CFB modes, it
              is a multiple of the block size (the default value is 'None').
           :pad_mode: Padding mode for ECB, CBC, and MAC modes . For ECB and CBC modes,
-             the acceptable values are PAD_MODE_1 and PAD_MODE_2 . for MAC mode,
+             the acceptable values are PAD_MODE_1 and PAD_MODE_2. For MAC mode,
              the acceptable value is PAD_MODE_3 (the default value is PAD_MODE_1).
 
        Return:
@@ -161,14 +161,13 @@ class GOST34132015:
        GOST 34.13-2015.
 
        Methods:
-          :decrypt(): Decrypting a plaintext.
-          :encrypt(): Encrypting a ciphertext.
+          :decrypt(): Decrypting a ciphertext.
+          :encrypt(): Encrypting a plaintext.
           :update(): Update the MAC object with the bytes-like object.
           :digest(): Calculating the Message authentication code of the data passed to the
              'update()' method so far.
           :hexdigest(): Calculating the Message authentication code of the data passed to the
              'update()' method so far an return it of the hexadecimal.
-          :set_counter(): Setting the counter value in CTR mode.
           :clear(): Сlearing the values of iterative encryption keys.
 
        Attributes:
@@ -544,6 +543,10 @@ class GOST34132015:
               :data: The string from which to get the MAC. Repeated calls are equivalent
                 to a single call with the concatenation of all the arguments: m.update(a);
                 m.update(b) is equivalent to m.update(a+b).
+ 
+           Exception:
+              ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
+              ValueError('unsupported padding mode') - in case of the unsupported padding mode.
         """
         if self._mode != MODE_MAC:
             self.clear()
@@ -596,7 +599,7 @@ class GOST34132015:
               ValueError('unsupported cipher mode') - in case of the unsupported cipher mode.
               ValueError('unsupported padding mode') - in case of the unsupported padding mode.
               ValueError('invalid message authentication code size') - in case of the invalid
-                 message authentication code size
+                 message authentication code size.
         """
         temp = deepcopy(self)
         if mac_size > temp.block_size:
@@ -621,18 +624,6 @@ class GOST34132015:
                  message authentication code size
         """
         return self.digest(mac_size).hex()
-
-    def set_counter(self, counter):
-        """Setting the counter value in CTR mode (used for implementing CTR-ECPM mode in
-           accordance with P 132565.1.017-2018)
-
-           Args:
-              :counter: The value to set the counter.
-        """
-        if self._mode != MODE_CTR:
-            self.clear()
-            raise ValueError('ValueError: invalid counter value')
-        self._counter = counter
 
     #pylint: disable=invalid-name
     @property

@@ -1,12 +1,8 @@
-GOST cryptographic functions
-============================
+Introduction
+============
 
-.. image:: https://img.shields.io/github/license/drobotun/virustotalapi3?style=flat
-    :target: http://doge.mit-license.org
-.. image:: https://img.shields.io/travis/drobotun/gostcrypto
-    :target: https://travis-ci.org/drobotun/gostcrypto
-.. image:: https://img.shields.io/coveralls/github/drobotun/gostcrypto
-    :target: https://coveralls.io/github/drobotun/gostcrypto
+Overview
+~~~~~~~~
 
 The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
@@ -274,17 +270,17 @@ Usage **'gostpbkdf'** module
     pbkdf_result = pbkdf_obj.derive(32)
 
 License
-"""""""
+~~~~~~~
 
 MIT Copyright (c) 2020 Evgeny Drobotun
 
-Documentation
-"""""""""""""
+Source code
+~~~~~~~~~~~
 
-Documentation for using this package:
+Package source code: https://github.com/drobotun/gostcrypto
 
 Release History
-"""""""""""""""
+~~~~~~~~~~~~~~~
 
 .. rubric:: 1.0.0 (08.04.2020)
 
