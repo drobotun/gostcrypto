@@ -298,8 +298,8 @@ class GOST34132015:
         if not self._pad_mode in (PAD_MODE_1, PAD_MODE_2):
             self.clear()
             raise ValueError('ValueError: unsupported padding mode')
-        if not self._init_vect or len(self._init_vect) < self.block_size\
-                               or len(self._init_vect) % self.block_size != 0:
+        if not self._init_vect (or len(self._init_vect) < self.block_size)\
+                               (or len(self._init_vect) % self.block_size != 0):
             self.clear()
             raise ValueError('ValueError: invalid initialization vector size')
         result = bytearray()
