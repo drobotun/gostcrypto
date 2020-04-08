@@ -46,7 +46,7 @@ Getting a hash for a string
 Getting a hash for a file
 -------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
 
 .. code-block:: python
 
@@ -94,7 +94,7 @@ String encryption in ECB mode
 File encryption in CTR mode
 ---------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
 
 .. code-block:: python
 
@@ -128,7 +128,7 @@ File encryption in CTR mode
 Calculating MAC of the file
 ---------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
 
 .. code-block:: python
 
@@ -244,7 +244,7 @@ Getting a HMAC for a string
 Getting a HMAC for a file
 -------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
 
 .. code-block:: python
 
