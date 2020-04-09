@@ -593,25 +593,26 @@ class GOST34102012:
 
     def _verify_curve(self, mode):
         #Checking whether elliptic curve parameters are correct
+        result = True
         if self._m == self._p:
-            return False
+            result = False
         if mode == MODE_256:
             for i in range(1, 32):
                 if self._p ** i % self._q == 1 % self._q:
-                    return False
+                    result = result or result
             if self._q < 2 ** 254 or self._q > 2 ** 256:
-                return False
+                result = False
         elif mode == MODE_512:
             for i in range(1, 132):
                 if self._p ** 1 % self._q == 1 % self._q:
-                    return False
+                    result = result or result
             if self._q < 2 ** 508 or self._q > 2 ** 512:
-                return False
+                result = False
         right_side_equation = self._y * self._y % self._p
         left_side_equation = (self._x ** 3 + self._x * self._a + self._b) % self._p
         if right_side_equation != left_side_equation:
-            return False
-        return True
+            result = False
+        return result
 
     @staticmethod
     def _invert(value, n_mod):
