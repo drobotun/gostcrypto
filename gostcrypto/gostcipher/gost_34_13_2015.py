@@ -244,11 +244,12 @@ class GOST34132015:
 
     def _set_padding(self, data):
         #Selecting and setting padding
+        result = data
         if self._pad_mode == PAD_MODE_1:
             result = self._pad_mode_1(data)
         elif self._pad_mode == PAD_MODE_2:
             result = self._pad_mode_2(data)
-        else:
+        elif self._pad_mode == PAD_MODE_3:
             result = self._pad_mode_3(data)
         return result
 
@@ -264,9 +265,10 @@ class GOST34132015:
 
     def _get_mac_key(self, value_r):
         #Generating final keys for MAC mode
+        value_b = b''
         if self.block_size == 16:
             value_b = _B_128
-        else:
+        elif self.block_size == 8:
             value_b = _B_64
         if msb(value_r) == 0:
             int_value = bytearray_to_int(value_r) << 1
@@ -479,6 +481,7 @@ class GOST34132015:
         if not self._mode in (MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB, MODE_CTR):
             self.clear()
             raise ValueError('ValueError: unsupported cipher mode')
+        result = b''
         if self._mode == MODE_ECB:
             result = self._ecb_decrypt(data)
         elif self._mode == MODE_CBC:
@@ -487,7 +490,7 @@ class GOST34132015:
             result = self._cfb_decrypt(data)
         elif self._mode == MODE_OFB:
             result = self._ofb_decrypt(data)
-        else:
+        elif self._mode == MODE_CTR:
             result = self._ctr_decrypt(data)
         return result
 
@@ -509,6 +512,7 @@ class GOST34132015:
         if not self._mode in (MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB, MODE_CTR):
             self.clear()
             raise ValueError('ValueError: unsupported cipher mode')
+        result = b''
         if self._mode == MODE_ECB:
             result = self._ecb_encrypt(data)
         elif self._mode == MODE_CBC:
@@ -517,7 +521,7 @@ class GOST34132015:
             result = self._cfb_encrypt(data)
         elif self._mode == MODE_OFB:
             result = self._ofb_encrypt(data)
-        else:
+        elif self._mode == MODE_CTR:
             result = self._ctr_encrypt(data)
         return result
 
