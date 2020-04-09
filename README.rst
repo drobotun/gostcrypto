@@ -11,6 +11,12 @@ GOST cryptographic functions
     :target: https://coveralls.io/github/drobotun/gostcrypto
 .. image:: https://readthedocs.org/projects/gostcrypto/badge/?version=latest
     :target: https://gostcrypto.readthedocs.io/en/latest/?badge=latest
+.. image:: https://img.shields.io/pypi/pyversions/gostcrypto.svg?logo=python&logoColor=FBE072
+    :target: https://pypi.org/project/gostcrypto/
+.. image:: https://img.shields.io/pypi/v/gostcrypto
+    :target: https://pypi.org/project/gostcrypto/
+.. image:: https://img.shields.io/pypi/format/gostcrypto
+    :target: https://pypi.org/project/gostcrypto/
 
 The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
