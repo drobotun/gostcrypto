@@ -459,23 +459,6 @@ class GOST34132015:
 
     def _ctr_encrypt(self, data):
         #Encryption mode CTR
-        """
-        if not self._init_vect or len(self._init_vect) != (self.block_size // 2):
-            self.clear()
-            raise ValueError('ValueError: 66invalid initialization vector size')
-        gamma = bytearray()
-        result = bytearray()
-        for i in range(self._get_num_block(data)):
-            gamma = self._cipher_obj.encrypt(self._counter)
-            self._counter = self._inc_ctr(self._counter)
-            result = result + add_xor(\
-                     data[self.block_size * i:self.block_size + (self.block_size * i)], gamma)
-        if len(data) % self.block_size != 0:
-            gamma = self._cipher_obj.encrypt(self._counter)
-            self._counter = self._inc_ctr(self._counter)
-            result = result + add_xor(\
-                     data[self.block_size * self._get_num_block(data)::], gamma)
-        """
         return self._ctr_decrypt(data)
 
     def decrypt(self, data):
