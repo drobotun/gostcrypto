@@ -508,59 +508,11 @@ def new(mode, curve):
           ValueError('invalid parameters of the elliptic curve') - if the elliptic curve
              parameters are incorrect.
     """
-    is_edvards_and_canonical = (
-        'e' in curve and 'd' in curve and 'u' in curve and 'v' in curve and
-        'x' in curve and 'y' in curve and 'a' in curve and 'b' in curve)
-    is_edvards_only = (
-        'e' in curve and 'd' in curve and 'u' in curve and 'v' in curve and
-        'x' not in curve and 'y' not in curve and 'a' not in curve and 'b' not in curve)
-    is_canonical_only = (
-        'e' not in curve and 'd' not in curve and 'u' not in curve and 'v' not in curve and
-        'x' in curve and 'y' in curve and 'a' in curve and 'b' in curve)
     try:
-        if is_edvards_and_canonical:
-            result = GOST34102012(mode=mode,
-                                  p=curve['p'],
-                                  a=curve['a'],
-                                  b=curve['b'],
-                                  e=curve['e'],
-                                  d=curve['d'],
-                                  m=curve['m'],
-                                  q=curve['q'],
-                                  x=curve['x'],
-                                  y=curve['y'],
-                                  u=curve['u'],
-                                  v=curve['v'])
-        elif is_edvards_only:
-            result = GOST34102012(mode=mode,
-                                  p=curve['p'],
-                                  a=None,
-                                  b=None,
-                                  e=curve['e'],
-                                  d=curve['d'],
-                                  m=curve['m'],
-                                  q=curve['q'],
-                                  x=None,
-                                  y=None,
-                                  u=curve['u'],
-                                  v=curve['v'])
-        elif is_canonical_only:
-            result = GOST34102012(mode=mode,
-                                  p=curve['p'],
-                                  a=curve['a'],
-                                  b=curve['b'],
-                                  e=None,
-                                  d=None,
-                                  m=curve['m'],
-                                  q=curve['q'],
-                                  x=curve['x'],
-                                  y=curve['y'],
-                                  u=None,
-                                  v=None)
+        return GOST34102012(mode, curve)
     except ValueError as err:
         print(err)
         sys_exit()
-    return result
 
 class GOST34102012:
     """Сlass that implements processes for creating and verifying an electronic digital
@@ -573,44 +525,93 @@ class GOST34102012:
 
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, mode, **curve_param):
+    def __init__(self, mode, curve):
         #Initialize the signature object
         if mode not in (MODE_256, MODE_512):
             raise ValueError('ValueError: unsupported signature mode')
-        self._p = curve_param['p']
-        self._a = curve_param['a']
-        self._b = curve_param['b']
-        self._e = curve_param['e']
-        self._d = curve_param['d']
-        self._m = curve_param['m']
-        self._q = curve_param['q']
-        self._x = curve_param['x']
-        self._y = curve_param['y']
-        self._u = curve_param['u']
-        self._v = curve_param['v']
-        if self._a is None or self._b is None or self._x is None or self._y is None:
+        if self._is_edvards_and_canonical(curve):
+            self._p = curve.get('p')
+            self._a = curve.get('a')
+            self._b = curve.get('b')
+            self._e = curve.get('e')
+            self._d = curve.get('d')
+            self._m = curve.get('m')
+            self._q = curve.get('q')
+            self._x = curve.get('x')
+            self._y = curve.get('y')
+            self._u = curve.get('u')
+            self._v = curve.get('v')
+        elif self._is_edvards_only(curve):
+            self._p = curve.get('p')
+            self._a = None
+            self._b = None
+            self._e = curve.get('e')
+            self._d = curve.get('d')
+            self._m = curve.get('m')
+            self._q = curve.get('q')
+            self._x = None
+            self._y = None
+            self._u = curve.get('u')
+            self._v = curve.get('v')
             self._edvards_to_canonical()
-        if self._m == self._p:
+        elif self._is_canonical_only(curve):
+            self._p = curve.get('p')
+            self._a = curve.get('a')
+            self._b = curve.get('b')
+            self._e = None
+            self._d = None
+            self._m = curve.get('m')
+            self._q = curve.get('q')
+            self._x = curve.get('x')
+            self._y = curve.get('y')
+            self._u = None
+            self._v = None
+        else:
             raise ValueError('ValueError: invalid parameters of the elliptic curve')
+        if not self._verify_curve(mode):
+            raise ValueError('ValueError: invalid parameters of the elliptic curve')
+        if mode == MODE_256:
+            self._size = 32
+        else:
+            self._size = 64
+    # pylint: enable=too-many-instance-attributes
+
+    @staticmethod
+    def _is_edvards_and_canonical(curve):
+        return ('e' in curve and 'd' in curve and 'u' in curve and 'v' in curve and
+                'x' in curve and 'y' in curve and 'a' in curve and 'b' in curve)
+
+    @staticmethod
+    def _is_edvards_only(curve):
+        return ('e' in curve and 'd' in curve and 'u' in curve and 'v' in curve and
+                'x' not in curve and 'y' not in curve and 'a' not in curve and 'b' not in curve)
+
+    @staticmethod
+    def _is_canonical_only(curve):
+        return ('e' not in curve and 'd' not in curve and 'u' not in curve and 'v' not in curve and
+                'x' in curve and 'y' in curve and 'a' in curve and 'b' in curve)
+
+    def _verify_curve(self, mode):
+        #Checking whether elliptic curve parameters are correct
+        if self._m == self._p:
+            return False
         if mode == MODE_256:
             for i in range(1, 32):
                 if self._p ** i % self._q == 1 % self._q:
-                    raise ValueError('ValueError: invalid parameters of the elliptic curve')
+                    return False
             if self._q < 2 ** 254 or self._q > 2 ** 256:
-                raise ValueError('ValueError: invalid parameters of the elliptic curve')
-            self._size = 32
+                return False
         elif mode == MODE_512:
             for i in range(1, 132):
                 if self._p ** 1 % self._q == 1 % self._q:
-                    raise ValueError('ValueError: invalid parameters of the elliptic curve')
+                    return False
             if self._q < 2 ** 508 or self._q > 2 ** 512:
-                raise ValueError('ValueError: invalid parameters of the elliptic curve')
-            self._size = 64
+                return False
         right_side_equation = self._y * self._y % self._p
         left_side_equation = (self._x ** 3 + self._x * self._a + self._b) % self._p
         if right_side_equation != left_side_equation:
-            raise ValueError('ValueError: invalid parameters of the elliptic curve')
-    # pylint: enable=too-many-instance-attributes
+            return False
+        return True
 
     @staticmethod
     def _invert(value, n_mod):

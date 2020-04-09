@@ -16,12 +16,66 @@ TEST_CURVE = {
         x=0x02,
         y=bytearray_to_int(bytearray.fromhex('08e2a8a0e65147d4bd6316030e16d19c85c97f0a9ca267122b96abbcea7e8fc8'))
     ),
+        'id-tc26-gost-3410-2012-256-paramSetTest_raises_1':dict(
+        p=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        a=0x07,
+        b=bytearray_to_int(bytearray.fromhex('5fbff498aa938ce739b8e022fbafef40563f6e6a3472fc2a514c0ce9dae23b7e')),
+        m=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        q=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        x=0x02,
+        y=bytearray_to_int(bytearray.fromhex('08e2a8a0e65147d4bd6316030e16d19c85c97f0a9ca267122b96abbcea7e8fc8'))
+    ),
+    'id-tc26-gost-3410-2012-256-paramSetTest_raises_2':dict(
+        p=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000000000000000000000000000000000431')),
+        a=0x07,
+        b=bytearray_to_int(bytearray.fromhex('5fbff498aa938ce739b8e022fbafef40563f6e6a3472fc2a514c0ce9dae23b7e')),
+        m=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        q=0x41,
+        x=0x02,
+        y=bytearray_to_int(bytearray.fromhex('08e2a8a0e65147d4bd6316030e16d19c85c97f0a9ca267122b96abbcea7e8fc8'))
+    ),
+    'id-tc26-gost-3410-2012-256-paramSetTest_raises_3':dict(
+        p=0x02,
+        a=0x07,
+        b=bytearray_to_int(bytearray.fromhex('5fbff498aa938ce739b8e022fbafef40563f6e6a3472fc2a514c0ce9dae23b7e')),
+        m=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        q=0x70,
+        x=0x02,
+        y=bytearray_to_int(bytearray.fromhex('08e2a8a0e65147d4bd6316030e16d19c85c97f0a9ca267122b96abbcea7e8fc8'))
+    ),
+    'id-tc26-gost-3410-2012-256-paramSetTest_raises_6':dict(
+        p=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000000000000000000000000000000000431')),
+        a=0x07,
+        b=0x0e,
+        m=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        q=bytearray_to_int(bytearray.fromhex('8000000000000000000000000000000150fe8a1892976154c59cfc193accf5b3')),
+        x=0x02,
+        y=bytearray_to_int(bytearray.fromhex('08e2a8a0e65147d4bd6316030e16d19c85c97f0a9ca267122b96abbcea7e8fc8'))
+    ),
     'id-tc26-gost-3410-2012-512-paramSetTest':dict(
         p=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15df1d852741af4704a0458047e80e4546d35b8336fac224dd81664bbf528be6373')),
         a=0x07,
         b=bytearray_to_int(bytearray.fromhex('1cff0806a31116da29d8cfa54e57eb748bc5f377e49400fdd788b649eca1ac4361834013b2ad7322480a89ca58e0cf74bc9e540c2add6897fad0a3084f302adc')),
         m=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15da82f2d7ecb1dbac719905c5eecc423f1d86e25edbe23c595d644aaf187e6e6df')),
         q=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15da82f2d7ecb1dbac719905c5eecc423f1d86e25edbe23c595d644aaf187e6e6df')),
+        x=bytearray_to_int(bytearray.fromhex('24d19cc64572ee30f396bf6ebbfd7a6c5213b3b3d7057cc825f91093a68cd762fd60611262cd838dc6b60aa7eee804e28bc849977fac33b4b530f1b120248a9a')),
+        y=bytearray_to_int(bytearray.fromhex('2bb312a43bd2ce6e0d020613c857acddcfbf061e91e5f2c3f32447c259f39b2c83ab156d77f1496bf7eb3351e1ee4e43dc1a18b91b24640b6dbb92cb1add371e'))
+    ),
+    'id-tc26-gost-3410-2012-512-paramSetTest_raises_4':dict(
+        p=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15df1d852741af4704a0458047e80e4546d35b8336fac224dd81664bbf528be6373')),
+        a=0x07,
+        b=bytearray_to_int(bytearray.fromhex('1cff0806a31116da29d8cfa54e57eb748bc5f377e49400fdd788b649eca1ac4361834013b2ad7322480a89ca58e0cf74bc9e540c2add6897fad0a3084f302adc')),
+        m=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15da82f2d7ecb1dbac719905c5eecc423f1d86e25edbe23c595d644aaf187e6e6df')),
+        q=0x02,
+        x=bytearray_to_int(bytearray.fromhex('24d19cc64572ee30f396bf6ebbfd7a6c5213b3b3d7057cc825f91093a68cd762fd60611262cd838dc6b60aa7eee804e28bc849977fac33b4b530f1b120248a9a')),
+        y=bytearray_to_int(bytearray.fromhex('2bb312a43bd2ce6e0d020613c857acddcfbf061e91e5f2c3f32447c259f39b2c83ab156d77f1496bf7eb3351e1ee4e43dc1a18b91b24640b6dbb92cb1add371e'))
+    ),
+    'id-tc26-gost-3410-2012-512-paramSetTest_raises_5':dict(
+        p=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15df1d852741af4704a0458047e80e4546d35b8336fac224dd81664bbf528be6373')),
+        a=0x07,
+        b=bytearray_to_int(bytearray.fromhex('1cff0806a31116da29d8cfa54e57eb748bc5f377e49400fdd788b649eca1ac4361834013b2ad7322480a89ca58e0cf74bc9e540c2add6897fad0a3084f302adc')),
+        m=bytearray_to_int(bytearray.fromhex('4531acd1fe0023c7550d267b6b2fee80922b14b2ffb90f04d4eb7c09b5d2d15da82f2d7ecb1dbac719905c5eecc423f1d86e25edbe23c595d644aaf187e6e6df')),
+        q=0x41,
         x=bytearray_to_int(bytearray.fromhex('24d19cc64572ee30f396bf6ebbfd7a6c5213b3b3d7057cc825f91093a68cd762fd60611262cd838dc6b60aa7eee804e28bc849977fac33b4b530f1b120248a9a')),
         y=bytearray_to_int(bytearray.fromhex('2bb312a43bd2ce6e0d020613c857acddcfbf061e91e5f2c3f32447c259f39b2c83ab156d77f1496bf7eb3351e1ee4e43dc1a18b91b24640b6dbb92cb1add371e'))
     ),
@@ -137,6 +191,8 @@ TEST_RANDOM_512 = bytearray.fromhex('0359e7f4b1410feacc570456c6801496946312120b3
 TEST_SIGNATURE_512 = bytearray.fromhex('2f86fa60a081091a23dd795e1e3c689ee512a3c82ee0dcc2643c78eea8fcacd35492558486b20f1c9ec197c90699850260c93bcbcd9c5c3317e19344e173ae361081b394696ffe8e6585e7a9362d26b6325f56778aadbc081c0bfbe933d52ff5823ce288e8c4f362526080df7f70ce406a6eeb1f56919cb92a9853bde73e5b4a')
 TEST_PUBLIC_KEY_512 = bytearray.fromhex('115dc5bc96760c7b48598d8ab9e740d4c4a85a65be33c1815b5c320c854621dd5a515856d13314af69bc5b924c8b4ddff75c45415c1d9dd9dd33612cd530efe137c7c90cd40b0f5621dc3ac1b751cfa0e2634fa0503b3d52639f5d7fb72afd61ea199441d943ffe7f0c70a2759a3cdb84c114e1f9339fdf27f35eca93677beec')
 
+raise_curve = TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']
+
 count_urandom = 0
 
 def os_urandom(value):
@@ -152,103 +208,53 @@ class TestMODE256(unittest.TestCase):
 
     def test_init_raises(self):
         with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(None)
+            test_sign = gostcrypto.gostsignature.GOST34102012(None, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
         self.assertTrue('unsupported signature mode' in str(context.exception))
+
+    def test_init_raises_0(self):
+        none_curve = dict(f = 0x00, u = 0x00)
+        with self.assertRaises(ValueError) as context:
+            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
+                                                              none_curve)
+        self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_1(self):
         with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_512,
-                                                              p=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['p'],
-                                                              a=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['a'],
-                                                              b=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['b'],
-                                                              e = None,
-                                                              d = None,
-                                                              m=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['p'],
-                                                              q=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['q'],
-                                                              x=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['x'],
-                                                              y=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['y'],
-                                                              u = None,
-                                                              v = None,)
+            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
+                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_1'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_2(self):
         with self.assertRaises(ValueError) as context:
             test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              p=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['p'],
-                                                              a=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['a'],
-                                                              b=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['b'],
-                                                              e = None,
-                                                              d = None,
-                                                              m=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['m'],
-                                                              q=0x41,
-                                                              x=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['x'],
-                                                              y=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['y'],
-                                                              u = None,
-                                                              v = None,)
+                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_2'])
+            TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['q'] = old_q
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_3(self):
         with self.assertRaises(ValueError) as context:
             test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              p=0x02,
-                                                              a=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['a'],
-                                                              b=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['b'],
-                                                              e = None,
-                                                              d = None,
-                                                              m=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['m'],
-                                                              q=0x70,
-                                                              x=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['x'],
-                                                              y=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['y'],
-                                                              u = None,
-                                                              v = None,)
+                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_3'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_4(self):
         with self.assertRaises(ValueError) as context:
             test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_512,
-                                                              p=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['p'],
-                                                              a=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['a'],
-                                                              b=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['b'],
-                                                              e = None,
-                                                              d = None,
-                                                              m=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['m'],
-                                                              q=0x02,
-                                                              x=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['x'],
-                                                              y=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['y'],
-                                                              u = None,
-                                                              v = None,)
+                                                              TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest_raises_4'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
+        
 
     def test_init_raises_5(self):
         with self.assertRaises(ValueError) as context:
             test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_512,
-                                                              p=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['p'],
-                                                              a=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['a'],
-                                                              b=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['b'],
-                                                              e = None,
-                                                              d = None,
-                                                              m=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['m'],
-                                                              q=0x41,
-                                                              x=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['x'],
-                                                              y=TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['y'],
-                                                              u = None,
-                                                              v = None,)
+                                                              TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest_raises_5'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
+        
 
     def test_init_raises_6(self):
         with self.assertRaises(ValueError) as context:
             test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              p=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['p'],
-                                                              a=0x07,
-                                                              b=0x0e,
-                                                              e = None,
-                                                              d = None,
-                                                              m=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['m'],
-                                                              q=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['q'],
-                                                              x=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['x'],
-                                                              y=TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest']['y'],
-                                                              u = None,
-                                                              v = None,)
+                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_6'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_sign_256(self):
