@@ -529,88 +529,72 @@ class GOST34102012:
         #Initialize the signature object
         if mode not in (MODE_256, MODE_512):
             raise ValueError('ValueError: unsupported signature mode')
-        if self._is_edvards_and_canonical(curve):
-            self._p = curve.get('p')
-            self._a = curve.get('a')
-            self._b = curve.get('b')
-            self._e = curve.get('e')
-            self._d = curve.get('d')
-            self._m = curve.get('m')
-            self._q = curve.get('q')
-            self._x = curve.get('x')
-            self._y = curve.get('y')
-            self._u = curve.get('u')
-            self._v = curve.get('v')
-        elif self._is_edvards_only(curve):
-            self._p = curve.get('p')
-            self._a = None
-            self._b = None
-            self._e = curve.get('e')
-            self._d = curve.get('d')
-            self._m = curve.get('m')
-            self._q = curve.get('q')
-            self._x = None
-            self._y = None
-            self._u = curve.get('u')
-            self._v = curve.get('v')
-            self._edvards_to_canonical()
-        elif self._is_canonical_only(curve):
-            self._p = curve.get('p')
-            self._a = curve.get('a')
-            self._b = curve.get('b')
-            self._e = None
-            self._d = None
-            self._m = curve.get('m')
-            self._q = curve.get('q')
-            self._x = curve.get('x')
-            self._y = curve.get('y')
-            self._u = None
-            self._v = None
-        else:
-            raise ValueError('ValueError: invalid parameters of the elliptic curve')
-        if not self._verify_curve(mode):
-            raise ValueError('ValueError: invalid parameters of the elliptic curve')
         if mode == MODE_256:
             self._size = 32
         else:
             self._size = 64
+        self._p = curve.get('p', 1)
+        self._a = curve.get('a', 0)
+        self._b = curve.get('b', 0)
+        self._e = curve.get('e', 0)
+        self._d = curve.get('d', 0)
+        self._m = curve.get('m', 1)
+        self._q = curve.get('q', 1)
+        self._x = curve.get('x', 0)
+        self._y = curve.get('y', 0)
+        self._u = curve.get('u', 0)
+        self._v = curve.get('v', 0)
+        if self._a == 0 and self._b == 0 and self._x == 0 and self._y == 0:
+            self._edvards_to_canonical()
+        if not self._check_curve():
+            raise ValueError('ValueError: invalid parameters of the elliptic curve')
     # pylint: enable=too-many-instance-attributes
 
-    @staticmethod
-    def _is_edvards_and_canonical(curve):
-        return ('e' in curve and 'd' in curve and 'u' in curve and 'v' in curve and
-                'x' in curve and 'y' in curve and 'a' in curve and 'b' in curve)
-
-    @staticmethod
-    def _is_edvards_only(curve):
-        return ('e' in curve and 'd' in curve and 'u' in curve and 'v' in curve and
-                'x' not in curve and 'y' not in curve and 'a' not in curve and 'b' not in curve)
-
-    @staticmethod
-    def _is_canonical_only(curve):
-        return ('e' not in curve and 'd' not in curve and 'u' not in curve and 'v' not in curve and
-                'x' in curve and 'y' in curve and 'a' in curve and 'b' in curve)
-
-    def _verify_curve(self, mode):
-        #Checking whether elliptic curve parameters are correct
+    def _check_p_m(self):
+        #Checking 'p' and 'm' parameters are correct
         result = True
         if self._m == self._p:
             result = False
-        if mode == MODE_256:
-            for i in range(1, 32):
-                if self._p ** i % self._q == 1 % self._q:
-                    result = result or result
-            if self._q < 2 ** 254 or self._q > 2 ** 256:
-                result = False
-        elif mode == MODE_512:
-            for i in range(1, 132):
-                if self._p ** 1 % self._q == 1 % self._q:
-                    result = result or result
-            if self._q < 2 ** 508 or self._q > 2 ** 512:
-                result = False
+        return result
+
+    def _check_x_y(self):
+        #Checking 'x' and 'y' parameters are correct
+        result = True
         right_side_equation = self._y * self._y % self._p
         left_side_equation = (self._x ** 3 + self._x * self._a + self._b) % self._p
         if right_side_equation != left_side_equation:
+            result = False
+        return result
+
+    def _check_p(self):
+        #Checking 'p' parameter are correct
+        result = True
+        if self._size == 32:
+            for i in range(1, 32):
+                if self._p ** i % self._q == 1 % self._q:
+                    result = result or result
+        elif self._size == 64:
+            for i in range(1, 132):
+                if self._p ** 1 % self._q == 1 % self._q:
+                    result = result or result
+        return result
+
+    def _check_q(self):
+         #Checking 'q' parameter are correct
+        result = True
+        if self._size == 32:
+            if self._q < 2 ** 254 or self._q > 2 ** 256:
+                result = False
+        elif self._size == 64:
+            if self._q < 2 ** 508 or self._q > 2 ** 512:
+                result = False
+        return result
+
+    def _check_curve(self):
+        result = True
+        #Checking whether elliptic curve parameters are correct
+        if ((not self._check_p_m()) or (not self._check_x_y()) or
+                (not self._check_p()) or (not self._check_q())):
             result = False
         return result
 
