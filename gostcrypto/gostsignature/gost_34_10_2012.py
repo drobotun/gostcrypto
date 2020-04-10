@@ -547,6 +547,7 @@ class GOST34102012:
     # pylint: enable=too-many-instance-attributes
 
     def _set_size(self, mode):
+        #Sets the size of the signature (256 or 512 bits)
         if mode == MODE_256:
             self._size = 32
         else:
@@ -716,6 +717,18 @@ class GOST34102012:
         private_key = zero_fill(len(private_key))
         return sign_r + sign_s
 
+    def _get_r_s(self, signature):
+        sign_r = bytearray_to_int(signature[:self._size])
+        sign_s = bytearray_to_int(signature[self._size:])
+        return sign_r, sign_s
+
+    def _verify_step_1(self, sign_r, sign_s):
+        #Verification of the signature (step 1, paragraph 6.2 of GOST 34.10-2012)
+        result = True
+        if sign_r <= 0 or sign_r >= self._q or sign_s <= 0 or sign_s >= self._q:
+            result = False
+        return result
+
     def verify(self, public_key, digest, signature):
         """Verify a signature.
 
@@ -734,9 +747,10 @@ class GOST34102012:
             raise ValueError('ValueError: invalid signature size')
         public_key = bytearray_to_int(public_key[:self._size]),\
                      bytearray_to_int(public_key[self._size:])
-        sign_r = bytearray_to_int(signature[:self._size])
-        sign_s = bytearray_to_int(signature[self._size:])
-        if sign_r <= 0 or sign_r >= self._q or sign_s <= 0 or sign_s >= self._q:
+        sign_r, sign_s = self._get_r_s(signature)
+        #sign_r = bytearray_to_int(signature[:self._size])
+        #sign_s = bytearray_to_int(signature[self._size:])
+        if not self._verify_step_1(sign_r, sign_s):
             return False
         sign_e = self._set_e(digest)
         sign_v = self._invert(sign_e, self._q)
