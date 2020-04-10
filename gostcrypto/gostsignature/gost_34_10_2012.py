@@ -672,6 +672,12 @@ class GOST34102012:
         while bytearray_to_int(rand_k) >= self._q:
             rand_k = os.urandom(self._size)
         return rand_k
+ 
+    def _set_e(self, digest):
+        result = bytearray_to_int(digest) % self._q
+        if compare_to_zero(int_to_bytearray(result, self._size)):
+            result = 1
+        return result
         
 
     def sign(self, private_key, digest, rand_k=None):
@@ -688,24 +694,23 @@ class GOST34102012:
 
            Exception:
               ValueError('invalid random value size') - in case of invalid 'rand_k' size.
+              ValueError('ValueError: invalid private key value')
+              ValueError('ValueError: invalid private key size')
         """
         if not isinstance(private_key, (bytes, bytearray)):
             raise ValueError('ValueError: invalid private key value')
         if len(private_key) != self._size:
             raise ValueError('ValueError: invalid private key size')
-        sign_e = bytearray_to_int(digest) % self._q
-        if compare_to_zero(int_to_bytearray(sign_e, self._size)):
-            sign_e = 1
+        sign_e = self._set_e(digest)
         sign_r = 0
         sign_s = 0
         sign_k = 0
-        if rand_k is None:
+        sign_rand_k = rand_k
+        if sign_rand_k is None:
             sign_rand_k = self._get_rand_k()
-        else:
-            if len(rand_k) != self._size:
-                private_key = zero_fill(len(private_key))
-                raise ValueError('ValueError: invalid random value size')
-            sign_rand_k = rand_k
+        if len(sign_rand_k) != self._size:
+            private_key = zero_fill(len(private_key))
+            raise ValueError('ValueError: invalid random value size')
         while compare_to_zero(int_to_bytearray(sign_s, self._size)):
             while compare_to_zero(int_to_bytearray(sign_r, self._size)):
                 sign_k = bytearray_to_int(sign_rand_k)
@@ -739,9 +744,7 @@ class GOST34102012:
         sign_s = bytearray_to_int(signature[self._size:])
         if sign_r <= 0 or sign_r >= self._q or sign_s <= 0 or sign_s >= self._q:
             return False
-        sign_e = bytearray_to_int(digest) % self._q
-        if compare_to_zero(int_to_bytearray(sign_e, self._size)):
-            sign_e = 1
+        sign_e = self._set_e(digest)
         sign_v = self._invert(sign_e, self._q)
         sign_z_1 = sign_s * sign_v % self._q
         sign_z_2 = self._q - sign_r * sign_v % self._q
