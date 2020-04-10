@@ -237,22 +237,26 @@ class GOST34122015Magma:
               :key: Cipher key.
         """
         self._cipher_iter_key = []
+        self._expand_iter_key(key)
+        self._expand_iter_key(key)
+        self._expand_iter_key(key)
+        self._expand_iter_key_final(key)
+        key = zero_fill(len(key))
+
+    def __del__(self):
+        self.clear()
+
+    def _expand_iter_key(self, key):
         iter_key = b''
         for j in range(8):
             iter_key = bytearray(4)
             for i in range(4):
                 iter_key[i] = key[(j * 4) + i]
             self._cipher_iter_key.append(iter_key)
-        for j in range(8):
-            iter_key = bytearray(4)
-            for i in range(4):
-                iter_key[i] = key[(j * 4) + i]
-            self._cipher_iter_key.append(iter_key)
-        for j in range(8):
-            iter_key = bytearray(4)
-            for i in range(4):
-                iter_key[i] = key[(j * 4) + i]
-            self._cipher_iter_key.append(iter_key)
+        iter_key = zero_fill(len(iter_key))
+        key = zero_fill(len(key))
+
+    def _expand_iter_key_final(self, key):
         for j in range(8):
             iter_key = bytearray(4)
             for i in range(4):
@@ -260,9 +264,6 @@ class GOST34122015Magma:
             self._cipher_iter_key.append(iter_key)
         iter_key = zero_fill(len(iter_key))
         key = zero_fill(len(key))
-
-    def __del__(self):
-        self.clear()
 
     @staticmethod
     def _cipher_t(data):
