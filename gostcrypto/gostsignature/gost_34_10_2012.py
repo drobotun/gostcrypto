@@ -541,8 +541,7 @@ class GOST34102012:
         self._y = curve.get('y', 0)
         self._u = curve.get('u', 0)
         self._v = curve.get('v', 0)
-        if self._a == 0 and self._b == 0 and self._x == 0 and self._y == 0:
-            self._edvards_to_canonical()
+        self._edvards_to_canonical()
         if not self._check_curve():
             raise ValueError('ValueError: invalid parameters of the elliptic curve')
     # pylint: enable=too-many-instance-attributes
@@ -658,14 +657,15 @@ class GOST34102012:
     def _edvards_to_canonical(self):
         #Translation function to canonical representation of an elliptic curve from the
         #representation as twisted Edwards curves
-        ed_s = (self._e - self._d) * self._invert(4, self._p) % self._p
-        ed_t = (self._e + self._d) * self._invert(6, self._p) % self._p
-        self._a = (ed_s ** 2 - 3 * ed_t ** 2) % self._p
-        self._b = (2 * ed_t ** 3 - ed_t * ed_s ** 2) % self._p
-        self._x = ((ed_s * (1 + self._v)) * self._invert(1 - self._v, self._p) + ed_t)\
-            % self._p
-        self._y = ((ed_s * (1 + self._v)) * self._invert((1 - self._v) * self._u, self._p))\
-            % self._p
+        if self._a == 0 and self._b == 0 and self._x == 0 and self._y == 0:
+            ed_s = (self._e - self._d) * self._invert(4, self._p) % self._p
+            ed_t = (self._e + self._d) * self._invert(6, self._p) % self._p
+            self._a = (ed_s ** 2 - 3 * ed_t ** 2) % self._p
+            self._b = (2 * ed_t ** 3 - ed_t * ed_s ** 2) % self._p
+            self._x = ((ed_s * (1 + self._v)) * self._invert(1 - self._v, self._p) + ed_t)\
+                % self._p
+            self._y = ((ed_s * (1 + self._v)) * self._invert((1 - self._v) * self._u, self._p))\
+                % self._p
 
     def _get_rand_k(self):
         rand_k = os.urandom(self._size)
