@@ -673,7 +673,14 @@ class GOST34102012:
         if compare_to_zero(int_to_bytearray(result, self._size)):
             result = 1
         return result
-        
+ 
+    def _check_private_key(self, private_key):
+        if (not isinstance(private_key, (bytes, bytearray))) or len(private_key) != self._size:
+            result = False
+        else:
+            private_key = zero_fill(len(private_key))
+            result = True
+        return result
 
     def sign(self, private_key, digest, rand_k=None):
         """Creating a signature.
@@ -692,10 +699,8 @@ class GOST34102012:
               ValueError('ValueError: invalid private key value')
               ValueError('ValueError: invalid private key size')
         """
-        if not isinstance(private_key, (bytes, bytearray)):
-            raise ValueError('ValueError: invalid private key value')
-        if len(private_key) != self._size:
-            raise ValueError('ValueError: invalid private key size')
+        if not self._check_private_key(private_key):
+            raise ValueError('ValueError: invalid private key')
         sign_e = self._set_e(digest)
         sign_r = 0
         sign_s = 0
@@ -748,8 +753,6 @@ class GOST34102012:
         public_key = bytearray_to_int(public_key[:self._size]),\
                      bytearray_to_int(public_key[self._size:])
         sign_r, sign_s = self._get_r_s(signature)
-        #sign_r = bytearray_to_int(signature[:self._size])
-        #sign_s = bytearray_to_int(signature[self._size:])
         if not self._verify_step_1(sign_r, sign_s):
             return False
         sign_e = self._set_e(digest)
