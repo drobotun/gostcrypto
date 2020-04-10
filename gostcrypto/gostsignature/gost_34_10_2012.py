@@ -571,24 +571,18 @@ class GOST34102012:
     def _check_p(self):
         #Checking 'p' parameter are correct
         result = True
-        if self._size == 32:
-            for i in range(1, 32):
-                if self._p ** i % self._q == 1 % self._q:
-                    result = result or result
-        elif self._size == 64:
-            for i in range(1, 132):
-                if self._p ** 1 % self._q == 1 % self._q:
-                    result = result or result
+        check_b = 32
+        if self._size == 64:
+            check_b = 132
+        for i in range(1, check_b):
+            if self._p ** i % self._q == 1 % self._q:
+                result = result or result
         return result
 
     def _check_q(self):
          #Checking 'q' parameter are correct
         result = True
-        if self._size == 32:
-            if self._q < 2 ** 254 or self._q > 2 ** 256:
-                result = False
-        elif self._size == 64:
-            if self._q < 2 ** 508 or self._q > 2 ** 512:
+        if self._q < 2 ** (self._size * 8 - self._size // 16) or self._q > 2 ** (self._size * 8):
                 result = False
         return result
 
