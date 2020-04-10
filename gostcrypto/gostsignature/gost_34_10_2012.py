@@ -696,8 +696,7 @@ class GOST34102012:
 
            Exception:
               ValueError('invalid random value size') - in case of invalid 'rand_k' size.
-              ValueError('ValueError: invalid private key value')
-              ValueError('ValueError: invalid private key size')
+              ValueError('ValueError: invalid private key')
         """
         if not self._check_private_key(private_key):
             raise ValueError('ValueError: invalid private key')
@@ -708,9 +707,7 @@ class GOST34102012:
         sign_rand_k = rand_k
         if sign_rand_k is None:
             sign_rand_k = self._get_rand_k()
-        if len(sign_rand_k) != self._size:
-            private_key = zero_fill(len(private_key))
-            raise ValueError('ValueError: invalid random value size')
+#            raise ValueError('ValueError: invalid random value size')
         while compare_to_zero(int_to_bytearray(sign_s, self._size)):
             while compare_to_zero(int_to_bytearray(sign_r, self._size)):
                 sign_k = bytearray_to_int(sign_rand_k)

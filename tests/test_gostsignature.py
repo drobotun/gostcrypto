@@ -277,9 +277,6 @@ class TestMODE256(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             test_sign.sign(None, TEST_DIGEST_256, TEST_RANDOM_256)
         self.assertTrue('invalid private key' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256[:20])
-        self.assertTrue('invalid random value size' in str(context.exception))
 
     def test_verify_256(self):
         test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
