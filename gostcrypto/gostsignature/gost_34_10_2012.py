@@ -664,6 +664,13 @@ class GOST34102012:
         self._y = ((ed_s * (1 + self._v)) * self._invert((1 - self._v) * self._u, self._p))\
             % self._p
 
+    def _get_rand_k(self):
+        rand_k = os.urandom(self._size)
+        while bytearray_to_int(rand_k) >= self._q:
+            rand_k = os.urandom(self._size)
+        return rand_k
+        
+
     def sign(self, private_key, digest, rand_k=None):
         """Creating a signature.
 
@@ -689,17 +696,15 @@ class GOST34102012:
         sign_r = 0
         sign_s = 0
         sign_k = 0
+        if rand_k is None:
+            sign_rand_k = self._get_rand_k()
+        else:
+            if len(rand_k) != self._size:
+                private_key = zero_fill(len(private_key))
+                raise ValueError('ValueError: invalid random value size')
+            sign_rand_k = rand_k
         while compare_to_zero(int_to_bytearray(sign_s, self._size)):
             while compare_to_zero(int_to_bytearray(sign_r, self._size)):
-                if rand_k is None:
-                    sign_rand_k = os.urandom(self._size)
-                    while bytearray_to_int(sign_rand_k) >= self._q:
-                        sign_rand_k = os.urandom(self._size)
-                else:
-                    if len(rand_k) != self._size:
-                        private_key = zero_fill(len(private_key))
-                        raise ValueError('ValueError: invalid random value size')
-                    sign_rand_k = rand_k
                 sign_k = bytearray_to_int(sign_rand_k)
                 sign_c = self._mul_point(sign_k)
                 sign_r = sign_c[0] % self._q
