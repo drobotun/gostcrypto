@@ -181,6 +181,7 @@ TEST_CURVE = {
 TEST_PRIVATE_KEY_256 = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
 TEST_DIGEST_256 = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
 TEST_RANDOM_256 = bytearray.fromhex('77105c9b20bcd3122823c8cf6fcc7b956de33814e95b7fe64fed924594dceab3')
+TEST_RANDOM_256_EDVARDS = bytearray.fromhex('37105c9b20bcd3122823c8cf6fcc7b956de33814e95b7fe64fed924594dceab3')
 TEST_SIGNATURE_256 = bytearray.fromhex('41aa28d2f1ab148280cd9ed56feda41974053554a42767b83ad043fd39dc049301456c64ba4642a1653c235a98a60249bcd6d3f746b631df928014f6c5bf9c40')
 TEST_SIGNATURE_256_ZERO = bytearray.fromhex('00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000')
 TEST_PUBLIC_KEY_256 = bytearray.fromhex('7f2b49e270db6d90d8595bec458b50c58585ba1d4e9b788f6689dbd8e56fd80b26f1b489d6701dd185c8413a977b3cbbaf64d1c593d26627dffb101a87ff77da')
@@ -260,14 +261,14 @@ class TestMODE256(unittest.TestCase):
         self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256), TEST_SIGNATURE_256)
 
     def test_sign_edvards_a(self):
-        signature = bytearray.fromhex('01b69df1e54b083516a398ee54f6975b213c384b39020bfa983766b7a458a23e370e36ebb493adab5abc69a44f835cbd9bb27db5700bde53f989d2afeb3979e7')
+        signature = bytearray.fromhex('33dd7cffb7abd971669508fe0d4a1248c3a656108292ed18280cc02d7f0bd3f72e3746c7f6a77491c0edc7b2493f36d007b88c411761c1b303ba851947113166')
         test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsA'])
-        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256), signature)
+        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256_EDVARDS), signature)
 
     def test_sign_edvards_b(self):
-        signature = bytearray.fromhex('01b69df1e54b083516a398ee54f6975b213c384b39020bfa983766b7a458a23e370e36ebb493adab5abc69a44f835cbd9bb27db5700bde53f989d2afeb3979e7')
+        signature = bytearray.fromhex('33dd7cffb7abd971669508fe0d4a1248c3a656108292ed18280cc02d7f0bd3f72e3746c7f6a77491c0edc7b2493f36d007b88c411761c1b303ba851947113166')
         test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsB'])
-        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256), signature)
+        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256_EDVARDS), signature)
 
     def test_sign_raises(self):
         test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
@@ -277,6 +278,10 @@ class TestMODE256(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             test_sign.sign(None, TEST_DIGEST_256, TEST_RANDOM_256)
         self.assertTrue('invalid private key' in str(context.exception))
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsA'])
+        with self.assertRaises(ValueError) as context:
+            test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256)
+        self.assertTrue('invalid random value' in str(context.exception))
 
     def test_verify_256(self):
         test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
@@ -297,10 +302,10 @@ class TestMODE256(unittest.TestCase):
         test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
         with self.assertRaises(ValueError) as context:
             test_sign.public_key_generate(TEST_PRIVATE_KEY_256[:20])
-        self.assertTrue('invalid private key size' in str(context.exception))
+        self.assertTrue('invalid private key' in str(context.exception))
         with self.assertRaises(ValueError) as context:
             test_sign.public_key_generate(None)
-        self.assertTrue('invalid private key value' in str(context.exception))
+        self.assertTrue('invalid private key' in str(context.exception))
 
 class TestMODE512(unittest.TestCase):
 

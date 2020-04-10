@@ -695,7 +695,7 @@ class GOST34102012:
               Signature for provided digest (as a byte object).
 
            Exception:
-              ValueError('invalid random value size') - in case of invalid 'rand_k' size.
+              ValueError('invalid random value') - in case of invalid 'rand_k'.
               ValueError('ValueError: invalid private key')
         """
         if not self._check_private_key(private_key):
@@ -707,7 +707,9 @@ class GOST34102012:
         sign_rand_k = rand_k
         if sign_rand_k is None:
             sign_rand_k = self._get_rand_k()
-#            raise ValueError('ValueError: invalid random value size')
+        if bytearray_to_int(sign_rand_k) >= self._q:
+            private_key = zero_fill(len(private_key))
+            raise ValueError('ValueError: invalid random value')
         while compare_to_zero(int_to_bytearray(sign_s, self._size)):
             while compare_to_zero(int_to_bytearray(sign_r, self._size)):
                 sign_k = bytearray_to_int(sign_rand_k)
@@ -773,15 +775,11 @@ class GOST34102012:
               Public key (as a byte object).
 
            Exception:
-              ValueError('ValueError: invalid private key size') - in case of invalid private
-                 key size.
-              ValueError('ValueError: invalid private key value') - in case of invalid private
-                 key value.
+              ValueError('ValueError: invalid private key') - in case of invalid private
+                 key.
         """
-        if not isinstance(private_key, (bytes, bytearray)):
-            raise ValueError('ValueError: invalid private key value')
-        if len(private_key) != self._size:
-            raise ValueError('ValueError: invalid private key size')
+        if not self._check_private_key(private_key):
+            raise ValueError('ValueError: invalid private key')
         private_key = bytearray_to_int(private_key)
         public_key = self._mul_point(private_key)
         public_key_x = int_to_bytearray(public_key[0], self._size)
