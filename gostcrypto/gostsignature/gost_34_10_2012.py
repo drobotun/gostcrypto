@@ -529,10 +529,7 @@ class GOST34102012:
         #Initialize the signature object
         if mode not in (MODE_256, MODE_512):
             raise ValueError('ValueError: unsupported signature mode')
-        if mode == MODE_256:
-            self._size = 32
-        else:
-            self._size = 64
+        self._set_size(mode)
         self._p = curve.get('p', 1)
         self._a = curve.get('a', 0)
         self._b = curve.get('b', 0)
@@ -549,6 +546,12 @@ class GOST34102012:
         if not self._check_curve():
             raise ValueError('ValueError: invalid parameters of the elliptic curve')
     # pylint: enable=too-many-instance-attributes
+
+    def _set_size(self, mode):
+        if mode == MODE_256:
+            self._size = 32
+        else:
+            self._size = 64
 
     def _check_p_m(self):
         #Checking 'p' and 'm' parameters are correct
