@@ -26,7 +26,7 @@ __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'
 __copyright__ = 'Copyright (C) 2020 Evgeny Drobotun'
 
-from .gosthash import GOST34112012
+from .gosthash import gosthash # GOST34112012
 from .gostcipher import GOST34122015Kuznechik, GOST34122015Magma
 from .gostcipher import GOST34132015
 from .gostsignature import GOST34102012
