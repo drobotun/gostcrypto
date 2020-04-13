@@ -1,6 +1,4 @@
 """
-The GOST cryptographic functions.
-
 The module that implements block encryption according to GOST 34.12-2015.
 
 Author: Evgeny Drobotun (c) 2020
@@ -53,12 +51,12 @@ class GOST34122015Kuznechik:
     """
     Class that implements the 'Kuznechik' block encryption algorithm.
 
-    Methods.
+    Methods
     :decrypt(): decrypting a block of ciphertext.
     :encrypt(): encrypting a block of plaintext.
     :clear(): Сlearing the values of iterative encryption keys.
 
-    Attributes.
+    Attributes
     :block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     :key_size: an integer value the cipher key size.
@@ -193,11 +191,11 @@ class GOST34122015Kuznechik:
         """
         Decrypting a block of ciphertext.
 
-        Args.
+        Args
         :block: The block of ciphertext to be decrypted (the block size is
         16 bytes).
 
-        Return.
+        Return
         The block of plaintext.
 
         """
@@ -213,11 +211,11 @@ class GOST34122015Kuznechik:
         """
         Encrypting a block of plaintext.
 
-        Args.
+        Args
         :block: The block of plaintext to be encrypted (the block size is
         16 bytes).
 
-        Return.
+        Return
         The block of ciphertext.
 
         """
@@ -239,12 +237,12 @@ class GOST34122015Magma:
     """
     Class that implements the 'magma' block encryption algorithm.
 
-    Methods.
+    Methods
     :decrypt(): decrypting a block of ciphertext.
     :encrypt(): encrypting a block of plaintext.
     :clear(): Сlearing the values of iterative encryption keys.
 
-    Attributes.
+    Attributes
     :block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     :key_size: an integer value the cipher key size.
@@ -390,11 +388,11 @@ class GOST34122015Magma:
         """
         Decrypting a block of plaintext.
 
-        Args.
+        Args:
         :block: The block of plaintext to be encrypted (the block size is
         8 bytes).
 
-        Return.
+        Return:
         The block of ciphertext.
 
         """
@@ -415,11 +413,11 @@ class GOST34122015Magma:
         """
         Encrypting a block of ciphertext.
 
-        Args.
+        Args:
         :block: The block of ciphertext to be decrypted (the block size is
         8 bytes).
 
-        Return.
+        Return:
         The block of plaintext.
 
         """

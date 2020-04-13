@@ -1,14 +1,9 @@
-"""
-The GOST cryptographic functions.
-
-The module that implements various block encryption modes (ECB, CBC, CFB, OFB, CTR and
+"""The module that implements various block encryption modes (ECB, CBC, CFB, OFB, CTR and
 MAC according to GOST 34.13-2015.
 
 Author: Evgeny Drobotun (c) 2020
 License: MIT
-
 """
-
 from copy import deepcopy
 
 from gostcrypto.utils import add_xor
@@ -85,32 +80,21 @@ def get_pad_size(data, block_size):
 
 
 def set_pad_mode_1(data, block_size):
-    """
-    Setting of padding MODE_PAD_1.
-
-    For MODE_ECB or MODE_CBC mode only.
-
+    """Setting of padding MODE_PAD_1. For MODE_ECB or MODE_CBC mode
+    only.
     """
     return data + b'\x00' * get_pad_size(data, block_size)
 
 
 def set_pad_mode_2(data, block_size):
-    """
-    Setting of padding MODE_PAD_2.
-
-    For MODE_ECB or MODE_CBC mode only.
-
+    """Setting of padding MODE_PAD_2. For MODE_ECB or MODE_CBC mode
+    only.
     """
     return data + b'\x80' + b'\x00' * (block_size + get_pad_size(data, block_size) - 1)
 
 
 def set_pad_mode_3(data, block_size):
-    """
-    Setting of padding MODE_PAD_3.
-
-    For MODE_MAC mode only.
-
-    """
+    """Setting of padding MODE_PAD_3. For MODE_MAC mode only."""
     if get_pad_size(data, block_size) == 0:
         result = data
     else:
@@ -119,11 +103,8 @@ def set_pad_mode_3(data, block_size):
 
 
 def set_padding(data, block_size, pad_mode):
-    """
-    Selecting and setting padding.
-
-    For MODE_ECB or MODE_CBC mode only.
-
+    """Selecting and setting padding. For MODE_ECB or MODE_CBC mode
+    only.
     """
     result = data
     if pad_mode == PAD_MODE_1:
@@ -134,11 +115,8 @@ def set_padding(data, block_size, pad_mode):
 
 
 def check_init_vect_value(init_vect, size_block):
-    """
-    Checking the value of the initialization vector.
-
-    For MODE_CBC, MODE_CFB or MODE_OFB mode.
-
+    """Checking the value of the initialization vector in CBC, CFB
+    or OFB mode.
     """
     result = True
     if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) % size_block != 0:
@@ -147,12 +125,7 @@ def check_init_vect_value(init_vect, size_block):
 
 
 def check_init_vect_value_ctr(init_vect, size_block):
-    """
-    Checking the value of the initialization vector.
-
-    For MODE_CTR mode.
-
-    """
+    """Checking the value of the initialization vector in CTR mode."""
     result = True
     if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) != size_block // 2:
         result = False
@@ -160,8 +133,7 @@ def check_init_vect_value_ctr(init_vect, size_block):
 
 
 def new(algorithm, key, mode, **kwargs):
-    """
-    Creates a new ciphering object and returns it.
+    """Creates a new ciphering object and returns it.
 
     Args:
     :algorithm: The string with the name of the ciphering algorithm of the
@@ -203,7 +175,6 @@ def new(algorithm, key, mode, **kwargs):
     initialization vector value is incorrect (for all modes except ECB mode).
     - GOSTCipherError('invalid text data') - in case where the text data
     is not byte object (for MODE_MAC mode).
-
     """
     result = None
     if mode == MODE_ECB:
@@ -232,8 +203,7 @@ def new(algorithm, key, mode, **kwargs):
 
 
 class GOST34132015:
-    """
-    Base class of the cipher object.
+    """Base class of the cipher object.
 
     Methods:
     :clear(): Сlearing the values of iterative cipher keys.
@@ -241,7 +211,6 @@ class GOST34132015:
     Attributes:
     :block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
-
     """
 
     def __init__(self, algorithm, key):
@@ -269,19 +238,18 @@ class GOST34132015:
 
     @property
     def block_size(self):
-        """
-        An integer value the internal block size of the cipher algorithm in bytes.
+        """An integer value the internal block size of the cipher algorithm
+        in bytes.
 
         For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
         algorithm, this value is 8.
-
         """
         return self._cipher_obj.block_size
 
 
 class GOST34132015ecb(GOST34132015):
-    """
-    The class that implements ECB mode of block encryption.
+    """The class that implements ECB mode of block encryption in accordance
+    with GOST 34.13-2015.
 
     Methods:
     :decrypt(): Decrypting a ciphertext.
@@ -290,7 +258,6 @@ class GOST34132015ecb(GOST34132015):
     Attributes:
     :block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
-
     """
 
     def __init__(self, algorithm, key, pad_mode):
