@@ -1,8 +1,8 @@
-"""The module that implements block encryption according to GOST 34.12-2015
-('Kuznechik' and 'Magma').
+"""The module that implements block encryption according to GOST 34.12-2015.
 
 Author: Evgeny Drobotun (c) 2020
 License: MIT
+
 """
 
 from struct import pack
@@ -49,8 +49,7 @@ _S_BOX_MAGMA = (
 
 
 class GOST34122015Kuznechik:
-    """Class that implements block encryption in accordance with
-    GOST 34.12-2015 ('Kuznechik').
+    """Class that implements the 'Kuznechik' block encryption algorithm.
 
     Methods:
     :decrypt(): decrypting a block of ciphertext.
@@ -61,12 +60,14 @@ class GOST34122015Kuznechik:
     :block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     :key_size: an integer value the cipher key size.
+
     """
     def __init__(self, key):
         """Initialize the ciphering object.
 
         Args:
         :key: Cipher key.
+
         """
         self._cipher_c = []
         self._cipher_iter_key = []
@@ -102,9 +103,7 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_s_reverse(data):
-        """The reverse S-transformation function (reverse nonlinear bijective
-        transformation).
-        """
+        """The reverse S-transformation function."""
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK):
             result[i] = S_BOX_REVERSE[data[i]]
@@ -157,9 +156,7 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_l_reverse(data):
-        """The reverse L-transformation function (reverse linear
-        transformation).
-        """
+        """The reverse L-transformation function."""
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         result = data
         for _ in range(16):
@@ -175,11 +172,11 @@ class GOST34122015Kuznechik:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the cipher algorithm
-        in bytes.
+        """An integer value the internal block size of the cipher algorithm in bytes.
 
         For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
         algorithm, this value is 8.
+
         """
         return _BLOCK_SIZE_KUZNECHIK
 
@@ -197,6 +194,7 @@ class GOST34122015Kuznechik:
 
         Return:
         The block of plaintext.
+
         """
         block = bytearray(block)
         block = add_xor(self._cipher_iter_key[9], block)
@@ -215,6 +213,7 @@ class GOST34122015Kuznechik:
 
         Return:
         The block of ciphertext.
+
         """
         block = bytearray(block)
         for i in range(9):
@@ -231,8 +230,7 @@ class GOST34122015Kuznechik:
 
 
 class GOST34122015Magma:
-    """Class that implements block encryption in accordance with
-    GOST 34.12-2012 ('Magma').
+    """Class that implements the 'magma' block encryption algorithm.
 
     Methods:
     :decrypt(): decrypting a block of ciphertext.
@@ -243,6 +241,7 @@ class GOST34122015Magma:
     :block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     :key_size: an integer value the cipher key size.
+
     """
     def __init__(self, key):
         """Initialize the ciphering object.
@@ -365,11 +364,11 @@ class GOST34122015Magma:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the cipher algorithm
-        in bytes.
+        """An integer value the internal block size of the cipher algorithm.
 
         For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
         algorithm, this value is 8.
+
         """
         return _BLOCK_SIZE_MAGMA
 
@@ -387,6 +386,7 @@ class GOST34122015Magma:
 
         Return:
         The block of ciphertext.
+
         """
         result = bytearray(_BLOCK_SIZE_MAGMA)
         result = GOST34122015Magma._cipher_g_prev(
@@ -410,6 +410,7 @@ class GOST34122015Magma:
 
         Return:
         The block of plaintext.
+
         """
         result = bytearray(_BLOCK_SIZE_MAGMA)
         result = GOST34122015Magma._cipher_g_prev(
