@@ -1,5 +1,5 @@
 """The module that implements various block encryption modes (ECB, CBC, CFB, OFB, CTR and
-MAC according to GOST 34.13-2015.
+   MAC according to GOST 34.13-2015.
 """
 
 __title__ = 'gostcipher'
