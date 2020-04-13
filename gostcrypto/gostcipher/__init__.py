@@ -1,4 +1,7 @@
-"""The module that implements various block encryption modes (ECB, CBC, CFB, OFB, CTR and
+"""
+The GOST cryptographic functions.
+
+The module that implements various block encryption modes (ECB, CBC, CFB, OFB, CTR and
 MAC according to GOST 34.13-2015.
 """
 

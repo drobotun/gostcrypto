@@ -1,4 +1,5 @@
-"""The module that implements block encryption according to GOST 34.12-2015.
+"""
+The module that implements block encryption according to GOST 34.12-2015.
 
 Author: Evgeny Drobotun (c) 2020
 License: MIT
@@ -21,13 +22,11 @@ _BLOCK_SIZE_KUZNECHIK: int = 16
 _BLOCK_SIZE_MAGMA: int = 8
 _KEY_SIZE: int = 32
 
-"""Constants for linear transformation in the 'Kuznechik' cipher."""
 _L = bytearray([
     0x01, 0x94, 0x20, 0x85, 0x10, 0xc2, 0xc0, 0x01,
     0xfb, 0x01, 0xc0, 0xc2, 0x10, 0x85, 0x20, 0x94,
 ])
 
-"""Constants for nonlinear bijective transformation in the 'Magma' cipher."""
 _S_BOX_MAGMA = (
     (0x0c, 0x04, 0x06, 0x02, 0x0a, 0x05, 0x0b, 0x09,
      0x0e, 0x08, 0x0d, 0x07, 0x00, 0x03, 0x0f, 0x01,),
@@ -49,23 +48,25 @@ _S_BOX_MAGMA = (
 
 
 class GOST34122015Kuznechik:
-    """Class that implements the 'Kuznechik' block encryption algorithm.
+    """
+    Class that implements the 'Kuznechik' block encryption algorithm.
 
-    Methods:
+    Methods
     :decrypt(): decrypting a block of ciphertext.
     :encrypt(): encrypting a block of plaintext.
     :clear(): Сlearing the values of iterative encryption keys.
 
-    Attributes:
+    Attributes
     :block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     :key_size: an integer value the cipher key size.
 
     """
     def __init__(self, key):
-        """Initialize the ciphering object.
+        """
+        Initialize the ciphering object.
 
-        Args:
+        Args
         :key: Cipher key.
 
         """
@@ -172,7 +173,8 @@ class GOST34122015Kuznechik:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the cipher algorithm in bytes.
+        """
+        An integer value the internal block size of the cipher algorithm in bytes.
 
         For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
         algorithm, this value is 8.
@@ -186,13 +188,14 @@ class GOST34122015Kuznechik:
         return _KEY_SIZE
 
     def decrypt(self, block):
-        """Decrypting a block of ciphertext.
+        """
+        Decrypting a block of ciphertext.
 
-        Args:
+        Args
         :block: The block of ciphertext to be decrypted (the block size is
         16 bytes).
 
-        Return:
+        Return
         The block of plaintext.
 
         """
@@ -205,13 +208,14 @@ class GOST34122015Kuznechik:
         return block
 
     def encrypt(self, block):
-        """Encrypting a block of plaintext.
+        """
+        Encrypting a block of plaintext.
 
-        Args:
+        Args
         :block: The block of plaintext to be encrypted (the block size is
         16 bytes).
 
-        Return:
+        Return
         The block of ciphertext.
 
         """
@@ -230,23 +234,25 @@ class GOST34122015Kuznechik:
 
 
 class GOST34122015Magma:
-    """Class that implements the 'magma' block encryption algorithm.
+    """
+    Class that implements the 'magma' block encryption algorithm.
 
-    Methods:
+    Methods
     :decrypt(): decrypting a block of ciphertext.
     :encrypt(): encrypting a block of plaintext.
     :clear(): Сlearing the values of iterative encryption keys.
 
-    Attributes:
+    Attributes
     :block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     :key_size: an integer value the cipher key size.
 
     """
     def __init__(self, key):
-        """Initialize the ciphering object.
+        """
+        Initialize the ciphering object.
 
-        Args:
+        Args
         :key: Cipher key.
         """
         self._cipher_iter_key = []
@@ -364,7 +370,8 @@ class GOST34122015Magma:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the cipher algorithm.
+        """
+        An integer value the internal block size of the cipher algorithm.
 
         For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
         algorithm, this value is 8.
@@ -378,13 +385,14 @@ class GOST34122015Magma:
         return _KEY_SIZE
 
     def decrypt(self, block):
-        """Decrypting a block of plaintext.
+        """
+        Decrypting a block of plaintext.
 
-        Args:
+        Args
         :block: The block of plaintext to be encrypted (the block size is
         8 bytes).
 
-        Return:
+        Return
         The block of ciphertext.
 
         """
@@ -402,13 +410,14 @@ class GOST34122015Magma:
         return result
 
     def encrypt(self, block):
-        """Encrypting a block of ciphertext.
+        """
+        Encrypting a block of ciphertext.
 
-        Args:
+        Args
         :block: The block of ciphertext to be decrypted (the block size is
         8 bytes).
 
-        Return:
+        Return
         The block of plaintext.
 
         """
