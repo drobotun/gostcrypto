@@ -1,0 +1,8 @@
+[flake8]
+ignore =
+    #line too long
+	E501,
+	#block comment should start with '# '
+	E265,
+	#inline comment should start with '# '
+	E262

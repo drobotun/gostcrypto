@@ -1,32 +1,46 @@
 """The module that implements auxiliary functions for the operation of the
-   GOSTcrypto module.
+GOSTcrypto module.
 
-   Author: Evgeny Drobotun (c) 2020
-   License: MIT
-
+Author: Evgeny Drobotun (c) 2020
+License: MIT
 """
 
-__all__ = ['msb', 'add_xor', 'zero_fill',
-           'bytearray_to_int', 'int_to_bytearray',
-           'compare', 'compare_to_zero']
+
+def check_value(value, size_value):
+    """Checking the correctness of the variable (belonging to a byte object and matching
+    the size).
+
+    Args:
+    :value: The variable that you want to check.
+    :saize_value: The required size of the variable.
+
+    Return:
+    Check result.
+    """
+    result = True
+    if (not isinstance(value, (bytes, bytearray))) or len(value) != size_value:
+        result = False
+    return result
+
 
 def msb(value):
     """Returns the value of the highest digit of the number 'value'.
 
-       Args:
-          :value: The number for which you want to determine the value of the high order.
+    Args:
+    :value: The number for which you want to determine the value of the high order.
     """
     return value[-1] & 0x80
+
 
 def add_xor(op_a, op_b):
     """Byte-by-byte 'xor' operation for byte objects.
 
-       Args:
-          :op_a: The first operand.
-          :op_b: The second operand.
+    Args:
+    :op_a: The first operand.
+    :op_b: The second operand.
 
-       Return:
-          Result of the byte-by-byte 'xor' operation.
+    Return:
+    Result of the byte-by-byte 'xor' operation.
     """
     op_a = bytearray(op_a)
     op_b = bytearray(op_b)
@@ -36,47 +50,58 @@ def add_xor(op_a, op_b):
         result[i] = op_a[i] ^ op_b[i]
     return result
 
-def zero_fill(size_object):
+
+def zero_fill(value):
     """Zeroing byte objects.
 
-       Args:
-          :value: The size of byte object that you want to reset.
+    Args:
+    :value: The byte object that you want to reset.
+
+    Return:
+    Reset value.
     """
-    return b'/x00' * size_object
+    result = None
+    if isinstance(value, (bytes, bytearray)):
+        result = b'/x00' * len(value)
+    return result
+
 
 def bytearray_to_int(value):
     """Converting a 'bytearray' object to a long integer.
 
-       Args:
-          :value: The 'bytearray' object to convert.
+    Args:
+    :value: The 'bytearray' object to convert.
 
-       Return:
-          Long integer value from 'bytearray' object.
+    Return:
+    Long integer value from 'bytearray' object.
     """
     return int.from_bytes(value, byteorder='big')
+
 
 def int_to_bytearray(value, num_byte):
     """Converting a long integer to a 'bytearray' object.
 
-       Args:
-          :value: The long integer value to convert.
-          :num_byte: Number of bytes in the 'bytearray'object.
+    Args:
+    :value: The long integer value to convert.
+    :num_byte: Number of bytes in the 'bytearray'object.
 
-       Return:
-          'bytearray' object from long integer value.
+    Return:
+    'bytearray' object from long integer value.
     """
-    return bytearray([(value &\
-           (0xff << pos * 8)) >> pos * 8 for pos in range(num_byte - 1, -1, -1)])
+    return bytearray(
+        [(value & (0xff << pos * 8)) >> pos * 8 for pos in range(num_byte - 1, -1, -1)]
+    )
+
 
 def compare(op_a, op_b):
     """Comparing two byte arrays (function is performed in a constant time).
 
-       Args:
-          :op_a: First array to compare.
-          :op_b: Second array to compare.
+    Args:
+    :op_a: First array to compare.
+    :op_b: Second array to compare.
 
-       Return:
-          Сomparison result (boolean).
+    Return:
+    Сomparison result (boolean).
     """
     op_a = bytearray(op_a)
     op_b = bytearray(op_b)
@@ -88,14 +113,15 @@ def compare(op_a, op_b):
         res_check = res_check + check
     return not res_check
 
+
 def compare_to_zero(value):
     """Comparing byte array with zero (function is performed in a constant time).
 
-       Args:
-          :value: Aarray to compare.
+    Args:
+    :value: Aarray to compare.
 
-       Return:
-          Сomparison result (boolean).
+    Return:
+    Comparison result (boolean).
     """
     value = bytearray(value)
     res_check = 0

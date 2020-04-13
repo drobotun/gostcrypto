@@ -1,33 +1,8 @@
 """The module implementing the hash calculation algorithm GOST 34.11-2012 ('Streebog').
 
-   Author: Evgeny Drobotun (c) 2020
-   License: MIT
-
-   Usage:
-    - getting a hash for a string:
-
-        import gostcrypto
-
-        hasher = gostcrypto.gosthash.new('streebog256')
-        hasher.update(b'<string>')
-        result = hasher.hexdigest()
-
-    - getting a hash for a file:
-
-        import gostcrypto
-
-        #The 'buffer_size' must be a multiple of 64
-        buffer_size = 128
-        hasher = gostcrypto.gosthash.new('streebog512')
-        with open(<'file path'>, 'rb') as file:
-            buffer = file.read(buffer_size)
-            while len(buffer) > 0:
-                hasher.update(buffer)
-                buffer = file.read(buffer_size)
-        result = hasher.hexdigest()
-
+Author: Evgeny Drobotun (c) 2020
+License: MIT
 """
-from sys import exit as sys_exit
 from copy import deepcopy
 from struct import pack
 from struct import unpack
@@ -35,11 +10,15 @@ from struct import unpack
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import S_BOX
 
-__all__ = ['GOST34112012', 'new']
+__all__ = [
+    'GOST34112012',
+    'new',
+    'GOSTHashError'
+]
 
 _BLOCK_SIZE = 64
 
-#Initialization vectors
+"""Initialization vectors."""
 _V_0 = bytearray(_BLOCK_SIZE)
 _V_512 = bytearray([
     0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -52,11 +31,10 @@ _V_512 = bytearray([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 ])
 
-# pylint: disable=bad-whitespace,bad-continuation
-#Permutation matrix
+"""Permutation matrix."""
 _TAU = (
-    0,  8, 16, 24, 32, 40, 48, 56,
-    1,  9, 17, 25, 33, 41, 49, 57,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    1, 9, 17, 25, 33, 41, 49, 57,
     2, 10, 18, 26, 34, 42, 50, 58,
     3, 11, 19, 27, 35, 43, 51, 59,
     4, 12, 20, 28, 36, 44, 52, 60,
@@ -64,9 +42,8 @@ _TAU = (
     6, 14, 22, 30, 38, 46, 54, 62,
     7, 15, 23, 31, 39, 47, 55, 63,
 )
-# pylint: disable=bad-whitespace,bad-continuation
 
-#Matrix of linear transformation of a set of binary vectors
+"""Matrix of linear transformation of a set of binary vectors."""
 _A = (
     0x8e20faa72ba0b470, 0x47107ddd9b505a38,
     0xad08b0e0c3282d1c, 0xd8045870ef14980e,
@@ -102,8 +79,8 @@ _A = (
     0xc83862965601dd1b, 0x641c314b2b8ee083,
 )
 
-#Iterative constants
-_C  = [bytearray([
+"""Iterative constants."""
+_C = [bytearray([
     0x07, 0x45, 0xa6, 0xf2, 0x59, 0x65, 0x80, 0xdd,
     0x23, 0x4d, 0x74, 0xcc, 0x36, 0x74, 0x76, 0x05,
     0x15, 0xd3, 0x60, 0xa4, 0x08, 0x2a, 0x42, 0xa2,
@@ -112,7 +89,7 @@ _C  = [bytearray([
     0x16, 0xd0, 0x45, 0x2e, 0x43, 0x76, 0x6a, 0x2f,
     0x1f, 0x7c, 0x65, 0xc0, 0x81, 0x2f, 0xcb, 0xeb,
     0xe9, 0xda, 0xca, 0x1e, 0xda, 0x5b, 0x08, 0xb1
-    ]), bytearray([
+]), bytearray([
     0xb7, 0x9b, 0xb1, 0x21, 0x70, 0x04, 0x79, 0xe6,
     0x56, 0xcd, 0xcb, 0xd7, 0x1b, 0xa2, 0xdd, 0x55,
     0xca, 0xa7, 0x0a, 0xdb, 0xc2, 0x61, 0xb5, 0x5c,
@@ -121,7 +98,7 @@ _C  = [bytearray([
     0x98, 0x2b, 0x23, 0x0a, 0x72, 0xea, 0xfe, 0xf3,
     0xd7, 0xb5, 0x70, 0x0f, 0x46, 0x9d, 0xe3, 0x4f,
     0x1a, 0x2f, 0x9d, 0xa9, 0x8a, 0xb5, 0xa3, 0x6f
-    ]), bytearray([
+]), bytearray([
     0xb2, 0x0a, 0xba, 0x0a, 0xf5, 0x96, 0x1e, 0x99,
     0x31, 0xdb, 0x7a, 0x86, 0x43, 0xf4, 0xb6, 0xc2,
     0x09, 0xdb, 0x62, 0x60, 0x37, 0x3a, 0xc9, 0xc1,
@@ -130,7 +107,7 @@ _C  = [bytearray([
     0x8b, 0x1f, 0x9c, 0x52, 0x5f, 0x5e, 0xf1, 0x06,
     0x35, 0x84, 0x3d, 0x6a, 0x28, 0xfc, 0x39, 0x0a,
     0xc7, 0x2f, 0xce, 0x2b, 0xac, 0xdc, 0x74, 0xf5
-    ]), bytearray([
+]), bytearray([
     0x2e, 0xd1, 0xe3, 0x84, 0xbc, 0xbe, 0x0c, 0x22,
     0xf1, 0x37, 0xe8, 0x93, 0xa1, 0xea, 0x53, 0x34,
     0xbe, 0x03, 0x52, 0x93, 0x33, 0x13, 0xb7, 0xd8,
@@ -139,7 +116,7 @@ _C  = [bytearray([
     0x7d, 0x3c, 0x5c, 0x33, 0x7e, 0x85, 0x8e, 0x48,
     0xdd, 0xe4, 0x71, 0x5d, 0xa0, 0xe1, 0x48, 0xf9,
     0xd2, 0x66, 0x15, 0xe8, 0xb3, 0xdf, 0x1f, 0xef
-    ]), bytearray([
+]), bytearray([
     0x57, 0xfe, 0x6c, 0x7c, 0xfd, 0x58, 0x17, 0x60,
     0xf5, 0x63, 0xea, 0xa9, 0x7e, 0xa2, 0x56, 0x7a,
     0x16, 0x1a, 0x27, 0x23, 0xb7, 0x00, 0xff, 0xdf,
@@ -148,7 +125,7 @@ _C  = [bytearray([
     0x4a, 0x10, 0x86, 0x16, 0x1f, 0x1c, 0x15, 0x7f,
     0x63, 0x23, 0xa9, 0x6c, 0x0c, 0x41, 0x3f, 0x9a,
     0x99, 0x47, 0x47, 0xad, 0xac, 0x6b, 0xea, 0x4b
-    ]), bytearray([
+]), bytearray([
     0x6e, 0x7d, 0x64, 0x46, 0x7a, 0x40, 0x68, 0xfa,
     0x35, 0x4f, 0x90, 0x36, 0x72, 0xc5, 0x71, 0xbf,
     0xb6, 0xc6, 0xbe, 0xc2, 0x66, 0x1f, 0xf2, 0x0a,
@@ -157,7 +134,7 @@ _C  = [bytearray([
     0x6c, 0xa4, 0x42, 0x51, 0xf9, 0xc4, 0x66, 0x2d,
     0xc0, 0x39, 0x30, 0x7a, 0x3b, 0xc3, 0xa4, 0x6f,
     0xd9, 0xd3, 0x3a, 0x1d, 0xae, 0xae, 0x4f, 0xae
-    ]), bytearray([
+]), bytearray([
     0x93, 0xd4, 0x14, 0x3a, 0x4d, 0x56, 0x86, 0x88,
     0xf3, 0x4a, 0x3c, 0xa2, 0x4c, 0x45, 0x17, 0x35,
     0x04, 0x05, 0x4a, 0x28, 0x83, 0x69, 0x47, 0x06,
@@ -166,7 +143,7 @@ _C  = [bytearray([
     0xc9, 0x87, 0xbf, 0xe6, 0xc7, 0xc6, 0x9e, 0x39,
     0x54, 0x09, 0x24, 0xbf, 0xfe, 0x86, 0xac, 0x51,
     0xec, 0xc5, 0xaa, 0xee, 0x16, 0x0e, 0xc7, 0xf4
-    ]), bytearray([
+]), bytearray([
     0x1e, 0xe7, 0x02, 0xbf, 0xd4, 0x0d, 0x7f, 0xa4,
     0xd9, 0xa8, 0x51, 0x59, 0x35, 0xc2, 0xac, 0x36,
     0x2f, 0xc4, 0xa5, 0xd1, 0x2b, 0x8d, 0xd1, 0x69,
@@ -175,7 +152,7 @@ _C  = [bytearray([
     0x1e, 0xde, 0x36, 0x9c, 0x71, 0xf8, 0xb7, 0x4e,
     0x41, 0x41, 0x6e, 0x0c, 0x02, 0xaa, 0xe7, 0x03,
     0xa7, 0xc9, 0x93, 0x4d, 0x42, 0x5b, 0x1f, 0x9b
-    ]), bytearray([
+]), bytearray([
     0xdb, 0x5a, 0x23, 0x83, 0x51, 0x44, 0x61, 0x72,
     0x60, 0x2a, 0x1f, 0xcb, 0x92, 0xdc, 0x38, 0x0e,
     0x54, 0x9c, 0x07, 0xa6, 0x9a, 0x8a, 0x2b, 0x7b,
@@ -184,7 +161,7 @@ _C  = [bytearray([
     0x24, 0x42, 0x89, 0x25, 0x1b, 0x3a, 0x7d, 0x3a,
     0xde, 0x5f, 0x16, 0xec, 0xd8, 0x9a, 0x4c, 0x94,
     0x9b, 0x22, 0x31, 0x16, 0x54, 0x5a, 0x8f, 0x37
-    ]), bytearray([
+]), bytearray([
     0xed, 0x9c, 0x45, 0x98, 0xfb, 0xc7, 0xb4, 0x74,
     0xc3, 0xb6, 0x3b, 0x15, 0xd1, 0xfa, 0x98, 0x36,
     0xf4, 0x52, 0x76, 0x3b, 0x30, 0x6c, 0x1e, 0x7a,
@@ -193,7 +170,7 @@ _C  = [bytearray([
     0xdb, 0x78, 0x8a, 0xff, 0x1c, 0xe7, 0x41, 0x89,
     0xf3, 0xf3, 0xe4, 0xb2, 0x48, 0xe5, 0x2a, 0x38,
     0x52, 0x6f, 0x05, 0x80, 0xa6, 0xde, 0xbe, 0xab
-    ]), bytearray([
+]), bytearray([
     0x1b, 0x2d, 0xf3, 0x81, 0xcd, 0xa4, 0xca, 0x6b,
     0x5d, 0xd8, 0x6f, 0xc0, 0x4a, 0x59, 0xa2, 0xde,
     0x98, 0x6e, 0x47, 0x7d, 0x1d, 0xcd, 0xba, 0xef,
@@ -202,7 +179,7 @@ _C  = [bytearray([
     0x61, 0x07, 0xab, 0xeb, 0xbb, 0x6b, 0xfa, 0xd8,
     0x94, 0xfe, 0x5a, 0x63, 0xcd, 0xc6, 0x02, 0x30,
     0xfb, 0x89, 0xc8, 0xef, 0xd0, 0x9e, 0xcd, 0x7b
-    ]), bytearray([
+]), bytearray([
     0x20, 0xd7, 0x1b, 0xf1, 0x4a, 0x92, 0xbc, 0x48,
     0x99, 0x1b, 0xb2, 0xd9, 0xd5, 0x17, 0xf4, 0xfa,
     0x52, 0x28, 0xe1, 0x88, 0xaa, 0xa4, 0x1d, 0xe7,
@@ -211,50 +188,53 @@ _C  = [bytearray([
     0x77, 0x1d, 0xdf, 0xbc, 0x32, 0x3c, 0xa4, 0xcd,
     0x7a, 0xb1, 0x49, 0x04, 0xb0, 0x80, 0x13, 0xd2,
     0xba, 0x31, 0x16, 0xf1, 0x67, 0xe7, 0x8e, 0x37
-    ])
-]
+])]
 
-def new(name):
+
+def new(name, data=None):
     """Creates a new hashing object and returns it.
 
-       Args:
-          :name: The string with the name of the hashing algorithm ('streebog256'
-             for the GOST R 34.11-2012 algorithm with the resulting hash length
-             of 32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
+    Args:
+    :name: The string with the name of the hashing algorithm ('streebog256'
+    for the GOST R 34.11-2012 algorithm with the resulting hash length
+    of 32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
+    :data: The data from which to get the hash (as a byte object). If this
+    argument is passed to a function, you can immediately use the 'digest'
+    (or 'hexdigest') method to calculate the MAC value after calling 'new'.
+    If the argument is not passed to the function, then you must use the
+    'update(data)' method before the 'digest' (or 'hexdigest') method.
 
-       Return:
-          New hashing object.
+    Return:
+    New hashing object.
 
-       Exception:
-          ValueError('unsupported hash type') - in case of invalid value 'name'.
+    Exception:
+    - GOSTHashError('unsupported hash type') - in case of invalid value 'name'.
+    - GOSTHashError('invalid data value') - in case where the data is not byte object.
     """
-    try:
-        return GOST34112012(name)
-    except ValueError as err:
-        print(err)
-        sys_exit()
+    if name not in ('streebog512', 'streebog256'):
+        raise GOSTHashError('GOSTHashError: unsupported hash type')
+    return GOST34112012(name, data)
+
 
 class GOST34112012:
     """Class that implements the hash calculation algorithm GOST 34.11-2012 ('Streebog').
 
-       Methods:
-          :update(): update the hash object with the bytes-like object.
-          :copy(): returns a copy ('clone') of the hash object.
-          :digest(): returns the digest of the data passed to the 'update()' method so far.
-          :hexdigest(): returns a digest of the hexadecimal data passed so far to the 'update()'
-             method.
-          :reset(): resets the values of all class attributes.
+    Methods:
+    :update(): update the hash object with the bytes-like object.
+    :copy(): returns a copy ('clone') of the hash object.
+    :digest(): returns the digest of the data passed to the 'update()' method so far.
+    :hexdigest(): returns a digest of the hexadecimal data passed so far to the 'update()'
+    method.
+    :reset(): resets the values of all class attributes.
 
-       Attributes:
-          :digest_size: an integer value the size of the resulting hash in bytes.
-          :block_size: an integer value the internal block size of the hash algorithm in bytes.
-          :name: a text string value the name of the hashing algorithm.
+    Attributes:
+    :digest_size: an integer value the size of the resulting hash in bytes.
+    :block_size: an integer value the internal block size of the hash algorithm in bytes.
+    :name: a text string value the name of the hashing algorithm.
     """
 
-    def __init__(self, name):
-        #Initialize the hashing object
-        if name not in ('streebog512', 'streebog256'):
-            raise ValueError('ValueError: unsupported hash type')
+    def __init__(self, name, data):
+        """Initialize the hashing object."""
         self._name = name
         self._buff = b''
         self._num_block = 0
@@ -264,10 +244,12 @@ class GOST34112012:
         self._hash_sigma = bytearray(_BLOCK_SIZE)
         if self._name == 'streebog256':
             self._hash_h = _BLOCK_SIZE * b'\x01'
+        if data is not None:
+            self.update(data)
 
     @staticmethod
     def _hash_add_512(op_a, op_b):
-        #Addition operation in the residue ring modulo 512
+        """.Addition operation in the residue ring modulo 512."""
         op_a = bytearray(op_a)
         op_b = bytearray(op_b)
         op_c = 0
@@ -279,7 +261,7 @@ class GOST34112012:
 
     @staticmethod
     def _hash_p(data):
-        #The operation of the permutation byte
+        """The operation of the permutation byte."""
         result = bytearray(_BLOCK_SIZE)
         for i in range(_BLOCK_SIZE - 1, -1, -1):
             result[i] = data[_TAU[i]]
@@ -287,7 +269,7 @@ class GOST34112012:
 
     @staticmethod
     def _hash_s(data):
-        ##The S-transformation function (nonlinear bijective transformation)
+        """The S-transformation function (nonlinear bijective transformation)."""
         result = bytearray(_BLOCK_SIZE)
         for i in range(_BLOCK_SIZE - 1, -1, -1):
             result[i] = S_BOX[data[i]]
@@ -295,7 +277,7 @@ class GOST34112012:
 
     @staticmethod
     def _hash_l(data):
-        #Linear transformation of a set of binary vectors
+        """Linear transformation of a set of binary vectors."""
         result = []
         for i in range(8):
             internal = unpack('<Q', data[i * 8:i * 8 + 8])[0]
@@ -308,7 +290,7 @@ class GOST34112012:
         return b"".join(result)
 
     def _hash_get_key(self, k, i):
-        #The function of the generation iterative compression keys
+        """The function of the generation iterative compression keys."""
         key = bytearray(_BLOCK_SIZE)
         key = add_xor(k, _C[i])
         key = self._hash_s(key)
@@ -317,7 +299,7 @@ class GOST34112012:
         return key
 
     def _hash_e(self, k, data):
-        #The E-transformation function
+        """The E-transformation function."""
         internal = add_xor(k, data)
         for i in range(12):
             internal = self._hash_s(internal)
@@ -328,12 +310,11 @@ class GOST34112012:
         return internal
 
     def _hash_g(self, hash_h, hash_n, data):
-        #The compression function
+        """The compression function."""
         k = add_xor(hash_n, hash_h)
         k = self._hash_s(k)
         k = self._hash_p(k)
         k = self._hash_l(k)
-
         internal = self._hash_e(k, data)
         internal = add_xor(internal, hash_h)
         result = add_xor(internal, data)
@@ -342,11 +323,17 @@ class GOST34112012:
     def update(self, data):
         """Update the hash object with the bytes-like object.
 
-           Args:
-             :data: The string from which to get the hash. Repeated calls are equivalent
-                to a single call with the concatenation of all the arguments: 'm.update(a)';
-                'm.update(b)' is equivalent to 'm.update(a+b)'.
+        Args:
+        :data: The string from which to get the hash. Repeated calls are equivalent
+        to a single call with the concatenation of all the arguments: 'm.update(a)';
+        'm.update(b)' is equivalent to 'm.update(a+b)'.
+
+        Exception:
+        - GOSTHashError('invalid data value') - in case where the data is not byte
+        object.
         """
+        if not isinstance(data, (bytes, bytearray)):
+            raise GOSTHashError('invalid data value')
         data = self._buff + data
         self._num_block = len(data) // _BLOCK_SIZE
         for i in range(0, self._num_block * _BLOCK_SIZE, _BLOCK_SIZE):
@@ -359,8 +346,7 @@ class GOST34112012:
             self._buff = data[-(_BLOCK_SIZE - self._pad_block_size):]
 
     def hash_final(self):
-        """Completes the hash calculation after the data update.
-        """
+        """Completes the hash calculation after the data update."""
         self._pad_block_size = _BLOCK_SIZE - len(self._buff)
         internal = bytearray(_BLOCK_SIZE)
         internal[1] = (((_BLOCK_SIZE - self._pad_block_size) * 8) >> 8) & 0xff
@@ -376,13 +362,13 @@ class GOST34112012:
         self._hash_h = self._hash_g(self._hash_h, _V_0, self._hash_sigma)
 
     def get_hash(self):
-        """Returns the value of the _hasha_h attribute.
-        """
+        """Returns the value of the _hasha_h attribute."""
         return self._hash_h[-self.digest_size:]
 
     def digest(self):
         """Returns the digest of the data passed to the update() method so far.
-           This is a bytes object of size digest_size.
+
+        This is a bytes object of size digest_size.
         """
         temp = self.copy()
         temp.hash_final()
@@ -390,13 +376,13 @@ class GOST34112012:
 
     def hexdigest(self):
         """Returns the digest of the data passed to the update() method so far.
-           This is a double-sized string object (digest_size * 2).
+
+        This is a double-sized string object (digest_size * 2).
         """
         return self.digest().hex()
 
     def reset(self):
-        """Resets the values of all class attributes.
-        """
+        """Resets the values of all class attributes."""
         self._buff = b''
         self._num_block = 0
         self._pad_block_size = 0
@@ -407,16 +393,17 @@ class GOST34112012:
             self._hash_h = _BLOCK_SIZE * b'\x01'
 
     def copy(self):
-        """Returns a copy (“clone”) of the hash object. This can be used to efficiently compute
-           the digests of data sharing a common initial substring.
+        """Returns a copy (“clone”) of the hash object. This can be used to efficiently
+        compute the digests of data sharing a common initial substring.
         """
         return deepcopy(self)
 
     @property
     def digest_size(self):
         """An integer value the size of the resulting hash in bytes.
-           For the 'streebog256' algorithm, this value is 32, for the
-           'streebog512' algorithm, this value is 64.
+
+        For the 'streebog256' algorithm, this value is 32, for the 'streebog512'
+        algorithm, this value is 64.
         """
         if self._name == 'streebog512':
             result = 64
@@ -427,14 +414,21 @@ class GOST34112012:
     @property
     def block_size(self):
         """An integer value the internal block size of the hash algorithm in bytes.
-           For the 'streebog256' algorithm and the 'streebog512' algorithm,
-           this value is 64.
+
+        For the 'streebog256' algorithm and the 'streebog512' algorithm, this value is 64.
         """
         return _BLOCK_SIZE
 
     @property
     def name(self):
         """A text string value the name of the hashing algorithm.
-           Respectively 'streebog256' or 'streebog512'.
+
+        Respectively 'streebog256' or 'streebog512'.
         """
         return self._name
+
+
+class GOSTHashError(Exception):
+    """The class that implements exceptions that may occur when module class methods
+    are used.
+    """

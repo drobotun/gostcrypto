@@ -1,9 +1,8 @@
 """The module that implements block encryption according to GOST 34.12-2015
-   ('Kuznechik' and 'Magma').
+('Kuznechik' and 'Magma').
 
-   Author: Evgeny Drobotun (c) 2020
-   License: MIT
-
+Author: Evgeny Drobotun (c) 2020
+License: MIT
 """
 
 from struct import pack
@@ -13,19 +12,22 @@ from gostcrypto.utils import zero_fill
 from gostcrypto.utils import S_BOX
 from gostcrypto.utils import S_BOX_REVERSE
 
-__all__ = ['GOST34122015Kuznechik', 'GOST34122015Magma']
+__all__ = [
+    'GOST34122015Kuznechik',
+    'GOST34122015Magma'
+]
 
-_BLOCK_SIZE_KUZNECHIK = 16
-_BLOCK_SIZE_MAGMA = 8
-_KEY_SIZE = 32
+_BLOCK_SIZE_KUZNECHIK: int = 16
+_BLOCK_SIZE_MAGMA: int = 8
+_KEY_SIZE: int = 32
 
-#Constants for linear transformation in the 'Kuznechik' cipher
+"""Constants for linear transformation in the 'Kuznechik' cipher."""
 _L = bytearray([
     0x01, 0x94, 0x20, 0x85, 0x10, 0xc2, 0xc0, 0x01,
     0xfb, 0x01, 0xc0, 0xc2, 0x10, 0x85, 0x20, 0x94,
 ])
 
-#Constants for nonlinear bijective transformation in the 'Magma' cipher
+"""Constants for nonlinear bijective transformation in the 'Magma' cipher."""
 _S_BOX_MAGMA = (
     (0x0c, 0x04, 0x06, 0x02, 0x0a, 0x05, 0x0b, 0x09,
      0x0e, 0x08, 0x0d, 0x07, 0x00, 0x03, 0x0f, 0x01,),
@@ -45,23 +47,26 @@ _S_BOX_MAGMA = (
      0x04, 0x0f, 0x0a, 0x06, 0x09, 0x0c, 0x0b, 0x02,)
 )
 
+
 class GOST34122015Kuznechik:
-    """Class that implements block encryption in accordance with GOST 34.12-2015 ('Kuznechik').
+    """Class that implements block encryption in accordance with
+    GOST 34.12-2015 ('Kuznechik').
 
-       Methods:
-          :decrypt(): decrypting a block of ciphertext.
-          :encrypt(): encrypting a block of plaintext.
-          :clear(): Сlearing the values of iterative encryption keys.
+    Methods:
+    :decrypt(): decrypting a block of ciphertext.
+    :encrypt(): encrypting a block of plaintext.
+    :clear(): Сlearing the values of iterative encryption keys.
 
-       Attributes:
-          :block_size: an integer value the internal block size of the cipher algorithm in bytes.
-          :key_size: an integer value the cipher key size.
+    Attributes:
+    :block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    :key_size: an integer value the cipher key size.
     """
     def __init__(self, key):
         """Initialize the ciphering object.
 
-           Args:
-              :key: Cipher key.
+        Args:
+        :key: Cipher key.
         """
         self._cipher_c = []
         self._cipher_iter_key = []
@@ -84,12 +89,12 @@ class GOST34122015Kuznechik:
         key = bytearray(self.key_size)
 
     def __del__(self):
-        #Delete the ciphering object
+        """Delete the ciphering object."""
         self.clear()
 
     @staticmethod
     def _cipher_s(data):
-        #The S-transformation function (nonlinear bijective transformation)
+        """The S-transformation function (nonlinear bijective transformation)."""
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK):
             result[i] = S_BOX[data[i]]
@@ -97,7 +102,9 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_s_reverse(data):
-        #The reverse S-transformation function (reverse nonlinear bijective transformation)
+        """The reverse S-transformation function (reverse nonlinear bijective
+        transformation).
+        """
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK):
             result[i] = S_BOX_REVERSE[data[i]]
@@ -105,7 +112,7 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_gf(op_a, op_b):
-        #The GF-transformation function
+        """The GF-transformation function."""
         result = 0
         for _ in range(8):
             if op_b & 1:
@@ -119,7 +126,7 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_r(data):
-        #The R-transformation function
+        """The R-transformation function."""
         a_0 = 0
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK):
@@ -130,7 +137,7 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_r_reverse(data):
-        #The reverse R-transformation function
+        """The reverse R-transformation function."""
         a_15 = 0
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK - 1, -1, -1):
@@ -141,7 +148,7 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_l(data):
-        #The L-transformation function (linear transformation)
+        """The L-transformation function (linear transformation)."""
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         result = data
         for _ in range(16):
@@ -150,7 +157,9 @@ class GOST34122015Kuznechik:
 
     @staticmethod
     def _cipher_l_reverse(data):
-        #The reverse L-transformation function (reverse linear transformation)
+        """The reverse L-transformation function (reverse linear
+        transformation).
+        """
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         result = data
         for _ in range(16):
@@ -158,7 +167,7 @@ class GOST34122015Kuznechik:
         return result
 
     def _cipher_get_c(self):
-        #The generate iteration constants C
+        """The generate iteration constants C."""
         for i in range(1, 33):
             internal = bytearray(_BLOCK_SIZE_KUZNECHIK)
             internal[15] = i
@@ -166,26 +175,28 @@ class GOST34122015Kuznechik:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the cipher algorithm in bytes.
-           For the 'Kuznechik' algorithm this value is 16 and the 'Magma' algorithm,
-           this value is 8.
+        """An integer value the internal block size of the cipher algorithm
+        in bytes.
+
+        For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
+        algorithm, this value is 8.
         """
         return _BLOCK_SIZE_KUZNECHIK
 
     @property
     def key_size(self):
-        """An integer value the cipher key size.
-        """
+        """An integer value the cipher key size."""
         return _KEY_SIZE
 
     def decrypt(self, block):
         """Decrypting a block of ciphertext.
 
-           Args:
-             :block: The block of ciphertext to be decrypted (the block size is 16 bytes).
+        Args:
+        :block: The block of ciphertext to be decrypted (the block size is
+        16 bytes).
 
-           Return:
-              The block of plaintext.
+        Return:
+        The block of plaintext.
         """
         block = bytearray(block)
         block = add_xor(self._cipher_iter_key[9], block)
@@ -198,11 +209,12 @@ class GOST34122015Kuznechik:
     def encrypt(self, block):
         """Encrypting a block of plaintext.
 
-           Args:
-             :block: The block of plaintext to be encrypted (the block size is 16 bytes).
+        Args:
+        :block: The block of plaintext to be encrypted (the block size is
+        16 bytes).
 
-           Return:
-              The block of ciphertext.
+        Return:
+        The block of ciphertext.
         """
         block = bytearray(block)
         for i in range(9):
@@ -213,28 +225,30 @@ class GOST34122015Kuznechik:
         return block
 
     def clear(self):
-        """Сlearing the values of iterative encryption keys.
-        """
+        """Сlearing the values of iterative encryption keys."""
         for i in range(10):
-            self._cipher_iter_key[i] = zero_fill(len(self._cipher_iter_key[i]))
+            self._cipher_iter_key[i] = zero_fill(self._cipher_iter_key[i])
+
 
 class GOST34122015Magma:
-    """Class that implements block encryption in accordance with GOST 34.12-2012 ('Magma').
+    """Class that implements block encryption in accordance with
+    GOST 34.12-2012 ('Magma').
 
-       Methods:
-          :decrypt(): decrypting a block of ciphertext.
-          :encrypt(): encrypting a block of plaintext.
-          :clear(): Сlearing the values of iterative encryption keys.
+    Methods:
+    :decrypt(): decrypting a block of ciphertext.
+    :encrypt(): encrypting a block of plaintext.
+    :clear(): Сlearing the values of iterative encryption keys.
 
-       Attributes:
-          :block_size: an integer value the internal block size of the cipher algorithm in bytes.
-          :key_size: an integer value the cipher key size.
+    Attributes:
+    :block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    :key_size: an integer value the cipher key size.
     """
     def __init__(self, key):
         """Initialize the ciphering object.
 
-           Args:
-              :key: Cipher key.
+        Args:
+        :key: Cipher key.
         """
         self._cipher_iter_key = []
         self._expand_iter_key(key)
@@ -244,30 +258,33 @@ class GOST34122015Magma:
         key = zero_fill(len(key))
 
     def __del__(self):
+        """Delete the ciphering object."""
         self.clear()
 
     def _expand_iter_key(self, key):
+        """Deploying an iterative keys."""
         iter_key = b''
         for j in range(8):
             iter_key = bytearray(4)
             for i in range(4):
                 iter_key[i] = key[(j * 4) + i]
             self._cipher_iter_key.append(iter_key)
-        iter_key = zero_fill(len(iter_key))
-        key = zero_fill(len(key))
+        iter_key = zero_fill(iter_key)
+        key = zero_fill(key)
 
     def _expand_iter_key_final(self, key):
+        """Final deploying an iterative keys."""
         for j in range(8):
             iter_key = bytearray(4)
             for i in range(4):
                 iter_key[i] = key[28 - (j * 4) + i]
             self._cipher_iter_key.append(iter_key)
-        iter_key = zero_fill(len(iter_key))
-        key = zero_fill(len(key))
+        iter_key = zero_fill(iter_key)
+        key = zero_fill(key)
 
     @staticmethod
     def _cipher_t(data):
-        #The T-transformation function
+        """The T-transformation function."""
         result = bytearray(4)
         data = bytearray(data)
         for i in range(4):
@@ -280,7 +297,7 @@ class GOST34122015Magma:
 
     @staticmethod
     def _cipher_add_32(op_a, op_b):
-        #Addition operation in the residue ring modulo 32
+        """Addition operation in the residue ring modulo 32."""
         op_a = bytearray(op_a)
         op_b = bytearray(op_b)
         internal = 0
@@ -292,7 +309,7 @@ class GOST34122015Magma:
 
     @staticmethod
     def _cipher_g(cipher_k, cipher_a):
-        #The g-transformation function
+        """The g-transformation function."""
         cipher_k = bytearray(cipher_k)
         cipher_a = bytearray(cipher_a)
         internal = bytearray(4)
@@ -304,14 +321,14 @@ class GOST34122015Magma:
         result_32 = (result_32 << 8) + internal[1]
         result_32 = (result_32 << 8) + internal[2]
         result_32 = (result_32 << 8) + internal[3]
-        result_32 = (result_32 << 11)|(result_32 >> 21)
+        result_32 = (result_32 << 11) | (result_32 >> 21)
         result_32 = result_32 & 0xffffffff
         result = pack('>I', result_32)
         return result
 
     @staticmethod
     def _cipher_g_prev(cipher_k, cipher_a):
-        #The preliminary G-transform function
+        """The preliminary G-transform function."""
         cipher_k = bytearray(cipher_k)
         cipher_a = bytearray(cipher_a)
         a_0 = bytearray(4)
@@ -330,7 +347,7 @@ class GOST34122015Magma:
 
     @staticmethod
     def _cipher_g_fin(cipher_k, cipher_a):
-        #The final G-transform function
+        """The final G-transform function."""
         cipher_k = bytearray(cipher_k)
         cipher_a = bytearray(cipher_a)
         a_0 = bytearray(4)
@@ -348,52 +365,66 @@ class GOST34122015Magma:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the cipher algorithm in bytes.
-           For the 'Kuznechik' algorithm this value is 16 and the 'Magma' algorithm,
-           this value is 8.
+        """An integer value the internal block size of the cipher algorithm
+        in bytes.
+
+        For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
+        algorithm, this value is 8.
         """
         return _BLOCK_SIZE_MAGMA
 
     @property
     def key_size(self):
-        """An integer value the cipher key size.
-        """
+        """An integer value the cipher key size."""
         return _KEY_SIZE
 
     def decrypt(self, block):
         """Decrypting a block of plaintext.
 
-           Args:
-             :block: The block of plaintext to be encrypted (the block size is 8 bytes).
+        Args:
+        :block: The block of plaintext to be encrypted (the block size is
+        8 bytes).
 
-           Return:
-              The block of ciphertext.
+        Return:
+        The block of ciphertext.
         """
         result = bytearray(_BLOCK_SIZE_MAGMA)
-        result = GOST34122015Magma._cipher_g_prev(self._cipher_iter_key[31], block)
+        result = GOST34122015Magma._cipher_g_prev(
+            self._cipher_iter_key[31], block
+        )
         for i in range(30, 0, -1):
-            result = GOST34122015Magma._cipher_g_prev(self._cipher_iter_key[i], result)
-        result = GOST34122015Magma._cipher_g_fin(self._cipher_iter_key[0], result)
+            result = GOST34122015Magma._cipher_g_prev(
+                self._cipher_iter_key[i], result
+            )
+        result = GOST34122015Magma._cipher_g_fin(
+            self._cipher_iter_key[0], result
+        )
         return result
 
     def encrypt(self, block):
         """Encrypting a block of ciphertext.
 
-           Args:
-             :block: The block of ciphertext to be decrypted (the block size is 8 bytes).
+        Args:
+        :block: The block of ciphertext to be decrypted (the block size is
+        8 bytes).
 
-           Return:
-              The block of plaintext.
+        Return:
+        The block of plaintext.
         """
         result = bytearray(_BLOCK_SIZE_MAGMA)
-        result = GOST34122015Magma._cipher_g_prev(self._cipher_iter_key[0], block)
+        result = GOST34122015Magma._cipher_g_prev(
+            self._cipher_iter_key[0], block
+        )
         for i in range(1, 31):
-            result = GOST34122015Magma._cipher_g_prev(self._cipher_iter_key[i], result)
-        result = GOST34122015Magma._cipher_g_fin(self._cipher_iter_key[31], result)
+            result = GOST34122015Magma._cipher_g_prev(
+                self._cipher_iter_key[i], result
+            )
+        result = GOST34122015Magma._cipher_g_fin(
+            self._cipher_iter_key[31], result
+        )
         return result
 
     def clear(self):
-        """Сlearing the values of iterative encryption keys.
-        """
+        """Сlearing the values of iterative encryption keys."""
         for i in range(32):
-            self._cipher_iter_key[i] = zero_fill(len(self._cipher_iter_key[i]))
+            self._cipher_iter_key[i] = zero_fill(self._cipher_iter_key[i])

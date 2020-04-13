@@ -1,6 +1,11 @@
 import unittest
+import pytest
+
 import gostcrypto
 
+from gostcrypto.gosthash import GOSTHashError
+
+@pytest.mark.hasher
 class Test(unittest.TestCase):
     
     TEST_MSG_SHORT = bytearray([
@@ -70,7 +75,7 @@ class Test(unittest.TestCase):
 
     def test_new(self):
         test_hasher = gostcrypto.gosthash.new('streebog256')
-        _test_hasher = gostcrypto.gosthash.GOST34112012('streebog256')
+        _test_hasher = gostcrypto.gosthash.new('streebog256')
         self.assertEqual(test_hasher._name, _test_hasher._name)
         self.assertEqual(test_hasher._buff, _test_hasher._buff)
         self.assertEqual(test_hasher._num_block, _test_hasher._num_block)
@@ -78,10 +83,15 @@ class Test(unittest.TestCase):
         self.assertEqual(test_hasher._hash_h, _test_hasher._hash_h)
         self.assertEqual(test_hasher._hash_n, _test_hasher._hash_n)
         self.assertEqual(test_hasher._hash_sigma, _test_hasher._hash_sigma)
+        test_hasher = gostcrypto.gosthash.new('streebog512', self.TEST_MSG_LONG)
+        test_result = '1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28'
+        result = test_hasher.digest()
+        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
+        
 
-    def test_init_raises(self):
-        with self.assertRaises(ValueError) as context:
-            test_hasher =  gostcrypto.gosthash.GOST34112012('test_name')
+    def test_new_raises(self):
+        with self.assertRaises(GOSTHashError) as context:
+            test_hasher =  gostcrypto.gosthash.new('test_name')
         self.assertTrue('unsupported hash type' in str(context.exception))
 
     def test_digest_size(self):
@@ -106,6 +116,12 @@ class Test(unittest.TestCase):
         test_hasher.update(self.TEST_MSG_LONG)
         test_result = 'afc707c4da6c812e85ea2c8e1e225d2e481f7389883b84a76aa4c7f79e77ef987b510c9b45acb727e1f8108f934e91e25d399597cd4cbbe365a4fa1223607fcd'
         self.assertEqual(''.join(format(x, '02x') for x in test_hasher._hash_h), test_result)
+
+    def test_update_raises(self):
+        test_hasher =  gostcrypto.gosthash.new('streebog512')
+        with self.assertRaises(GOSTHashError) as context:
+            test_hasher.update('test_data')
+        self.assertTrue('invalid data value' in str(context.exception))
 
     def test_reset_512(self):
         test_hasher = gostcrypto.gosthash.new('streebog512')

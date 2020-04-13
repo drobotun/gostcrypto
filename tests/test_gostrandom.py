@@ -1,6 +1,9 @@
 import unittest
-import gostcrypto
 from unittest import mock
+import pytest
+
+import gostcrypto
+from  gostcrypto.gostrandom import GOSTRandomError
 
 def os_urandom(value):
     return TEST_SEED
@@ -40,10 +43,10 @@ TEST_RAND_LONG = bytearray([
 
 class Test(unittest.TestCase):
 
-    def test_init_raises(self):
-        with self.assertRaises(ValueError) as context:
-            test_random = gostcrypto.gostrandom.R132356510062017(32, TEST_SEED[:30], gostcrypto.gostrandom.SIZE_S_256)
-        self.assertTrue('invalid seed value size' in str(context.exception))
+    def test_new_raises(self):
+        with self.assertRaises(GOSTRandomError) as context:
+            test_random = gostcrypto.gostrandom.new(32, 'test_seed', gostcrypto.gostrandom.SIZE_S_256)
+        self.assertTrue('invalid seed value' in str(context.exception))
 
     def test_random(self):
         test_random = gostcrypto.gostrandom.new(32, TEST_SEED, gostcrypto.gostrandom.SIZE_S_256)
@@ -52,18 +55,18 @@ class Test(unittest.TestCase):
         self.assertEqual(test_random.random(), TEST_RAND_LONG)
 
     def test_random_raises(self):
-        test_random = gostcrypto.gostrandom.R132356510062017(32, TEST_SEED_ZERO, gostcrypto.gostrandom.SIZE_S_256)
-        with self.assertRaises(ValueError) as context:
+        test_random = gostcrypto.gostrandom.new(32, TEST_SEED_ZERO, gostcrypto.gostrandom.SIZE_S_256)
+        with self.assertRaises(GOSTRandomError) as context:
             test_random.random()
         self.assertTrue('the seed value is zero' in str(context.exception))
-        test_random = gostcrypto.gostrandom.R132356510062017(32, TEST_SEED, gostcrypto.gostrandom.SIZE_S_256)
+        test_random = gostcrypto.gostrandom.new(32, TEST_SEED, gostcrypto.gostrandom.SIZE_S_256)
         test_random._limit = 0
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(GOSTRandomError) as context:
             test_random.random()
         self.assertTrue('exceeded the limit value of the counter' in str(context.exception))
-        test_random = gostcrypto.gostrandom.R132356510062017(68, TEST_SEED, gostcrypto.gostrandom.SIZE_S_256)
+        test_random = gostcrypto.gostrandom.new(68, TEST_SEED, gostcrypto.gostrandom.SIZE_S_256)
         test_random._limit = 0
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(GOSTRandomError) as context:
             test_random.random()
         self.assertTrue('exceeded the limit value of the counter' in str(context.exception))
 
@@ -74,13 +77,13 @@ class Test(unittest.TestCase):
 
     def test_reset_raises(self):
         test_random = gostcrypto.gostrandom.new(32, TEST_SEED_ZERO, gostcrypto.gostrandom.SIZE_S_256)
-        with self.assertRaises(ValueError) as context:
-            test_random.reset(TEST_SEED[:30])
-        self.assertTrue('invalid seed value size' in str(context.exception))
+        with self.assertRaises(GOSTRandomError) as context:
+            test_random.reset('test_seed')
+        self.assertTrue('invalid seed value' in str(context.exception))
 
-    def test_init_urandom(self):
+    def test_new_urandom(self):
         with mock.patch('os.urandom', os_urandom):
-            test_random = gostcrypto.gostrandom.R132356510062017(32, None, gostcrypto.gostrandom.SIZE_S_256)
+            test_random = gostcrypto.gostrandom.new(32, None, gostcrypto.gostrandom.SIZE_S_256)
         self.assertEqual(test_random.random(), TEST_RAND)
 
     def test_reset_urandom(self):

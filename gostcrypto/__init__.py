@@ -26,10 +26,9 @@ __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'
 __copyright__ = 'Copyright (C) 2020 Evgeny Drobotun'
 
-from .gosthash import GOST34112012
-from .gostcipher import GOST34122015Kuznechik, GOST34122015Magma
-from .gostcipher import GOST34132015
-from .gostsignature import GOST34102012
-from .gostrandom import R132356510062017
-from .gosthmac import R5011132016
-from .gostpbkdf import R5011112016
+from gostcrypto import gosthash
+from gostcrypto import gostcipher
+from gostcrypto import gostsignature
+from gostcrypto import gostrandom
+from gostcrypto import gosthmac
+from gostcrypto import gostpbkdf

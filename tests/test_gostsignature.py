@@ -1,10 +1,12 @@
 import unittest
 import os
+import pytest
 from unittest import mock
 
 import gostcrypto
 from gostcrypto.utils import bytearray_to_int
 from gostcrypto.utils import int_to_bytearray
+from gostcrypto.gostsignature import GOSTSignatureError
 
 TEST_CURVE = {
     'id-tc26-gost-3410-2012-256-paramSetTest':dict(
@@ -203,126 +205,172 @@ def os_urandom(value):
     else:
         return TEST_RANDOM_512
 
+@pytest.mark.signature
 class TestMODE256(unittest.TestCase):
 
     def test_init_raises(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(None, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(None, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
         self.assertTrue('unsupported signature mode' in str(context.exception))
 
     def test_init_raises_0(self):
         none_curve = dict(f = 0x00, u = 0x00)
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              none_curve)
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+                none_curve)
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_1(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_1'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+                TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_1'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_2(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_2'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+                TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_2'])
             TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest']['q'] = old_q
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_3(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_3'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+                TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_3'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_init_raises_4(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_512,
-                                                              TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest_raises_4'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+                TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest_raises_4'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
         
 
     def test_init_raises_5(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_512,
-                                                              TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest_raises_5'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+                TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest_raises_5'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
         
 
     def test_init_raises_6(self):
-        with self.assertRaises(ValueError) as context:
-            test_sign = gostcrypto.gostsignature.GOST34102012(gostcrypto.gostsignature.MODE_256,
-                                                              TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_6'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+                TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest_raises_6'])
         self.assertTrue('invalid parameters of the elliptic curve' in str(context.exception))
 
     def test_sign_256(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
-        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256), TEST_SIGNATURE_256)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256),
+            TEST_SIGNATURE_256)
 
     def test_sign_edvards_a(self):
         signature = bytearray.fromhex('33dd7cffb7abd971669508fe0d4a1248c3a656108292ed18280cc02d7f0bd3f72e3746c7f6a77491c0edc7b2493f36d007b88c411761c1b303ba851947113166')
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsA'])
-        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256_EDVARDS), signature)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsA'])
+        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256_EDVARDS),
+            signature)
 
     def test_sign_edvards_b(self):
         signature = bytearray.fromhex('33dd7cffb7abd971669508fe0d4a1248c3a656108292ed18280cc02d7f0bd3f72e3746c7f6a77491c0edc7b2493f36d007b88c411761c1b303ba851947113166')
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsB'])
-        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256_EDVARDS), signature)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsB'])
+        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256_EDVARDS),
+            signature)
 
     def test_sign_raises(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
-        with self.assertRaises(ValueError) as context:
-            self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256[:20], TEST_DIGEST_256, TEST_RANDOM_256), TEST_SIGNATURE_256)
-        self.assertTrue('invalid private key' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_sign.sign(None, TEST_DIGEST_256, TEST_RANDOM_256)
-        self.assertTrue('invalid private key' in str(context.exception))
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTestEdvardsA'])
-        with self.assertRaises(ValueError) as context:
-            test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_256)
+        #Test 'invalid private key value'
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            self.assertEqual(test_sign.sign('test_private_key', TEST_DIGEST_256, TEST_RANDOM_256),
+                TEST_SIGNATURE_256)
+        self.assertTrue('invalid private key value' in str(context.exception))
+        #Test 'invalid digest value'
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_256, 'test_digest', TEST_RANDOM_256),
+                TEST_SIGNATURE_256)
+        self.assertTrue('invalid digest value' in str(context.exception))
+        #Test 'invalid random value' (not a byte object)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, 'test_random')
+        self.assertTrue('invalid random value' in str(context.exception))
+        #Test 'invalid random value' (random value >= 'q')
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign.sign(TEST_PRIVATE_KEY_256, TEST_DIGEST_256, TEST_RANDOM_512)
         self.assertTrue('invalid random value' in str(context.exception))
 
     def test_verify_256(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
-        self.assertEqual(test_sign.verify(TEST_PUBLIC_KEY_256, TEST_DIGEST_256, TEST_SIGNATURE_256), True)
-        self.assertEqual(test_sign.verify(TEST_PUBLIC_KEY_256, TEST_DIGEST_256, TEST_SIGNATURE_256_ZERO), False)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        self.assertEqual(test_sign.verify(TEST_PUBLIC_KEY_256, TEST_DIGEST_256,
+            TEST_SIGNATURE_256), True)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        self.assertEqual(test_sign.verify(TEST_PUBLIC_KEY_256, TEST_DIGEST_256,
+            TEST_SIGNATURE_256_ZERO), False)
 
     def test_verify_raises(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
-        with self.assertRaises(ValueError) as context:
-            test_sign.verify(TEST_PUBLIC_KEY_256, TEST_DIGEST_256, TEST_SIGNATURE_256[:20])
-        self.assertTrue('invalid signature size' in str(context.exception))
+        #Test 'invalid public key value'
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign.verify('test_public_key', TEST_DIGEST_256, TEST_SIGNATURE_256)
+        self.assertTrue('invalid public key value' in str(context.exception))
+        #Test 'invalid signature value'
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign.verify(TEST_PUBLIC_KEY_256, TEST_DIGEST_256, 'test_signature')
+        self.assertTrue('invalid signature value' in str(context.exception))
+        #Test 'invalid digest value'
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign.verify(TEST_PUBLIC_KEY_256, 'test_digest', TEST_SIGNATURE_256)
+        self.assertTrue('invalid digest value' in str(context.exception))
 
     def test_public_key_generate_256(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
         self.assertEqual(test_sign.public_key_generate(TEST_PRIVATE_KEY_256), TEST_PUBLIC_KEY_256)
 
     def test_public_key_generate_raises(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256, TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
-        with self.assertRaises(ValueError) as context:
-            test_sign.public_key_generate(TEST_PRIVATE_KEY_256[:20])
-        self.assertTrue('invalid private key' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_sign.public_key_generate(None)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        with self.assertRaises(GOSTSignatureError) as context:
+            test_sign.public_key_generate('test_private_key')
         self.assertTrue('invalid private key' in str(context.exception))
 
 class TestMODE512(unittest.TestCase):
 
     def test_sign_512(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
-        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_512, TEST_DIGEST_512, TEST_RANDOM_512), TEST_SIGNATURE_512)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+            TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
+        self.assertEqual(test_sign.sign(TEST_PRIVATE_KEY_512, TEST_DIGEST_512, TEST_RANDOM_512),
+            TEST_SIGNATURE_512)
 
     def test_verify_512(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
-        self.assertEqual(test_sign.verify(TEST_PUBLIC_KEY_512, TEST_DIGEST_512, TEST_SIGNATURE_512), True)
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+            TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
+        self.assertEqual(test_sign.verify(TEST_PUBLIC_KEY_512, TEST_DIGEST_512,
+            TEST_SIGNATURE_512), True)
 
     def test_public_key_generate_512(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+            TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
         self.assertEqual(test_sign.public_key_generate(TEST_PRIVATE_KEY_512), TEST_PUBLIC_KEY_512)
 
     def test_sign_urandom(self):
-        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512, TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+            TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
         with mock.patch('os.urandom', os_urandom):
             test_result = test_sign.sign(TEST_PRIVATE_KEY_512, TEST_DIGEST_512)
         self.assertEqual(test_result, TEST_SIGNATURE_512)

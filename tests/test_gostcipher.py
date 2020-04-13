@@ -1,6 +1,10 @@
 import unittest
-import gostcrypto
+import pytest
 
+import gostcrypto
+from gostcrypto.gostcipher import GOSTCipherError
+
+@pytest.mark.cipher
 class TestKuznechik(unittest.TestCase):
 
     TEST_KEY = bytearray([
@@ -32,10 +36,10 @@ class TestKuznechik(unittest.TestCase):
         test_data_5 = bytearray([
             0x23, 0xae, 0x65, 0x63, 0x3f, 0x84, 0x2d, 0x29, 0xc5, 0xdf, 0x52, 0x9c, 0x13, 0xf5, 0xac, 0xda,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s(test_data_4), test_data_5)
 
     def test_s_reverse(self):
         test_data_1 = bytearray([
@@ -53,10 +57,10 @@ class TestKuznechik(unittest.TestCase):
         test_data_5 = bytearray([
             0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s_reverse(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s_reverse(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s_reverse(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_s_reverse(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s_reverse(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s_reverse(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s_reverse(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_s_reverse(test_data_4), test_data_5)
 
     def test_r(self):
         test_data_1 = bytearray([
@@ -74,10 +78,10 @@ class TestKuznechik(unittest.TestCase):
         test_data_5 = bytearray([
             0x0d, 0x64, 0xa5, 0x94, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r(test_data_4), test_data_5)
 
     def test_r_reverse(self):
         test_data_1 = bytearray([
@@ -95,10 +99,10 @@ class TestKuznechik(unittest.TestCase):
         test_data_5 = bytearray([
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r_reverse(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r_reverse(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r_reverse(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_r_reverse(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r_reverse(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r_reverse(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r_reverse(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_r_reverse(test_data_4), test_data_5)
 
     def test_l(self):
         test_data_1 = bytearray([
@@ -116,10 +120,10 @@ class TestKuznechik(unittest.TestCase):
         test_data_5 = bytearray([
             0xe6, 0xa8, 0x09, 0x4f, 0xee, 0x0a, 0xa2, 0x04, 0xfd, 0x97, 0xbc, 0xb0, 0xb4, 0x4b, 0x85, 0x80,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l(test_data_4), test_data_5)
 
     def test_l_reverse(self):
         test_data_1 = bytearray([
@@ -137,10 +141,10 @@ class TestKuznechik(unittest.TestCase):
         test_data_5 = bytearray([
             0x64, 0xa5, 0x94, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l_reverse(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l_reverse(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l_reverse(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Kuznechik._cipher_l_reverse(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l_reverse(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l_reverse(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l_reverse(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Kuznechik._cipher_l_reverse(test_data_4), test_data_5)
 
     def test_expand_key(self):
         test_iter_key = [bytearray([
@@ -189,6 +193,7 @@ class TestKuznechik(unittest.TestCase):
         test_cipher = gostcrypto.gostcipher.GOST34122015Kuznechik(self.TEST_KEY)
         self.assertEqual(test_cipher.key_size, 32)
 
+@pytest.mark.cipher
 class TestMagma(unittest.TestCase):
 
     TEST_KEY = bytearray([
@@ -222,10 +227,10 @@ class TestMagma(unittest.TestCase):
         test_data_5 = bytearray([
             0x68, 0x69, 0x54, 0x33,
         ])
-        self.assertEqual(gostcrypto.GOST34122015Magma._cipher_t(test_data_1), test_data_2)
-        self.assertEqual(gostcrypto.GOST34122015Magma._cipher_t(test_data_2), test_data_3)
-        self.assertEqual(gostcrypto.GOST34122015Magma._cipher_t(test_data_3), test_data_4)
-        self.assertEqual(gostcrypto.GOST34122015Magma._cipher_t(test_data_4), test_data_5)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Magma._cipher_t(test_data_1), test_data_2)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Magma._cipher_t(test_data_2), test_data_3)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Magma._cipher_t(test_data_3), test_data_4)
+        self.assertEqual(gostcrypto.gostcipher.GOST34122015Magma._cipher_t(test_data_4), test_data_5)
 
     def test_encrypt(self):
         test_cipher = gostcrypto.gostcipher.GOST34122015Magma(self.TEST_KEY)
@@ -239,6 +244,7 @@ class TestMagma(unittest.TestCase):
         test_cipher = gostcrypto.gostcipher.GOST34122015Magma(self.TEST_KEY)
         self.assertEqual(test_cipher.key_size, 32)
 
+@pytest.mark.cipher
 class TestGOST34132015Kuznechik(unittest.TestCase):
 
     TEST_KEY = bytearray([
@@ -397,230 +403,242 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
         0x7e, 0xd1, 0xa2, 0xb9, 0x96, 0x48, 0x06, 0x04, 0xaa, 0xf5, 0x51, 0x80, 0x66, 0x5a, 0xdf, 0xc0,
     ])
 
-    def test_init_raises(self):
-        with self.assertRaises(ValueError) as context:
-            test_obj =  gostcrypto.gostcipher.GOST34132015('test_algorithm', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
-        self.assertTrue('unsupported algorithm' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_obj =  gostcrypto.gostcipher.GOST34132015('kuznechik', 'test_key', None, pad_mode=None)
+    def test_new_raises(self):
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, 'test_mode')
+        self.assertTrue('unsupported cipher mode' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('test_algorithm', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_ECB)
+        self.assertTrue('unsupported cipher algorithm' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', 'test_key',
+                gostcrypto.gostcipher.MODE_ECB)
         self.assertTrue('invalid key value' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_obj =  gostcrypto.gostcipher.GOST34132015('kuznechik', b'test_key', None, pad_mode=None)
-        self.assertTrue('invalid key size' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_obj =  gostcrypto.gostcipher.GOST34132015('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=None, pad_mode=None)
-        self.assertTrue('invalid IV value' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_CBC, init_vect='test_init_vect')
+        self.assertTrue('invalid initialization vector value' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_CFB, init_vect='test_init_vect')
+        self.assertTrue('invalid initialization vector value' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_OFB, init_vect='test_init_vect')
+        self.assertTrue('invalid initialization vector value' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_CTR, init_vect='test_init_vect')
+        self.assertTrue('invalid initialization vector value' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_ECB, pad_mode='test_pad')
+        self.assertTrue('invalid padding mode' in str(context.exception))
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY,
+                gostcrypto.gostcipher.MODE_CBC, init_vect = self.TEST_INIT_VECT,
+                pad_mode='test_pad')
+        self.assertTrue('invalid padding mode' in str(context.exception))
 
     def test_ecb_encrypt(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_ECB)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_ECB_PAD_1)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB, pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB,
+            pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_ECB_PAD_2)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_SHORT), self.TEST_CIPHER_TEXT_ECB_SHORT)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB, pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported padding mode' in str(context.exception))
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
 
     def test_ecb_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_ECB), self.TEST_PLAIN_TEXT)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_ECB_PAD_1), self.TEST_PLAIN_TEXT_PAD_1)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB, pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB,
+            pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_ECB_PAD_2), self.TEST_PLAIN_TEXT_PAD_2)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_ECB_SHORT), self.TEST_PLAIN_TEXT_SHORT_PAD_1)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB, pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported padding mode' in str(context.exception))
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
 
     def test_ctr_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CTR)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CTR_NO_MUL)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=b'test_iv')
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
 
     def test_ctr_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR), self.TEST_PLAIN_TEXT)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=b'test_iv')
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
-
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
+    
     def test_cbc_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CBC)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CBC_PAD_1)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
-                                             init_vect=self.TEST_INIT_VECT, pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
+            init_vect=self.TEST_INIT_VECT, pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CBC_PAD_2)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT,
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported padding mode' in str(context.exception))
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=b'test_iv',
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
 
     def test_cbc_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC_PAD_1), self.TEST_PLAIN_TEXT_PAD_1)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
-                                             init_vect=self.TEST_INIT_VECT, pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
+            init_vect=self.TEST_INIT_VECT, pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC_PAD_2), self.TEST_PLAIN_TEXT_PAD_2)
         test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
-                                              init_vect=self.TEST_INIT_VECT, pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported padding mode' in str(context.exception))
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=b'test_iv',
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+            init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
 
     def test_cfb_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CFB)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CFB_NO_MUL)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=b'test_iv')
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
 
     def test_cfb_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=b'test_iv')
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
 
     def test_ofb_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_OFB)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_OFB_NO_MUL)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=b'test_iv')
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
 
     def test_ofb_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=b'test_iv')
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('invalid initialization vector size' in str(context.exception))
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
+
 
     def test_mac_calculate(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                             pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
         test_obj.update(self.TEST_PLAIN_TEXT)
-        self.assertEqual(test_obj.digest(test_obj._cipher_obj.block_size), self.TEST_MAC_VALUE)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
+            data=self.TEST_PLAIN_TEXT)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE)
 
     def test_mac_calculate_hex(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                             pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,)
         test_obj.update(self.TEST_PLAIN_TEXT)
-        self.assertEqual(test_obj.hexdigest(test_obj._cipher_obj.block_size), self.TEST_MAC_VALUE.hex())
+        self.assertEqual(test_obj.hexdigest(test_obj.block_size), self.TEST_MAC_VALUE.hex())
 
     def test_mac_calculate_double(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
+        test_obj.update(self.TEST_PLAIN_TEXT)
+        test_obj.update(self.TEST_PLAIN_TEXT)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE_DOUBLE)
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                             pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+            data=self.TEST_PLAIN_TEXT)
         test_obj.update(self.TEST_PLAIN_TEXT)
-        test_obj.update(self.TEST_PLAIN_TEXT)
-        self.assertEqual(test_obj.digest(test_obj._cipher_obj.block_size), self.TEST_MAC_VALUE_DOUBLE)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE_DOUBLE)
 
     def test_mac_calculate_padding(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                             pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
         test_obj.update(self.TEST_PLAIN_TEXT_NO_MUL)
-        self.assertEqual(test_obj.digest(test_obj._cipher_obj.block_size), self.TEST_MAC_VALUE_PAD)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE_PAD)
 
     def test_mac_calculate_raises(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
-        with self.assertRaises(ValueError) as context:
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.update('test_text_mac')
+        self.assertTrue('invalid text data' in str(context.exception))
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
+        with self.assertRaises(GOSTCipherError) as context:
             test_obj.update(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported cipher mode' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_obj.digest(test_obj._cipher_obj.block_size)
-        self.assertTrue('unsupported cipher mode' in str(context.exception))
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
-        with self.assertRaises(ValueError) as context:
-            test_obj.update(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported padding mode' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
-            test_obj.digest(test_obj._cipher_obj.block_size)
-        self.assertTrue('unsupported padding mode' in str(context.exception))
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.update(self.TEST_PLAIN_TEXT)
-            test_obj.digest(test_obj._cipher_obj.block_size + 1)
+            test_obj.digest(test_obj.block_size + 1)
         self.assertTrue('invalid message authentication code size' in str(context.exception))
 
-    def test_decrypt_raises(self):
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.decrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported cipher mode' in str(context.exception))
-
-    def test_encrypt_raises(self):
-        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                              pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-        with self.assertRaises(ValueError) as context:
-            test_obj.encrypt(self.TEST_PLAIN_TEXT)
-        self.assertTrue('unsupported cipher mode' in str(context.exception))
-
     def test_iv(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)
-        self.assertEqual(test_obj.iv, self.TEST_INIT_VECT[len(self.TEST_INIT_VECT) - test_obj._cipher_obj.block_size::])
-
-    def test_iv_raises(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
-        with self.assertRaises(ValueError) as context:
-            test_iv =  test_obj.iv
-        self.assertTrue('ValueError: invalid IV value' in str(context.exception))
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT)
+        self.assertEqual(test_obj.iv, self.TEST_INIT_VECT[len(self.TEST_INIT_VECT) - test_obj.block_size::])
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
+        self.assertEqual(test_obj.iv, self.TEST_INIT_VECT[len(self.TEST_INIT_VECT) - test_obj.block_size::])
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
+        self.assertEqual(test_obj.iv, self.TEST_INIT_VECT[len(self.TEST_INIT_VECT) - test_obj.block_size::])
 
     def test_counter(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
-        test_counter = self.TEST_INIT_VECT_CTR + b'\x00' * (test_obj._cipher_obj.block_size // 2)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
+        test_counter = self.TEST_INIT_VECT_CTR + b'\x00' * (test_obj.block_size // 2)
         test_counter = bytearray(test_counter)
         self.assertEqual(test_obj.counter, test_counter)
 
-    def test_counter_raises(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
-        with self.assertRaises(ValueError) as context:
-            test_counter =  test_obj.counter
-        self.assertTrue('ValueError: invalid counter value' in str(context.exception))
 
+@pytest.mark.cipher
 class TestGOST34132015Magma(unittest.TestCase):
 
     TEST_KEY = bytearray([
@@ -728,76 +746,79 @@ class TestGOST34132015Magma(unittest.TestCase):
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_ECB), self.TEST_PLAIN_TEXT)
 
     def test_ctr_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CTR)
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CTR_NO_MUL)
 
     def test_ctr_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
 
     def test_cbc_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT_CBC)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT_CBC)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CBC)
 
     def test_cbc_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC, init_vect=self.TEST_INIT_VECT_CBC)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            init_vect=self.TEST_INIT_VECT_CBC)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC), self.TEST_PLAIN_TEXT)
 
     def test_cfb_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CFB)
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CFB_NO_MUL)
 
     def test_cfb_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
 
     def test_ofb_encrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_OFB)
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_OFB_NO_MUL)
 
     def test_ofb_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)    
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
 
     def test_mac_calculate(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC,
-                                             pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
         test_obj.update(self.TEST_PLAIN_TEXT)                                             
-        self.assertEqual(test_obj.digest(test_obj._cipher_obj.block_size), self.TEST_MAC_VALUE)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE)
 
     def test_iv(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB, init_vect=self.TEST_INIT_VECT)
-        self.assertEqual(test_obj.iv, self.TEST_INIT_VECT[len(self.TEST_INIT_VECT) - test_obj._cipher_obj.block_size::])
-
-    def test_iv_raises(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
-        with self.assertRaises(ValueError) as context:
-            test_iv =  test_obj.iv
-        self.assertTrue('invalid IV value' in str(context.exception))
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
+            init_vect=self.TEST_INIT_VECT)
+        self.assertEqual(test_obj.iv, self.TEST_INIT_VECT[len(self.TEST_INIT_VECT) - test_obj.block_size::])
 
     def test_counter(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)
-        test_counter = self.TEST_INIT_VECT_CTR + b'\x00' * (test_obj._cipher_obj.block_size // 2)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)
+        test_counter = self.TEST_INIT_VECT_CTR + b'\x00' * (test_obj.block_size // 2)
         test_counter = bytearray(test_counter)
         self.assertEqual(test_obj.counter, test_counter)
-
-    def test_counter_raises(self):
-        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
-        with self.assertRaises(ValueError) as context:
-            test_iv =  test_obj.counter
-        self.assertTrue('invalid counter value' in str(context.exception))
 
 if __name__ == '__main__':
     unittest.main()

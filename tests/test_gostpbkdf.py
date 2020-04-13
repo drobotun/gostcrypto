@@ -1,8 +1,10 @@
 import unittest
 import os
+import pytest
 from unittest import mock
 
 import gostcrypto
+from gostcrypto.gostpbkdf import GOSTPBKDFError
 
 TEST_PASSWORD = b'password'
 TEST_SALT = b'salt'
@@ -13,7 +15,8 @@ TEST_DK_SHOT = bytearray.fromhex('64770af7f748c3b1c9ac831dbcfd85c26111b30a8a657d
 def os_urandom(value):
     return TEST_SALT
 
-class TestHMAC(unittest.TestCase):
+@pytest.mark.pbkdf
+class TestPBKDF(unittest.TestCase):
 
     def test_pbcdf_derive_1(self):
         test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, TEST_SALT, 1)
@@ -35,17 +38,21 @@ class TestHMAC(unittest.TestCase):
 
     def test_pbcdf_derive_raises(self):
         test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, TEST_SALT, 1)
-        with self.assertRaises(ValueError) as context:
-            test_pbkdf.hexderive(((2 ** 32 - 1) * 64) + 1)
-        self.assertTrue('invalid size of the derived key' in str(context.exception))
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(GOSTPBKDFError) as context:
             test_pbkdf.derive(((2 ** 32 - 1) * 64) + 1)
+        self.assertTrue('invalid size of the derived key' in str(context.exception))
+        test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, TEST_SALT, 1)
+        with self.assertRaises(GOSTPBKDFError) as context:
+            test_pbkdf.hexderive(((2 ** 32 - 1) * 64) + 1)
         self.assertTrue('invalid size of the derived key' in str(context.exception))
 
     def test_pbcdf_raises(self):
-        with self.assertRaises(ValueError) as context:
-            test_pbkdf = gostcrypto.gostpbkdf.R5011112016(None, TEST_SALT, 1)
+        with self.assertRaises(GOSTPBKDFError) as context:
+            test_pbkdf = gostcrypto.gostpbkdf.new('test_password', TEST_SALT, 1)
         self.assertTrue('invalid password value' in str(context.exception))
+        with self.assertRaises(GOSTPBKDFError) as context:
+            test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, 'test_salt', 1)
+        self.assertTrue('invalid salt value' in str(context.exception))
 
     def test_pbcdf_salt(self):
         test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, TEST_SALT, 1)
