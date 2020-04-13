@@ -413,7 +413,7 @@ class GOST34122015Magma:
         """
         Encrypting a block of ciphertext.
 
-        Args
+        Args:
         :block: The block of ciphertext to be decrypted (the block size is
         8 bytes).
 
