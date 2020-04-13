@@ -1,4 +1,5 @@
-"""The GOST cryptographic functions.
+"""
+The GOST cryptographic functions.
 
 The package implements various cryptographic functions defined in the State standards
 of the Russian Federation. It includes the following modules:
@@ -15,6 +16,7 @@ in accordance with R 1323565.1.006-2017.
 authentication code in accordance with R 50.1.113-2016.
 - gostpbkdf: The module implements the password-based key derivation function in
 accordance with R 50.1.111-2016.
+
 """
 __title__ = 'gostcrypto'
 __version__ = '1.0.0'

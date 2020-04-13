@@ -388,11 +388,11 @@ class GOST34122015Magma:
         """
         Decrypting a block of plaintext.
 
-        Args
+        Args:
         :block: The block of plaintext to be encrypted (the block size is
         8 bytes).
 
-        Return
+        Return:
         The block of ciphertext.
 
         """
@@ -417,7 +417,7 @@ class GOST34122015Magma:
         :block: The block of ciphertext to be decrypted (the block size is
         8 bytes).
 
-        Return
+        Return:
         The block of plaintext.
 
         """
