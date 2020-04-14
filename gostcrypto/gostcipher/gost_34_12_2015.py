@@ -22,10 +22,10 @@ from gostcrypto.utils import zero_fill
 from gostcrypto.utils import S_BOX
 from gostcrypto.utils import S_BOX_REVERSE
 
-__all__ = [
+__all__ = (
     'GOST34122015Kuznechik',
     'GOST34122015Magma'
-]
+)
 
 _BLOCK_SIZE_KUZNECHIK: int = 16
 _BLOCK_SIZE_MAGMA: int = 8
@@ -179,7 +179,7 @@ class GOST34122015Kuznechik:
     @property
     def block_size(self) -> int:
         """
-        Сontains the internal block size of the encryption algorithm.
+        Return the value of the internal block size of the cipher algorithm.
 
         For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
@@ -189,7 +189,7 @@ class GOST34122015Kuznechik:
     @property
     def key_size(self) -> int:
         """
-        Сontains the value of the cipher key size.
+        Return the value of the cipher key size.
 
         For the 'magma' and 'kuznechik' algorithms, the key size is 32 bytes
         (256 bits).
@@ -375,7 +375,7 @@ class GOST34122015Magma:
     @property
     def block_size(self) -> int:
         """
-        Сontains the internal block size of the encryption algorithm..
+        Return the value of the internal block size of the cipher algorithm.
 
         For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
@@ -385,7 +385,7 @@ class GOST34122015Magma:
     @property
     def key_size(self) -> int:
         """
-        Сontains the value of the cipher key size.
+        Return the value of the cipher key size.
 
         For the 'magma' and 'kuznechik' algorithms, the key size is 32 bytes
         (256 bits).

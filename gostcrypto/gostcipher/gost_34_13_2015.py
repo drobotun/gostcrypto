@@ -27,7 +27,7 @@ from gostcrypto.utils import check_value
 from .gost_34_12_2015 import GOST34122015Kuznechik
 from .gost_34_12_2015 import GOST34122015Magma
 
-__all__ = [
+__all__ = (
     'GOST34132015',
     'new',
     'MODE_ECB',
@@ -39,7 +39,7 @@ __all__ = [
     'PAD_MODE_1',
     'PAD_MODE_2',
     'GOSTCipherError'
-]
+)
 
 MODE_ECB: int = 0x01  #Electronic Codebook mode
 MODE_CBC: int = 0x02  #Cipher Block Chaining mode
@@ -284,7 +284,7 @@ class GOST34132015:
     @property
     def block_size(self) -> int:
         """
-        Сontains the internal block size of the encryption algorithm.
+        Return the value of the internal block size of the cipher algorithm..
 
         For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
@@ -466,7 +466,7 @@ class GOST34132015cbc(GOST34132015):
     #pylint: disable=invalid-name
     @property
     def iv(self) -> bytearray:
-        """Contains an initializing vector."""
+        """Return the value of the initializing vector."""
         return self._init_vect[len(self._init_vect) - self.block_size::]
     #pylint: enable=invalid-name
 
@@ -572,7 +572,7 @@ class GOST34132015cfb(GOST34132015):
     #pylint: disable=invalid-name
     @property
     def iv(self) -> bytearray:
-        """Contains an initializing vector."""
+        """Return the value of the initializing vector."""
         return self._init_vect[len(self._init_vect) - self.block_size::]
     #pylint: enable=invalid-name
 
@@ -681,7 +681,7 @@ class GOST34132015ofb(GOST34132015):
     #pylint: disable=invalid-name
     @property
     def iv(self) -> bytearray:
-        """Contains an initializing vector."""
+        """Return the value of the initializing vector."""
         return self._init_vect[len(self._init_vect) - self.block_size::]
     #pylint: enable=invalid-name
 
@@ -723,7 +723,7 @@ class GOST34132015ctr(GOST34132015):
 
     @property
     def counter(self) -> bytearray:
-        """Contains counter blocks."""
+        """Return the value of the block counter."""
         return self._counter
 
     def encrypt(self, data: bytearray) -> bytearray:
