@@ -60,5 +60,5 @@ class TestPBKDF(unittest.TestCase):
 
     def test_pbkdf_urandom(self):
         with mock.patch('os.urandom', os_urandom):
-            test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, None, 1)
+            test_pbkdf = gostcrypto.gostpbkdf.new(TEST_PASSWORD, b'', 1)
         self.assertEqual(test_pbkdf.derive(32), TEST_DK_SHOT)
