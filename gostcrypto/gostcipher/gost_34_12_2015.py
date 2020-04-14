@@ -59,15 +59,16 @@ class GOST34122015Kuznechik:
     Class that implements the 'kuznechik' block encryption algorithm.
 
     Methods
-        - decrypt(): decrypting a block of ciphertext.
-        - encrypt(): encrypting a block of plaintext.
-        - clear(): Сlearing the values of iterative encryption keys.
+    - decrypt(): decrypting a block of ciphertext.
+    - encrypt(): encrypting a block of plaintext.
+    - clear(): Сlearing the values of iterative encryption keys.
 
     Attributes
-        - block_size: an integer value the internal block size of the cipher
-          algorithm in bytes.
-        - key_size: an integer value the cipher key size.
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    - key_size: an integer value the cipher key size.
     """
+
     def __init__(self, key: bytearray):
         """
         Initialize the ciphering object.
@@ -176,7 +177,7 @@ class GOST34122015Kuznechik:
     @property
     def block_size(self) -> int:
         """
-        An integer value the internal block size of the cipher algorithm.
+        Сontains the internal block size of the encryption algorithm.
 
         For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
@@ -185,7 +186,7 @@ class GOST34122015Kuznechik:
 
     @property
     def key_size(self) -> int:
-        """An integer value the cipher key size.
+        """Сontains the value of the cipher key size.
 
         For the 'magma' and 'kuznechik' algorithms, the key size is 32 bytes
         (256 bits).
@@ -249,6 +250,7 @@ class GOST34122015Magma:
     - key_size: an integer value the cipher key size.
 
     """
+
     def __init__(self, key: bytearray):
         """
         Initialize the ciphering object.
@@ -316,7 +318,6 @@ class GOST34122015Magma:
 
     @staticmethod
     def _cipher_g(cipher_k: bytearray, cipher_a: bytearray) -> bytearray:
-        """The g-transformation function."""
         cipher_k = bytearray(cipher_k)
         cipher_a = bytearray(cipher_a)
         internal = bytearray(4)
@@ -371,7 +372,7 @@ class GOST34122015Magma:
     @property
     def block_size(self) -> int:
         """
-        An integer value the internal block size of the cipher algorithm.
+        Сontains the internal block size of the encryption algorithm..
 
         For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
@@ -380,7 +381,8 @@ class GOST34122015Magma:
 
     @property
     def key_size(self) -> int:
-        """An integer value the cipher key size.
+        """
+        Сontains the value of the cipher key size.
 
         For the 'magma' and 'kuznechik' algorithms, the key size is 32 bytes
         (256 bits).
