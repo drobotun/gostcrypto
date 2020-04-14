@@ -150,7 +150,8 @@ class R5011132016:
         return result
 
     def hexdigest(self) -> str:
-        """Return the HMAC message authentication code.
+        """
+        Return the HMAC message authentication code.
 
         This method is called after calling the 'update ()' method.
 
@@ -159,7 +160,8 @@ class R5011132016:
         return self.digest().hex()
 
     def copy(self) -> 'R5011132016':
-        """Return a duplicate (“clone”) of the HMAC object.
+        """
+        Return a duplicate (“clone”) of the HMAC object.
 
         This can be used to efficiently compute the digests of data sharing
         a common initial substring.
