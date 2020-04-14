@@ -1,4 +1,7 @@
-"""The module that implements auxiliary functions for the operation of the
+"""
+General features of the ghostcrypto package.
+
+The module that implements auxiliary functions for the operation of the
 GOSTcrypto module.
 """
 

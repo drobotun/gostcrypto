@@ -1,21 +1,28 @@
-"""The module that implements auxiliary functions for the operation of the
-GOSTcrypto module.
+#The GOST cryptographic functions.
+#
+#Author: Evgeny Drobotun (c) 2020
+#License: MIT
 
-Author: Evgeny Drobotun (c) 2020
-License: MIT
+"""
+General features of the ghostcrypto package.
+
+The module that implements auxiliary functions for the operation of the
+GOSTcrypto module.
 """
 
 
-def check_value(value, size_value):
-    """Checking the correctness of the variable (belonging to a byte object and matching
-    the size).
+def check_value(value: bytearray, size_value: int) -> bool:
+    """
+    Check the correctness of the variable.
+    
+    This function checks the type ('bytes' or 'bytearray') and whether
+    the size of the 'value' variable matches the 'size_value' value.
 
-    Args:
-    :value: The variable that you want to check.
-    :saize_value: The required size of the variable.
+    Parameters
+    - value: the variable that you want to check.
+    - saize_value: the required size of the variable.
 
-    Return:
-    Check result.
+    Return: check result.
     """
     result = True
     if (not isinstance(value, (bytes, bytearray))) or len(value) != size_value:
@@ -23,24 +30,26 @@ def check_value(value, size_value):
     return result
 
 
-def msb(value):
-    """Returns the value of the highest digit of the number 'value'.
+def msb(value: bytearray) -> int:
+    """
+    Return the value of the highest digit of the number 'value'.
 
-    Args:
-    :value: The number for which you want to determine the value of the high order.
+    Parameters
+    - value: the number for which you want to determine the value of the
+    high order.
     """
     return value[-1] & 0x80
 
 
-def add_xor(op_a, op_b):
-    """Byte-by-byte 'xor' operation for byte objects.
+def add_xor(op_a: bytearray, op_b: bytearray) -> bytearray:
+    """
+    Byte-by-byte 'xor' operation for byte objects.
 
-    Args:
-    :op_a: The first operand.
-    :op_b: The second operand.
+    Parameters
+    - op_a: the first operand.
+    - op_b: the second operand.
 
-    Return:
-    Result of the byte-by-byte 'xor' operation.
+    Return: result of the byte-by-byte 'xor' operation.
     """
     op_a = bytearray(op_a)
     op_b = bytearray(op_b)
@@ -51,57 +60,61 @@ def add_xor(op_a, op_b):
     return result
 
 
-def zero_fill(value):
-    """Zeroing byte objects.
-
-    Args:
-    :value: The byte object that you want to reset.
-
-    Return:
-    Reset value.
+def zero_fill(value: bytearray) -> bytearray:
     """
-    result = None
+    Zeroing byte objects.
+
+    Parameters
+    - value: the byte object that you want to reset.
+
+    Return: reset value.
+    """
+    result = b''
     if isinstance(value, (bytes, bytearray)):
         result = b'/x00' * len(value)
+        result = bytearray(result)
     return result
 
 
-def bytearray_to_int(value):
-    """Converting a 'bytearray' object to a long integer.
+def bytearray_to_int(value: bytearray) -> int:
+    """
+    Convert a 'bytearray' object to a long integer.
 
-    Args:
-    :value: The 'bytearray' object to convert.
+    Parameters
+    - value: the 'bytearray' object to convert.
 
-    Return:
-    Long integer value from 'bytearray' object.
+    Return: long integer value from 'bytearray' object.
     """
     return int.from_bytes(value, byteorder='big')
 
 
-def int_to_bytearray(value, num_byte):
-    """Converting a long integer to a 'bytearray' object.
+def int_to_bytearray(value: int, num_byte: int) -> bytearray:
+    """
+    Convert a long integer to a 'bytearray' object.
 
-    Args:
-    :value: The long integer value to convert.
-    :num_byte: Number of bytes in the 'bytearray'object.
+    Parameters
+    - value: the long integer value to convert.
+    - num_byte: number of bytes in the 'bytearray' object.
 
-    Return:
-    'bytearray' object from long integer value.
+    Return: 'bytearray' object from long integer value.
     """
     return bytearray(
         [(value & (0xff << pos * 8)) >> pos * 8 for pos in range(num_byte - 1, -1, -1)]
     )
 
 
-def compare(op_a, op_b):
-    """Comparing two byte arrays (function is performed in a constant time).
+def compare(op_a: bytearray, op_b: bytearray) -> bool:
+    """
+    Compare two byte arrays.
 
-    Args:
-    :op_a: First array to compare.
-    :op_b: Second array to compare.
+    This function, in contrast to the simple comparison operation '==', is
+    performed in constant time to prevent timing attacks.
 
-    Return:
-    Сomparison result (boolean).
+    Parameters
+    - op_a: first array to compare.
+    - op_b: second array to compare.
+
+    Return: comparison result (boolean).
     """
     op_a = bytearray(op_a)
     op_b = bytearray(op_b)
@@ -115,13 +128,15 @@ def compare(op_a, op_b):
 
 
 def compare_to_zero(value):
-    """Comparing byte array with zero (function is performed in a constant time).
+    """Compare byte array with zero.
 
-    Args:
-    :value: Aarray to compare.
+    This function, in contrast to the simple comparison operation '==', is
+    performed in constant time to prevent timing attacks.
 
-    Return:
-    Comparison result (boolean).
+    Parameters
+    - value: array to compare.
+
+    Return: comparison result (boolean).
     """
     value = bytearray(value)
     res_check = 0

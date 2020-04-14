@@ -1,12 +1,16 @@
-"""The module defines the 's box' values for nonlinear bijective transformation.
-   These values are used in the hash sum calculation algorithm of GOST 34.11 - 2012
-   and in the encryption algorithm' kuznechik ' of GOST 34.12 - 2015.
+"""
+The module defines the 's box' values for S-transformation.
+
+These values are used in the hash sum calculation algorithm of GOST 34.11-2012
+and in the "kuznechik" encryption algorithm of GOST 34.12-2015 to implement a
+nonlinear bijectvny transformation.
 """
 
-__all__ = ['S_BOX', 'S_BOX_REVERSE']
+__all__ = (
+    'S_BOX',
+    'S_BOX_REVERSE'
+)
 
-#S-BOX for hashing algorithm according to GOST 34.11-2012 and
-#encryption algorithm ' Kuznechik'according to GOST 34.12-2015
 S_BOX = bytearray([
     0xfc, 0xee, 0xdd, 0x11, 0xcf, 0x6e, 0x31, 0x16,
     0xfb, 0xc4, 0xfa, 0xda, 0x23, 0xc5, 0x04, 0x4d,
@@ -42,8 +46,6 @@ S_BOX = bytearray([
     0xd1, 0x66, 0xaf, 0xc2, 0x39, 0x4b, 0x63, 0xb6,
 ])
 
-#Reverse representation of S-BOX for the 'Kuznechik' encryption
-#algorithm according to GOST 34.12-2015
 S_BOX_REVERSE = bytearray([
     0xa5, 0x2d, 0x32, 0x8f, 0x0e, 0x30, 0x38, 0xc0,
     0x54, 0xe6, 0x9e, 0x39, 0x55, 0x7e, 0x52, 0x91,
