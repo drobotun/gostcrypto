@@ -186,7 +186,8 @@ class GOST34122015Kuznechik:
 
     @property
     def key_size(self) -> int:
-        """Сontains the value of the cipher key size.
+        """
+        Сontains the value of the cipher key size.
 
         For the 'magma' and 'kuznechik' algorithms, the key size is 32 bytes
         (256 bits).
