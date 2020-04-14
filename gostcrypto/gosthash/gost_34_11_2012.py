@@ -252,7 +252,7 @@ class GOST34112012:
         self._hash_sigma = bytearray(_BLOCK_SIZE)
         if self._name == 'streebog256':
             self._hash_h = bytearray(_BLOCK_SIZE * b'\x01')
-        if data == bytearray(b''):
+        if data != bytearray(b''):
             self.update(data)
 
     @staticmethod
@@ -291,7 +291,7 @@ class GOST34112012:
                     result_64 = result_64 ^ _A[j]
                 internal = internal >> 1
             result.append(pack('<Q', result_64))
-        return bytearray(b''.join(result))
+        return b''.join(result)
 
     def _hash_get_key(self, k: bytearray, i: int) -> bytearray:
         key = bytearray(_BLOCK_SIZE)
