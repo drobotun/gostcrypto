@@ -1,5 +1,8 @@
-"""The module implementing the calculating the HMAC message authentication code in
-accordance with R 50.1.113-2016.
+"""
+The GOST hash-based message authentication code functions.
+
+The module implementing the calculating the HMAC message authentication code
+in accordance with R 50.1.113-2016.
 """
 
 __title__ = 'gosthmac'

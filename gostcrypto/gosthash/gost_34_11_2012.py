@@ -9,7 +9,7 @@ The GOST hashing functions.
 The module that implements the 'Streebog' hash calculation algorithm
 in accordance with GOST 34.11-2012 with a hash size of 512 bits and
 256 bits.  The module includes the GOST34112012 class, the GOSTHashError
-class and several General functions.
+class and several general functions.
 """
 from copy import deepcopy
 from struct import pack
@@ -24,10 +24,10 @@ __all__ = (
     'GOSTHashError'
 )
 
-_BLOCK_SIZE = 64
+_BLOCK_SIZE: int = 64
 
-_V_0 = bytearray(_BLOCK_SIZE)
-_V_512 = bytearray([
+_V_0: bytearray = bytearray(_BLOCK_SIZE)
+_V_512: bytearray = bytearray([
     0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -38,7 +38,7 @@ _V_512 = bytearray([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 ])
 
-_TAU = (
+_TAU: tuple = (
     0, 8, 16, 24, 32, 40, 48, 56,
     1, 9, 17, 25, 33, 41, 49, 57,
     2, 10, 18, 26, 34, 42, 50, 58,
@@ -49,7 +49,7 @@ _TAU = (
     7, 15, 23, 31, 39, 47, 55, 63,
 )
 
-_A = (
+_A: tuple = (
     0x8e20faa72ba0b470, 0x47107ddd9b505a38,
     0xad08b0e0c3282d1c, 0xd8045870ef14980e,
     0x6c022c38f90a4c07, 0x3601161cf205268d,
@@ -84,7 +84,7 @@ _A = (
     0xc83862965601dd1b, 0x641c314b2b8ee083,
 )
 
-_C = [bytearray([
+_C: list = [bytearray([
     0x07, 0x45, 0xa6, 0xf2, 0x59, 0x65, 0x80, 0xdd,
     0x23, 0x4d, 0x74, 0xcc, 0x36, 0x74, 0x76, 0x05,
     0x15, 0xd3, 0x60, 0xa4, 0x08, 0x2a, 0x42, 0xa2,
@@ -228,10 +228,10 @@ class GOST34112012:
     Methods
     - update(): update the hash object with the bytes-like object.
     - copy(): returns a copy ('clone') of the hash object.
-    - digest(): returns the digest of the data passed to the 'update()' method so
-    far.
-    - hexdigest(): returns a digest of the hexadecimal data passed so far to the
-    'update()' method.
+    - digest(): returns the digest of the data passed to the 'update()' method
+    so far.
+    - hexdigest(): returns a digest of the hexadecimal data passed so far to
+    the 'update()' method.
     - reset(): resets the values of all class attributes.
 
     Attributes
@@ -291,7 +291,7 @@ class GOST34112012:
                     result_64 = result_64 ^ _A[j]
                 internal = internal >> 1
             result.append(pack('<Q', result_64))
-        return b''.join(result)
+        return bytearray(b''.join(result))
 
     def _hash_get_key(self, k: bytearray, i: int) -> bytearray:
         key = bytearray(_BLOCK_SIZE)

@@ -7,7 +7,8 @@
 The GOST digital signature functions.
 
 The module that implements processes for creating and verifying an electronic
-digital signature according to GOST 34.10-2012.
+digital signature according to GOST 34.10-2012.  The module includes the
+GOST34102012 class, the GOSTSignatureError class and several general functions.
 """
 import os
 from typing import Any, Tuple
@@ -30,7 +31,7 @@ __all__ = (
     'CURVES_R_1323565_1_024_2019'
 )
 
-CURVES_R_1323565_1_024_2019 = {
+CURVES_R_1323565_1_024_2019: dict = {
     'id-tc26-gost-3410-2012-256-paramSetB': dict(
         p=bytearray_to_int(bytearray([
             0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,

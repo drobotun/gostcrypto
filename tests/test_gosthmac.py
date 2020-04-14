@@ -40,10 +40,10 @@ class TestHMAC(unittest.TestCase):
         self.assertEqual(test_hmac_copy.hexdigest(), TEST_HMAC_512.hex())
 
     def test_name(self):
-        test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_512', TEST_KEY)
-        self.assertEqual(test_hmac.name, 'HMAC_GOSTR3411_2012_512')
-        test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', TEST_KEY)
-        self.assertEqual(test_hmac.name, 'HMAC_GOSTR3411_2012_256')
+        test_hmac_512 = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_512', TEST_KEY)
+        self.assertEqual(test_hmac_512.name, 'HMAC_GOSTR3411_2012_512')
+        test_hmac_256 = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', TEST_KEY)
+        self.assertEqual(test_hmac_256.name, 'HMAC_GOSTR3411_2012_256')
 
     def test_digest_size(self):
         test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_512', TEST_KEY)
@@ -60,6 +60,12 @@ class TestHMAC(unittest.TestCase):
         with self.assertRaises(GOSTHMACError) as context:
             test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_512', TEST_KEY + add)
         self.assertTrue('invalid key value' in str(context.exception))
+
+    def test_data_value_raises(self):
+        test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_512', TEST_KEY)
+        with self.assertRaises(GOSTHMACError) as context:
+            test_hmac.update('test_data')
+        self.assertTrue('invalid data value' in str(context.exception))
 
     def test_key_512(self):
         add = bytearray(32)
