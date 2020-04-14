@@ -1,7 +1,8 @@
-"""The GOST cryptographic functions.
+"""
+The GOST cryptographic functions.
 
 The package implements various cryptographic functions defined in the State standards
-of the Russian Federation. It includes the following modules:
+of the Russian Federation.  It includes the following modules:
 
 - gosthash: The module implements functions for calculating hash amounts in accordance
 with GOST R 34.11-2012.
@@ -22,7 +23,6 @@ __author__ = 'Evgeny Drobotun'
 __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'
 __copyright__ = 'Copyright (C) 2020 Evgeny Drobotun'
-
 
 from gostcrypto import gosthash
 from gostcrypto import gostcipher

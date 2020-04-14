@@ -15,6 +15,8 @@ encryption and decryption procedures for the 'magma'algorithm.
 
 from struct import pack
 
+from typing import List
+
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import zero_fill
 from gostcrypto.utils import S_BOX
@@ -76,7 +78,7 @@ class GOST34122015Kuznechik:
         Parameters
         - key: cipher key.
         """
-        self._cipher_c = []
+        self._cipher_c: List[bytearray] = []
         self._cipher_iter_key = []
         self._cipher_get_c()
         key_1 = key[:_KEY_SIZE // 2]
@@ -120,7 +122,7 @@ class GOST34122015Kuznechik:
         return result
 
     @staticmethod
-    def _cipher_gf(op_a: bytearray, op_b: bytearray) -> bytearray:
+    def _cipher_gf(op_a: int, op_b: int) -> int:
         result = 0
         for _ in range(8):
             if op_b & 1:
@@ -259,7 +261,7 @@ class GOST34122015Magma:
         Parameters
         - key: Cipher key.
         """
-        self._cipher_iter_key = []
+        self._cipher_iter_key: List[bytearray] = []
         self._expand_iter_key(key)
         self._expand_iter_key(key)
         self._expand_iter_key(key)
@@ -332,7 +334,7 @@ class GOST34122015Magma:
         result_32 = (result_32 << 8) + internal[3]
         result_32 = (result_32 << 11) | (result_32 >> 21)
         result_32 = result_32 & 0xffffffff
-        result = pack('>I', result_32)
+        result = bytearray(pack('>I', result_32))
         return result
 
     @staticmethod

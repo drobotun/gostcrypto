@@ -1,10 +1,35 @@
-"""The module that implements various block encryption modes (ECB, CBC, CFB, OFB, CTR and
-MAC according to GOST 34.13-2015.
+#The GOST cryptographic functions.
+#
+#Author: Evgeny Drobotun (c) 2020
+#License: MIT
 
-Author: Evgeny Drobotun (c) 2020
-License: MIT
 """
+Block cipher modes according to GOST 34.13-2015.
+
+The module implements the modes of operation of block encryption algorithms
+"magma" and "kuznechik", described in GOST 34.13-2015.  The module includes
+the base class GOST3413205, GOST3413205ecb, GOST3413205cbc, GOST3413205cfb,
+GOST3413205ofb and GOST3413205ctr.  In addition the module includes the
+GOSTCipherError class and several General functions.
+"""
+
 from copy import deepcopy
+
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Text,
+    Tuple,
+    TypeVar,
+    Union,
+    Set,
+    Iterable,
+    Sequence,
+)
 
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import int_to_bytearray
@@ -62,14 +87,24 @@ _B_128 = bytearray([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x87,
 ])
 
+CipherObjType = Union[
+    'GOST34132015',
+    'GOST34132015ecb',
+    'GOST34132015cbc',
+    'GOST34132015cfb',
+    'GOST34132015ofb',
+    'GOST34132015ctr',
+    'GOST34132015mac'
+]
 
-def get_num_block(data, block_size):
-    """Returns the number of blocks in the data."""
+
+def get_num_block(data: bytearray, block_size: int) -> int:
+    """Return the number of blocks in the data."""
     return len(data) // block_size
 
 
-def get_pad_size(data, block_size):
-    """Returns the padding size."""
+def get_pad_size(data: bytearray, block_size: int) -> int:
+    """Return the padding size."""
     if len(data) < block_size:
         result = block_size - len(data)
     elif len(data) % block_size == 0:
@@ -79,22 +114,30 @@ def get_pad_size(data, block_size):
     return result
 
 
-def set_pad_mode_1(data, block_size):
-    """Setting of padding MODE_PAD_1. For MODE_ECB or MODE_CBC mode
-    only.
+def set_pad_mode_1(data: bytearray, block_size: int) -> bytearray:
+    """
+    Set padding MODE_PAD_1 mode.
+
+    For MODE_ECB or MODE_CBC mode only.
     """
     return data + b'\x00' * get_pad_size(data, block_size)
 
 
-def set_pad_mode_2(data, block_size):
-    """Setting of padding MODE_PAD_2. For MODE_ECB or MODE_CBC mode
-    only.
+def set_pad_mode_2(data: bytearray, block_size: int) -> bytearray:
+    """
+    Set padding MODE_PAD_2 mode.
+
+    For MODE_ECB or MODE_CBC mode only.
     """
     return data + b'\x80' + b'\x00' * (block_size + get_pad_size(data, block_size) - 1)
 
 
-def set_pad_mode_3(data, block_size):
-    """Setting of padding MODE_PAD_3. For MODE_MAC mode only."""
+def set_pad_mode_3(data: bytearray, block_size: int) -> bytearray:
+    """
+    Set padding MODE_PAD_3 mode.
+
+    For MODE_MAC mode only.
+    """
     if get_pad_size(data, block_size) == 0:
         result = data
     else:
@@ -102,9 +145,11 @@ def set_pad_mode_3(data, block_size):
     return result
 
 
-def set_padding(data, block_size, pad_mode):
-    """Selecting and setting padding. For MODE_ECB or MODE_CBC mode
-    only.
+def set_padding(data: bytearray, block_size: int, pad_mode: int) -> bytearray:
+    """
+    Select and set padding.
+
+    For MODE_ECB or MODE_CBC mode only.
     """
     result = data
     if pad_mode == PAD_MODE_1:
@@ -114,69 +159,78 @@ def set_padding(data, block_size, pad_mode):
     return result
 
 
-def check_init_vect_value(init_vect, size_block):
-    """Checking the value of the initialization vector in CBC, CFB
-    or OFB mode.
+def check_init_vect_value(init_vect: bytearray, block_size: int) -> bool:
+    """
+    Check the value of the initialization vector.
+
+    It checks the type ('bytes' or 'bytearray') and matches the size (the size
+    must be a multiple of the block size).  For MODE_CBC, MODE_CFB or MODE_OFB
+    mode.
     """
     result = True
-    if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) % size_block != 0:
+    if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) % block_size != 0:
         result = False
     return result
 
 
-def check_init_vect_value_ctr(init_vect, size_block):
-    """Checking the value of the initialization vector in CTR mode."""
+def check_init_vect_value_ctr(init_vect: bytearray, block_size: int) -> bool:
+    """
+    Check the value of the initialization vector in MODE_CTR mode.
+
+    It checks the type ('bytes' or 'bytearray') and matches the size (the size
+    must be equal to half the block size).
+    """
     result = True
-    if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) != size_block // 2:
+    if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) != block_size // 2:
         result = False
     return result
 
 
-def new(algorithm, key, mode, **kwargs):
-    """Creates a new ciphering object and returns it.
+def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
+    """
+    Create a new ciphering object and returns it.
 
-    Args:
-    :algorithm: The string with the name of the ciphering algorithm of the
+    Parameters
+    - algorithm: the string with the name of the ciphering algorithm of the
     GOST R 34.12-201 ('kuznechik' with block size 128 bit or 'magma' with
     block size 64 bit).
-    :key: Byte object with 256-bit encryption key.
-    :mode: Mode of operation of the block encryption algorithm (valid value:
+    - key: byte object with 256-bit encryption key.
+    - mode: mode of operation of the block encryption algorithm (valid value:
     MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB,MODE_OFB or MODE_MAC).
 
-    Keyword args:
-    :init_vect: Byte object with initialization vector. Used in MODE_CTR,
-    MODE_OFB, MODE_CBC and MODE_CFB modes. For MODE_CTR mode, the
+    Keyword args
+    - init_vect: byte object with initialization vector.  Used in MODE_CTR,
+    MODE_OFB, MODE_CBC and MODE_CFB modes.  For MODE_CTR mode, the
     initialization vector length is equal to half the block size (default
-    value iz '_DEFAULT_IV_CTR'). For MODE_CBC, MODE_OFB and MODE_CFB modes,
+    value iz '_DEFAULT_IV_CTR').  For MODE_CBC, MODE_OFB and MODE_CFB modes,
     it is a multiple of the block size (default value iz '_DEFAULT_IV').
-    :data: The data from which to get the MAC (as a byte object). For MODE_MAC
-    mode only. If this argument is passed to a function, you can immediately
+    - data: the data from which to get the MAC (as a byte object).  For MODE_MAC
+    mode only.  If this argument is passed to a function, you can immediately
     use the 'digest' (or 'hexdigest') method to calculate the MAC value after
-    calling 'new'. If the argument is not passed to the function, then you
+    calling 'new'.  If the argument is not passed to the function, then you
     must use the 'update(data)' method before the 'digest' (or 'hexdigest')
     method.
-    :pad_mode: Padding mode for ECB or CBC (the default value is PAD_MODE_1).
+    - pad_mode: padding mode for ECB or CBC (the default value is PAD_MODE_1).
 
-    Return:
-    New ciphering object.
+    Return: new ciphering object.
 
-    Exception:
-    - GOSTCipherError('unsupported cipher mode') - in case of unsupported
+    Exception
+    - GOSTCipherError('unsupported cipher mode'): in case of unsupported
     cipher mode (is not MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB, MODE_CTR
     or MODE_MAC).
-    - GOSTCipherError('unsupported cipher algorithm') - in case of invalid
+    - GOSTCipherError('unsupported cipher algorithm'): in case of invalid
     value 'algorithm'.
-    - GOSTCipherError('invalid key value') - in case of invalid 'key' value
+    - GOSTCipherError('invalid key value'): in case of invalid 'key' value
     (the key value is not a byte object ('bytearray' or 'bytes') or its
     length is not 256 bits).
-    - GOSTCipherError('invalid padding mode') - in case padding mode is
+    - GOSTCipherError('invalid padding mode'): in case padding mode is
     incorrect (for MODE_ECB and MODE_CBC modes).
-    - GOSTCipherError('invalid initialization vector value') - in case
+    - GOSTCipherError('invalid initialization vector value'): in case
     initialization vector value is incorrect (for all modes except ECB mode).
-    - GOSTCipherError('invalid text data') - in case where the text data
+    - GOSTCipherError('invalid text data'): in case where the text data
     is not byte object (for MODE_MAC mode).
     """
-    result = None
+    result: Any = GOST34132015
     if mode == MODE_ECB:
         pad_mode = kwargs.get('pad_mode', PAD_MODE_1)
         result = GOST34132015ecb(algorithm, key, pad_mode)
@@ -203,19 +257,19 @@ def new(algorithm, key, mode, **kwargs):
 
 
 class GOST34132015:
-    """Base class of the cipher object.
+    """
+    Base class of the cipher object.
 
-    Methods:
-    :clear(): Сlearing the values of iterative cipher keys.
+    Methods
+    - clear(): clearing the values of iterative cipher keys.
 
-    Attributes:
-    :block_size: An integer value the internal block size of the cipher
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
-    def __init__(self, algorithm, key):
-        """Initialize the ciphering object.
-        """
+    def __init__(self, algorithm: str, key: bytearray) -> None:
+        """Initialize the ciphering object."""
         if algorithm not in ('magma', 'kuznechik'):
             key = zero_fill(key)
             raise GOSTCipherError('unsupported cipher algorithm')
@@ -227,40 +281,46 @@ class GOST34132015:
         elif algorithm == 'magma':
             self._cipher_obj = GOST34122015Magma(key)
 
-    def __del__(self):
-        """Delete the ciphering object."""
+    def __del__(self) -> None:
+        """
+        Delete the ciphering object.
+
+        When deleting an instance of a class, it clears the values of
+        iterative keys.
+        """
         self.clear()
 
-    def clear(self):
+    def clear(self) -> None:
         """Сlearing the values of iterative encryption keys."""
         if hasattr(self, '_cipher_obj'):
             self._cipher_obj.clear()
 
     @property
-    def block_size(self):
-        """An integer value the internal block size of the cipher algorithm
-        in bytes.
+    def block_size(self) -> int:
+        """
+        Сontains the internal block size of the encryption algorithm.
 
-        For the 'Kuznechik' algorithm this value is 16 and the 'Magma'
+        For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
         """
         return self._cipher_obj.block_size
 
 
 class GOST34132015ecb(GOST34132015):
-    """The class that implements ECB mode of block encryption in accordance
-    with GOST 34.13-2015.
+    """
+    The class that implements ECB mode of block encryption.
 
-    Methods:
-    :decrypt(): Decrypting a ciphertext.
-    :encrypt(): Encrypting a plaintext.
+    Methods
+    - decrypt(): decrypting a ciphertext.
+    - encrypt(): encrypting a plaintext.
+    - clear(): clearing the values of iterative cipher keys.
 
-    Attributes:
-    :block_size: An integer value the internal block size of the cipher
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
-    def __init__(self, algorithm, key, pad_mode):
+    def __init__(self, algorithm: str, key: bytearray, pad_mode: int) -> None:
         """Initialize the ciphering object in ECB mode."""
         super().__init__(algorithm, key)
         if pad_mode not in (PAD_MODE_1, PAD_MODE_2):
@@ -268,17 +328,17 @@ class GOST34132015ecb(GOST34132015):
             raise GOSTCipherError('invalid padding mode')
         self._pad_mode = pad_mode
 
-    def encrypt(self, data):
-        """Plaintext encryption in ECB mode.
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption in ECB mode.
 
-        Args:
-        :data: Plaintext data to be encrypted (as a byte object).
+        Parameters
+        - data: plaintext data to be encrypted (as a byte object).
 
-        Return:
-        Ciphertext data (as a byte object).
+        Return: ciphertext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid plaintext data') - in case where the
+        Exception
+        - GOSTCipherError('invalid plaintext data'): in case where the
         plaintext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -294,17 +354,17 @@ class GOST34132015ecb(GOST34132015):
             )
         return result
 
-    def decrypt(self, data):
-        """Ciphertext decryption in ECB mode.
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption in ECB mode.
 
-        Args:
-        :data: Ciphertext data to be decrypted (as a byte object).
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
 
-        Return:
-        Plaintext data (as a byte object).
+        Return: plaintext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid ciphertext data') - in case where the
+        Exception
+        - GOSTCipherError('invalid ciphertext data'): in case where the
         ciphertext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -321,19 +381,22 @@ class GOST34132015ecb(GOST34132015):
 
 
 class GOST34132015cbc(GOST34132015):
-    """The class that implements CBC mode of block encryption in accordance
-    with GOST 34.13-2015.
+    """
+    The class that implements CBC mode of block encryption.
 
-    Methods:
-    :decrypt(): Decrypting a ciphertext.
-    :encrypt(): Encrypting a plaintext.
+    Methods
+    - decrypt(): decrypting a ciphertext.
+    - encrypt(): encrypting a plaintext.
+    - clear(): clearing the values of iterative cipher keys.
 
-    Attributes:
-    :iv:  The initial value which will be used to start a cipher feedback
-    mode.
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    - iv: the initial value.
     """
 
-    def __init__(self, algorithm, key, init_vect, pad_mode):
+    def __init__(self, algorithm: str, key: bytearray,
+                 init_vect: bytearray, pad_mode: int) -> None:
         """Initialize the ciphering object in CBC mode."""
         super().__init__(algorithm, key)
         if pad_mode not in (PAD_MODE_1, PAD_MODE_2):
@@ -346,17 +409,17 @@ class GOST34132015cbc(GOST34132015):
         self._init_vect = init_vect
         self._init_vect = bytearray(self._init_vect)
 
-    def encrypt(self, data):
-        """Plaintext encryption in CBC mode.
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption in CBC mode.
 
-        Args:
-        :data: Plaintext data to be encrypted (as a byte object).
+        Parameters
+        - data: plaintext data to be encrypted (as a byte object).
 
-        Return:
-        Ciphertext data (as a byte object).
+        Return: ciphertext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid plaintext data') - in case where the
+        Exception
+        - GOSTCipherError('invalid plaintext data'): in case where the
         plaintext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -382,17 +445,17 @@ class GOST34132015cbc(GOST34132015):
             )
         return result
 
-    def decrypt(self, data):
-        """Ciphertext decryption in CBC mode.
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption in CBC mode.
 
-        Args:
-        :data: Ciphertext data to be decrypted (as a byte object).
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
 
-        Return:
-        Plaintext data (as a byte object).
+        Return: plaintext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid ciphertext data') - in case where the
+        Exception
+        - GOSTCipherError('invalid ciphertext data'): in case where the
         ciphertext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -416,28 +479,28 @@ class GOST34132015cbc(GOST34132015):
 
     #pylint: disable=invalid-name
     @property
-    def iv(self):
-        """Contains the initial value which will be used to start a cipher
-        feedback mode.
-        """
+    def iv(self) -> bytearray:
+        """Contains an initializing vector."""
         return self._init_vect[len(self._init_vect) - self.block_size::]
     #pylint: enable=invalid-name
 
 
 class GOST34132015cfb(GOST34132015):
-    """The class that implements CFB mode of block encryption in accordance
-    with GOST 34.13-2015.
+    """
+    The class that implements CFB mode of block encryption.
 
-    Methods:
-    :decrypt(): Decrypting a ciphertext.
-    :encrypt(): Encrypting a plaintext.
+    Methods
+    - decrypt(): decrypting a ciphertext.
+    - encrypt(): encrypting a plaintext.
+    - clear(): clearing the values of iterative cipher keys.
 
-    Attributes:
-    :iv:  The initial value which will be used to start a cipher feedback
-    mode.
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    - iv: the initial value.
     """
 
-    def __init__(self, algorithm, key, init_vect):
+    def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """Initialize the ciphering object in CFB mode."""
         super().__init__(algorithm, key)
         if not check_init_vect_value(init_vect, self.block_size):
@@ -446,17 +509,17 @@ class GOST34132015cfb(GOST34132015):
         self._init_vect = init_vect
         self._init_vect = bytearray(self._init_vect)
 
-    def encrypt(self, data):
-        """Plaintext encryption in CFB mode.
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption in CFB mode.
 
-        Args:
-        :data: Plaintext data to be encrypted (as a byte object).
+        Parameters
+        - data: plaintext data to be encrypted (as a byte object).
 
-        Return:
-        Ciphertext data (as a byte object).
+        Return: ciphertext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid plaintext data') - in case where the
+        Exception
+        - GOSTCipherError('invalid plaintext data'): in case where the
         plaintext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -484,17 +547,17 @@ class GOST34132015cfb(GOST34132015):
             result = result + cipher_blk
         return result
 
-    def decrypt(self, data):
-        """Ciphertext decryption in CFB mode.
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption in CFB mode.
 
-        Args:
-        :data: Ciphertext data to be decrypted (as a byte object).
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
 
-        Return:
-        Plaintext data (as a byte object).
+        Return: plaintext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid ciphertext data') - in case where the
+        Exception
+        - GOSTCipherError('invalid ciphertext data'): in case where the
         ciphertext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -522,27 +585,28 @@ class GOST34132015cfb(GOST34132015):
 
     #pylint: disable=invalid-name
     @property
-    def iv(self):
-        """Contains the initial value which will be used to start a cipher feedback
-        mode.
-        """
+    def iv(self) -> bytearray:
+        """Contains an initializing vector."""
         return self._init_vect[len(self._init_vect) - self.block_size::]
     #pylint: enable=invalid-name
 
 
 class GOST34132015ofb(GOST34132015):
-    """The class that implements OFB mode of block encryption in accordance with
-    GOST 34.13-2015.
+    """
+    The class that implements OFB mode of block encryption.
 
-    Methods:
-    :decrypt(): Decrypting a ciphertext.
-    :encrypt(): Encrypting a plaintext.
+    Methods
+    - decrypt(): decrypting a ciphertext.
+    - encrypt(): encrypting a plaintext.
+    - clear(): clearing the values of iterative cipher keys.
 
-    Attributes:
-    :iv:  The initial value which will be used to start a cipher feedback mode.
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    - iv: the initial value.
     """
 
-    def __init__(self, algorithm, key, init_vect):
+    def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """Initialize the ciphering object in OFB mode."""
         super().__init__(algorithm, key)
         if not check_init_vect_value(init_vect, self.block_size):
@@ -551,14 +615,15 @@ class GOST34132015ofb(GOST34132015):
         self._init_vect = init_vect
         self._init_vect = bytearray(self._init_vect)
 
-    def encrypt(self, data):
-        """Plaintext encryption in OFB mode.
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption in OFB mode.
 
-        Args:
+        Parameters
         :data: Plaintext data to be encrypted (as a byte object).
 
         Return:
-        Ciphertext data (as a byte object).
+        ciphertext data (as a byte object).
 
         Exception:
         - GOSTCipherError('invalid plaintext data') - in case where the plaintext data
@@ -589,17 +654,17 @@ class GOST34132015ofb(GOST34132015):
             result = result + cipher_blk
         return result
 
-    def decrypt(self, data):
-        """Ciphertext decryption in OFB mode.
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption in OFB mode.
 
-        Args:
-        :data: Ciphertext data to be decrypted (as a byte object).
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
 
-        Return:
-        Plaintext data (as a byte object).
+        Return: plaintext data (as a byte object).
 
         Exception:
-        - GOSTCipherError('invalid plaintext data') - in case where the plaintext data
+        - GOSTCipherError('invalid plaintext data'): in case where the plaintext data
         is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -629,27 +694,28 @@ class GOST34132015ofb(GOST34132015):
 
     #pylint: disable=invalid-name
     @property
-    def iv(self):
-        """Contains the initial value which will be used to start a cipher feedback
-        mode.
-        """
+    def iv(self) -> bytearray:
+        """Contains an initializing vector."""
         return self._init_vect[len(self._init_vect) - self.block_size::]
     #pylint: enable=invalid-name
 
 
 class GOST34132015ctr(GOST34132015):
-    """The class that implements CTR mode of block encryption in accordance with
-    GOST 34.13-2015.
+    """
+    The class that implements CTR mode of block encryption.
 
-    Methods:
-    :decrypt(): Decrypting a ciphertext.
-    :encrypt(): Encrypting a plaintext.
+    Methods
+    - decrypt(): decrypting a ciphertext.
+    - encrypt(): encrypting a plaintext.
+    - clear(): clearing the values of iterative cipher keys.
 
-    Attributes:
-    :counter: Counter blocks.
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    - counter: counter blocks.
     """
 
-    def __init__(self, algorithm, key, init_vect):
+    def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """Initialize the ciphering object in CTR mode."""
         super().__init__(algorithm, key)
         if not check_init_vect_value_ctr(init_vect, self.block_size):
@@ -660,8 +726,7 @@ class GOST34132015ctr(GOST34132015):
         self._counter = init_vect + b'\x00' * (self.block_size // 2)
         self._counter = bytearray(self._counter)
 
-    def _inc_ctr(self, ctr):
-        """Increasing the counter value in CTR mode."""
+    def _inc_ctr(self, ctr: bytearray) -> bytearray:
         internal = 0
         bit = bytearray(self.block_size)
         bit[self.block_size - 1] = 0x01
@@ -671,21 +736,21 @@ class GOST34132015ctr(GOST34132015):
         return ctr
 
     @property
-    def counter(self):
+    def counter(self) -> bytearray:
         """Contains counter blocks."""
         return self._counter
 
-    def encrypt(self, data):
-        """Plaintext encryption in CTR mode.
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption in CTR mode.
 
-        Args:
-        :data: Plaintext data to be encrypted (as a byte object).
+        Parameters
+        - data: plaintext data to be encrypted (as a byte object).
 
-        Return:
-        Ciphertext data (as a byte object).
+        Return: ciphertext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid plaintext data') - in case where the plaintext data
+        Exception
+        - GOSTCipherError('invalid plaintext data'): in case where the plaintext data
         is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -707,17 +772,17 @@ class GOST34132015ctr(GOST34132015):
             )
         return result
 
-    def decrypt(self, data):
-        """Ciphertext decryption in CTR mode.
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption in CTR mode.
 
-        Args:
-        :data: Ciphertext data to be decrypted (as a byte object).
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
 
-        Return:
-        Plaintext data (as a byte object).
+        Return: plaintext data (as a byte object).
 
-        Exception:
-        - GOSTCipherError('invalid ciphertext data') - in case where the ciphertext data
+        Exception
+        - GOSTCipherError('invalid ciphertext data'): in case where the ciphertext data
         is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -727,18 +792,17 @@ class GOST34132015ctr(GOST34132015):
 
 
 class GOST34132015mac(GOST34132015):
-    """The class that implements MAC mode of block encryption in accordance with
-    GOST 34.13-2015.
+    """The class that implements MAC mode.
 
     Methods:
-    :update(): Update the MAC object with the bytes-like object.
-    :digest(): Calculating the Message authentication code of the data passed to the
-        'update()' method so far.
-    :hexdigest(): Calculating the Message authentication code of the data passed to the
-        'update()' method so far an return it of the hexadecimal.
+    - update(): update the MAC object with the bytes-like object.
+    - digest(): calculating the Message authentication code of the data passed
+    to the 'update()' method so far.
+    - hexdigest(): calculating the Message authentication code of the data passed
+    to the 'update()' method so far an return it of the hexadecimal.
     """
 
-    def __init__(self, algorithm, key, data):
+    def __init__(self, algorithm: str, key: bytearray, data: bytearray) -> None:
         """Initialize the ciphering object in MAC mode."""
         super().__init__(algorithm, key)
         value_r = self._cipher_obj.encrypt(self._cipher_obj.block_size * b'\x00')
@@ -750,7 +814,6 @@ class GOST34132015mac(GOST34132015):
             self.update(data)
 
     def _get_mac_key(self, value_r):
-        """Generating final keys for MAC mode."""
         value_b = b''
         if self.block_size == 16:
             value_b = _B_128
@@ -770,16 +833,16 @@ class GOST34132015mac(GOST34132015):
             key_2 = add_xor(int_to_bytearray(int_value, self.block_size), value_b)
         return [key_1, key_2]
 
-    def update(self, data):
+    def update(self, data: bytearray) -> None:
         """Update the MAC object with the bytes-like object.
 
-        Args:
-        :data: The data from which to get the MAC (as a byte object). Repeated calls are
-            equivalent to a single call with the concatenation of all the arguments:
-            'm.update(a)'; 'm.update(b)' is equivalent to 'm.update(a+b)'.
+        Parameters
+        - data: The data from which to get the MAC (as a byte object).  Repeated
+        calls are equivalent to a single call with the concatenation of all the
+        arguments: 'm.update(a)'; 'm.update(b)' is equivalent to 'm.update(a+b)'.
 
-        Exception:
-        - GOSTCipherError('invalid text data') - in case where the text data
+        Exception
+        - GOSTCipherError('invalid text data'): in case where the text data
         is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -808,7 +871,7 @@ class GOST34132015mac(GOST34132015):
         self._prev_mac = prev_block
         self._buff = data[self.block_size * (get_num_block(data, self.block_size) - 1):]
 
-    def mac_final(self):
+    def mac_final(self) -> bytearray:
         """Return the final value of the MAC."""
         if get_pad_size(self._buff, self.block_size) == 0:
             final_key = self._key_1
@@ -821,19 +884,20 @@ class GOST34132015mac(GOST34132015):
         )
         return result
 
-    def digest(self, mac_size):
-        """Calculating the Message authentication code (MAC) of the data passed to the
-        'update()' method so far.
+    def digest(self, mac_size: int) -> bytearray:
+        """Calculate the Message authentication code (MAC).
 
-        Args:
-        :mac_size: Message authentication code size (in bytes).
+        This method can be called after applying the 'update ()' method, or after
+        calling the 'new ()' function with the data passed to it for MAC calculation.
 
-        Return:
-        Message authentication code value (as a byte object).
+        Parameters
+        - mac_size: message authentication code size (in bytes).
+
+        Return: message authentication code value (as a byte object).
 
         Exception:
-        - GOSTCipherError('invalid message authentication code size') - in case of the invalid
-        message authentication code size.
+        - GOSTCipherError('invalid message authentication code size'): in case of the
+        invalid message authentication code size.
         """
         temp = deepcopy(self)
         if mac_size > temp.block_size:
@@ -841,24 +905,25 @@ class GOST34132015mac(GOST34132015):
             raise GOSTCipherError('invalid message authentication code size')
         return temp.mac_final()[0:mac_size:]
 
-    def hexdigest(self, mac_size):
-        """Calculating the Message authentication code (MAC) of the data passed to the
-        'update()' method so far and return it of the hexadecimal.
+    def hexdigest(self, mac_size: int) -> str:
+        """Calculate the Message authentication code (MAC).
 
-        Args:
-        :mac_size: Message authentication code size (in bytes).
+        Parameters
+        - mac_size: message authentication code size (in bytes).
 
-        Return:
-        Message authentication code value in hexadecimal (as a hexadecimal string).
+        This method can be called after applying the 'update ()' method, or after
+        calling the 'new ()' function with the data passed to it for MAC
+        calculation.  The result is represented as a hexadecimal string.
+        
+        Return: message authentication code value in hexadecimal (as a hexadecimal
+        string).
 
-        Exception:
-        - GOSTCipherError('invalid message authentication code size') - in case of the invalid
-        message authentication code size.
+        Exception
+        - GOSTCipherError('invalid message authentication code size') in case of the
+        invalid message authentication code size.
         """
         return self.digest(mac_size).hex()
 
 
 class GOSTCipherError(Exception):
-    """The class that implements exceptions that may occur when module class methods
-    are used.
-    """
+    """The class that implements exceptions."""
