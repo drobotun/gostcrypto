@@ -898,12 +898,12 @@ class GOST34132015mac(GOST34132015):
         """
         Calculate the Message authentication code (MAC).
 
-        Parameters
-        - mac_size: message authentication code size (in bytes).
-
         This method can be called after applying the 'update ()' method, or after
         calling the 'new ()' function with the data passed to it for MAC
         calculation.  The result is represented as a hexadecimal string.
+
+        Parameters
+        - mac_size: message authentication code size (in bytes).
 
         Return: message authentication code value in hexadecimal (as a hexadecimal
         string).
