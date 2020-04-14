@@ -162,7 +162,8 @@ class R5011112016:
 
 
 class GOSTPBKDFError(Exception):
-    """The class that implements exceptions.
+    """
+    The class that implements exceptions.
 
     Exceptions
     - invalid password value
