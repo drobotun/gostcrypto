@@ -1,9 +1,4 @@
-"""
-General features of the ghostcrypto package.
-
-The module that implements auxiliary functions for the operation of the
-GOSTcrypto module.
-"""
+"""General features of the ghostcrypto package."""
 
 __title__ = 'utils'
 __author__ = 'Evgeny Drobotun'
