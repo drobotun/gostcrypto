@@ -778,9 +778,10 @@ class GOST34132015ctr(GOST34132015):
 
 
 class GOST34132015mac(GOST34132015):
-    """The class that implements MAC mode.
+    """
+    The class that implements MAC mode.
 
-    Methods:
+    Methods
     - update(): update the MAC object with the bytes-like object.
     - digest(): calculating the Message authentication code of the data passed
     to the 'update()' method so far.
@@ -820,7 +821,8 @@ class GOST34132015mac(GOST34132015):
         return [key_1, key_2]
 
     def update(self, data: bytearray) -> None:
-        """Update the MAC object with the bytes-like object.
+        """
+        Update the MAC object with the bytes-like object.
 
         Parameters
         - data: The data from which to get the MAC (as a byte object).  Repeated
@@ -871,7 +873,8 @@ class GOST34132015mac(GOST34132015):
         return result
 
     def digest(self, mac_size: int) -> bytearray:
-        """Calculate the Message authentication code (MAC).
+        """
+        Calculate the Message authentication code (MAC).
 
         This method can be called after applying the 'update ()' method, or after
         calling the 'new ()' function with the data passed to it for MAC calculation.
@@ -892,7 +895,8 @@ class GOST34132015mac(GOST34132015):
         return temp.mac_final()[0:mac_size:]
 
     def hexdigest(self, mac_size: int) -> str:
-        """Calculate the Message authentication code (MAC).
+        """
+        Calculate the Message authentication code (MAC).
 
         Parameters
         - mac_size: message authentication code size (in bytes).
