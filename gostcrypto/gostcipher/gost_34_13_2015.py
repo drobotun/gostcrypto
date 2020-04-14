@@ -920,7 +920,20 @@ class GOST34132015mac(GOST34132015):
 
 
 class GOSTCipherError(Exception):
-    """The class that implements exceptions."""
+    """
+    The class that implements exceptions.
+
+    Exceptions
+    - unsupported cipher mode.
+    - unsupported cipher algorithm.
+    - invalid key value.
+    - invalid padding mode.
+    - invalid initialization vector value.
+    - invalid text data.
+    - invalid plaintext data.
+    - invalid ciphertext data.
+    - invalid message authentication code size.
+    """
 
     def __init__(self, msg: str) -> None:
         """
