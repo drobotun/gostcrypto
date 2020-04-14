@@ -9,6 +9,8 @@ GOST cryptographic functions
     :target: https://ci.appveyor.com/project/drobotun/gostcrypto
 .. image:: https://img.shields.io/coveralls/github/drobotun/gostcrypto
     :target: https://coveralls.io/github/drobotun/gostcrypto
+.. image:: https://api.codacy.com/project/badge/Grade/774f6fd50f224286ac1e566d752bd9c6
+    :target: https://app.codacy.com/manual/drobotun/gostcrypto/dashboard
 .. image:: https://readthedocs.org/projects/gostcrypto/badge/?version=latest
     :target: https://gostcrypto.readthedocs.io/en/latest/?badge=latest
 .. image:: https://img.shields.io/pypi/pyversions/gostcrypto.svg?logo=python&logoColor=FBE072
