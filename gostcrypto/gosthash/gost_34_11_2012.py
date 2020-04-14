@@ -1,7 +1,15 @@
-"""The module implementing the hash calculation algorithm GOST 34.11-2012 ('Streebog').
+#The GOST cryptographic functions.
+#
+#Author: Evgeny Drobotun (c) 2020
+#License: MIT
 
-Author: Evgeny Drobotun (c) 2020
-License: MIT
+"""
+The GOST hashing functions.
+
+The module that implements the 'Streebog' hash calculation algorithm
+in accordance with GOST 34.11-2012 with a hash size of 512 bits and
+256 bits.  The module includes the GOST34112012 class, the GOSTHashError
+class and several General functions.
 """
 from copy import deepcopy
 from struct import pack
@@ -10,15 +18,14 @@ from struct import unpack
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import S_BOX
 
-__all__ = [
+__all__ = (
     'GOST34112012',
     'new',
     'GOSTHashError'
-]
+)
 
 _BLOCK_SIZE = 64
 
-"""Initialization vectors."""
 _V_0 = bytearray(_BLOCK_SIZE)
 _V_512 = bytearray([
     0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -31,7 +38,6 @@ _V_512 = bytearray([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 ])
 
-"""Permutation matrix."""
 _TAU = (
     0, 8, 16, 24, 32, 40, 48, 56,
     1, 9, 17, 25, 33, 41, 49, 57,
@@ -43,7 +49,6 @@ _TAU = (
     7, 15, 23, 31, 39, 47, 55, 63,
 )
 
-"""Matrix of linear transformation of a set of binary vectors."""
 _A = (
     0x8e20faa72ba0b470, 0x47107ddd9b505a38,
     0xad08b0e0c3282d1c, 0xd8045870ef14980e,
@@ -79,7 +84,6 @@ _A = (
     0xc83862965601dd1b, 0x641c314b2b8ee083,
 )
 
-"""Iterative constants."""
 _C = [bytearray([
     0x07, 0x45, 0xa6, 0xf2, 0x59, 0x65, 0x80, 0xdd,
     0x23, 0x4d, 0x74, 0xcc, 0x36, 0x74, 0x76, 0x05,
@@ -191,25 +195,26 @@ _C = [bytearray([
 ])]
 
 
-def new(name, data=None):
-    """Creates a new hashing object and returns it.
+def new(name: str, data: bytearray = bytearray(b'')) -> 'GOST34112012':
+    """
+    Create a new hashing object and returns it.
 
-    Args:
-    :name: The string with the name of the hashing algorithm ('streebog256'
-    for the GOST R 34.11-2012 algorithm with the resulting hash length
-    of 32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
-    :data: The data from which to get the hash (as a byte object). If this
+    Parameters
+    - name: the string with the name of the hashing algorithm ('streebog256'
+    for the GOST R 34.11-2012 algorithm with the resulting hash length of
+    32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
+    - data: the data from which to get the hash (as a byte object).  If this
     argument is passed to a function, you can immediately use the 'digest'
     (or 'hexdigest') method to calculate the MAC value after calling 'new'.
     If the argument is not passed to the function, then you must use the
     'update(data)' method before the 'digest' (or 'hexdigest') method.
 
-    Return:
-    New hashing object.
+    Return: new hashing object.
 
-    Exception:
-    - GOSTHashError('unsupported hash type') - in case of invalid value 'name'.
-    - GOSTHashError('invalid data value') - in case where the data is not byte object.
+    Exception
+    - GOSTHashError('unsupported hash type'): in case of invalid value 'name'.
+    - GOSTHashError('invalid data value'): in case where the data is not byte
+    object.
     """
     if name not in ('streebog512', 'streebog256'):
         raise GOSTHashError('GOSTHashError: unsupported hash type')
@@ -217,39 +222,41 @@ def new(name, data=None):
 
 
 class GOST34112012:
-    """Class that implements the hash calculation algorithm GOST 34.11-2012 ('Streebog').
+    """
+    Class that implements the hash calculation algorithm.
 
-    Methods:
-    :update(): update the hash object with the bytes-like object.
-    :copy(): returns a copy ('clone') of the hash object.
-    :digest(): returns the digest of the data passed to the 'update()' method so far.
-    :hexdigest(): returns a digest of the hexadecimal data passed so far to the 'update()'
-    method.
-    :reset(): resets the values of all class attributes.
+    Methods
+    - update(): update the hash object with the bytes-like object.
+    - copy(): returns a copy ('clone') of the hash object.
+    - digest(): returns the digest of the data passed to the 'update()' method so
+    far.
+    - hexdigest(): returns a digest of the hexadecimal data passed so far to the
+    'update()' method.
+    - reset(): resets the values of all class attributes.
 
-    Attributes:
-    :digest_size: an integer value the size of the resulting hash in bytes.
-    :block_size: an integer value the internal block size of the hash algorithm in bytes.
-    :name: a text string value the name of the hashing algorithm.
+    Attributes
+    - digest_size: an integer value the size of the resulting hash in bytes.
+    - block_size: an integer value the internal block size of the hash algorithm
+    in bytes.
+    - name: a text string value the name of the hashing algorithm.
     """
 
-    def __init__(self, name, data):
+    def __init__(self, name: str, data: bytearray) -> None:
         """Initialize the hashing object."""
         self._name = name
-        self._buff = b''
+        self._buff = bytearray(b'')
         self._num_block = 0
         self._pad_block_size = 0
         self._hash_h = bytearray(_BLOCK_SIZE)
         self._hash_n = bytearray(_BLOCK_SIZE)
         self._hash_sigma = bytearray(_BLOCK_SIZE)
         if self._name == 'streebog256':
-            self._hash_h = _BLOCK_SIZE * b'\x01'
-        if data is not None:
+            self._hash_h = bytearray(_BLOCK_SIZE * b'\x01')
+        if data == bytearray(b''):
             self.update(data)
 
     @staticmethod
-    def _hash_add_512(op_a, op_b):
-        """.Addition operation in the residue ring modulo 512."""
+    def _hash_add_512(op_a: bytearray, op_b: bytearray) -> bytearray:
         op_a = bytearray(op_a)
         op_b = bytearray(op_b)
         op_c = 0
@@ -260,24 +267,21 @@ class GOST34112012:
         return result
 
     @staticmethod
-    def _hash_p(data):
-        """The operation of the permutation byte."""
+    def _hash_p(data: bytearray) -> bytearray:
         result = bytearray(_BLOCK_SIZE)
         for i in range(_BLOCK_SIZE - 1, -1, -1):
             result[i] = data[_TAU[i]]
         return result
 
     @staticmethod
-    def _hash_s(data):
-        """The S-transformation function (nonlinear bijective transformation)."""
+    def _hash_s(data: bytearray) -> bytearray:
         result = bytearray(_BLOCK_SIZE)
         for i in range(_BLOCK_SIZE - 1, -1, -1):
             result[i] = S_BOX[data[i]]
         return result
 
     @staticmethod
-    def _hash_l(data):
-        """Linear transformation of a set of binary vectors."""
+    def _hash_l(data: bytearray) -> bytearray:
         result = []
         for i in range(8):
             internal = unpack('<Q', data[i * 8:i * 8 + 8])[0]
@@ -287,10 +291,9 @@ class GOST34112012:
                     result_64 = result_64 ^ _A[j]
                 internal = internal >> 1
             result.append(pack('<Q', result_64))
-        return b"".join(result)
+        return bytearray(b''.join(result))
 
-    def _hash_get_key(self, k, i):
-        """The function of the generation iterative compression keys."""
+    def _hash_get_key(self, k: bytearray, i: int) -> bytearray:
         key = bytearray(_BLOCK_SIZE)
         key = add_xor(k, _C[i])
         key = self._hash_s(key)
@@ -298,8 +301,7 @@ class GOST34112012:
         key = self._hash_l(key)
         return key
 
-    def _hash_e(self, k, data):
-        """The E-transformation function."""
+    def _hash_e(self, k: bytearray, data: bytearray) -> bytearray:
         internal = add_xor(k, data)
         for i in range(12):
             internal = self._hash_s(internal)
@@ -309,8 +311,8 @@ class GOST34112012:
             internal = add_xor(internal, k)
         return internal
 
-    def _hash_g(self, hash_h, hash_n, data):
-        """The compression function."""
+    def _hash_g(self, hash_h: bytearray, hash_n: bytearray,
+                data: bytearray) -> bytearray:
         k = add_xor(hash_n, hash_h)
         k = self._hash_s(k)
         k = self._hash_p(k)
@@ -320,17 +322,19 @@ class GOST34112012:
         result = add_xor(internal, data)
         return result
 
-    def update(self, data):
-        """Update the hash object with the bytes-like object.
+    def update(self, data: bytearray) -> None:
+        """
+        Update the hash object with the bytes-like object.
 
-        Args:
-        :data: The string from which to get the hash. Repeated calls are equivalent
-        to a single call with the concatenation of all the arguments: 'm.update(a)';
-        'm.update(b)' is equivalent to 'm.update(a+b)'.
+        Parameters
+        - data: The string from which to get the hash. Repeated calls are
+        equivalent to a single call with the concatenation of all the
+        arguments: 'm.update(a)'; 'm.update(b)' is equivalent to
+        'm.update(a+b)'.
 
-        Exception:
-        - GOSTHashError('invalid data value') - in case where the data is not byte
-        object.
+        Exception
+        - GOSTHashError('invalid data value'): in case where the data is not
+        byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
             raise GOSTHashError('invalid data value')
@@ -345,8 +349,8 @@ class GOST34112012:
         if self._pad_block_size < _BLOCK_SIZE:
             self._buff = data[-(_BLOCK_SIZE - self._pad_block_size):]
 
-    def hash_final(self):
-        """Completes the hash calculation after the data update."""
+    def hash_final(self) -> None:
+        """Complete the hash calculation after the data update."""
         self._pad_block_size = _BLOCK_SIZE - len(self._buff)
         internal = bytearray(_BLOCK_SIZE)
         internal[1] = (((_BLOCK_SIZE - self._pad_block_size) * 8) >> 8) & 0xff
@@ -361,46 +365,54 @@ class GOST34112012:
         self._hash_h = self._hash_g(self._hash_h, _V_0, self._hash_n)
         self._hash_h = self._hash_g(self._hash_h, _V_0, self._hash_sigma)
 
-    def get_hash(self):
-        """Returns the value of the _hasha_h attribute."""
+    def get_hash(self) -> bytearray:
+        """Return the value of the _hasha_h attribute."""
         return self._hash_h[-self.digest_size:]
 
-    def digest(self):
-        """Returns the digest of the data passed to the update() method so far.
+    def digest(self) -> bytearray:
+        """
+        Return the digest of the data.
 
-        This is a bytes object of size digest_size.
+        This method can be called after applying the 'update ()' method, or
+        after calling the 'new()' function with the data passed to it for
+        hash calculation.
         """
         temp = self.copy()
         temp.hash_final()
         return temp.get_hash()
 
-    def hexdigest(self):
-        """Returns the digest of the data passed to the update() method so far.
+    def hexdigest(self) -> str:
+        """Return the digest of the data.
 
-        This is a double-sized string object (digest_size * 2).
+        This method can be called after applying the 'update ()' method, or
+        after calling the 'new()' function with the data passed to it for
+        hash calculation.  The result is represented as a hexadecimal string
+        as a double-sized string object (digest_size * 2).
         """
         return self.digest().hex()
 
-    def reset(self):
-        """Resets the values of all class attributes."""
-        self._buff = b''
+    def reset(self) -> None:
+        """Reset the values of all class attributes."""
+        self._buff = bytearray(b'')
         self._num_block = 0
         self._pad_block_size = 0
         self._hash_h = bytearray(_BLOCK_SIZE)
         self._hash_n = bytearray(_BLOCK_SIZE)
         self._hash_sigma = bytearray(_BLOCK_SIZE)
         if self._name == 'streebog256':
-            self._hash_h = _BLOCK_SIZE * b'\x01'
+            self._hash_h = bytearray(_BLOCK_SIZE * b'\x01')
 
-    def copy(self):
-        """Returns a copy (“clone”) of the hash object. This can be used to efficiently
-        compute the digests of data sharing a common initial substring.
+    def copy(self) -> 'GOST34112012':
+        """Return a duplicate (“clone”) of the hash object.
+
+        This function can be used to efficiently compute the digests of data
+        sharing a common initial substring.
         """
         return deepcopy(self)
 
     @property
     def digest_size(self):
-        """An integer value the size of the resulting hash in bytes.
+        """Return the size of the resulting hash in bytes.
 
         For the 'streebog256' algorithm, this value is 32, for the 'streebog512'
         algorithm, this value is 64.
@@ -413,15 +425,16 @@ class GOST34112012:
 
     @property
     def block_size(self):
-        """An integer value the internal block size of the hash algorithm in bytes.
+        """Return the value of the internal block size of the hashing algorithm.
 
-        For the 'streebog256' algorithm and the 'streebog512' algorithm, this value is 64.
+        For the 'streebog256' algorithm and the 'streebog512' algorithm, this
+        value is 64.
         """
         return _BLOCK_SIZE
 
     @property
     def name(self):
-        """A text string value the name of the hashing algorithm.
+        """Return the string value the name of the hashing algorithm.
 
         Respectively 'streebog256' or 'streebog512'.
         """
@@ -429,6 +442,13 @@ class GOST34112012:
 
 
 class GOSTHashError(Exception):
-    """The class that implements exceptions that may occur when module class methods
-    are used.
-    """
+    """The class that implements exceptions."""
+
+    def __init__(self, msg: str) -> None:
+        """
+        Initialize exception.
+
+        Parameters
+        - msg: message to output when an exception occurs.
+        """
+        self.msg = msg

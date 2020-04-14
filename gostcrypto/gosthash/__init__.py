@@ -1,4 +1,9 @@
-"""The module implementing the hash calculation algorithm GOST 34.11-2012 ('Streebog').
+"""
+The GOST hashing functions.
+
+The module that implements the 'Streebog' hash calculation algorithm
+in accordance with GOST 34.11-2012 with a hash size of 512 bits and
+256 bits.
 """
 
 __title__ = 'gosthash'

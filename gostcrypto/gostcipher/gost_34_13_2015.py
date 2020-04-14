@@ -216,7 +216,7 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
     - GOSTCipherError('invalid text data'): in case where the text data
     is not byte object (for MODE_MAC mode).
     """
-    result: Any = GOST34132015
+    result: Any = None
     if mode == MODE_ECB:
         pad_mode = kwargs.get('pad_mode', PAD_MODE_1)
         result = GOST34132015ecb(algorithm, key, pad_mode)
@@ -284,7 +284,7 @@ class GOST34132015:
     @property
     def block_size(self) -> int:
         """
-        Return the value of the internal block size of the cipher algorithm..
+        Return the value of the internal block size of the cipher algorithm.
 
         For the 'kuznechik' algorithm this value is 16 and the 'magma'
         algorithm, this value is 8.
@@ -787,6 +787,10 @@ class GOST34132015mac(GOST34132015):
     to the 'update()' method so far.
     - hexdigest(): calculating the Message authentication code of the data passed
     to the 'update()' method so far an return it of the hexadecimal.
+
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
     """
 
     def __init__(self, algorithm: str, key: bytearray, data: bytearray) -> None:
