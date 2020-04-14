@@ -1,3 +1,5 @@
+"""The GOST hash-based message authentication code functions."""
+
 __title__ = 'gosthmac'
 __author__ = 'Evgeny Drobotun'
 __author_email__ = 'drobotun@xakep.ru'
