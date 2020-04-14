@@ -382,7 +382,8 @@ class GOST34112012:
         return temp.get_hash()
 
     def hexdigest(self) -> str:
-        """Return the digest of the data.
+        """
+        Return the digest of the data.
 
         This method can be called after applying the 'update ()' method, or
         after calling the 'new()' function with the data passed to it for
@@ -403,7 +404,8 @@ class GOST34112012:
             self._hash_h = bytearray(_BLOCK_SIZE * b'\x01')
 
     def copy(self) -> 'GOST34112012':
-        """Return a duplicate (“clone”) of the hash object.
+        """
+        Return a duplicate (“clone”) of the hash object.
 
         This function can be used to efficiently compute the digests of data
         sharing a common initial substring.
@@ -412,7 +414,8 @@ class GOST34112012:
 
     @property
     def digest_size(self):
-        """Return the size of the resulting hash in bytes.
+        """
+        Return the size of the resulting hash in bytes.
 
         For the 'streebog256' algorithm, this value is 32, for the 'streebog512'
         algorithm, this value is 64.
@@ -425,7 +428,8 @@ class GOST34112012:
 
     @property
     def block_size(self):
-        """Return the value of the internal block size of the hashing algorithm.
+        """
+        Return the value of the internal block size of the hashing algorithm.
 
         For the 'streebog256' algorithm and the 'streebog512' algorithm, this
         value is 64.
@@ -434,7 +438,8 @@ class GOST34112012:
 
     @property
     def name(self):
-        """Return the string value the name of the hashing algorithm.
+        """
+        Return the string value the name of the hashing algorithm.
 
         Respectively 'streebog256' or 'streebog512'.
         """
