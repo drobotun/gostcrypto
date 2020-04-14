@@ -150,8 +150,7 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
     file_path = 'd:/file.txt'
     cipher = gostcrypto.gostcipher.new('kuznechik',
                                         key,
-                                        gostcrypto.gostcipher.MODE_MAC,
-                                        pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
+                                        gostcrypto.gostcipher.MODE_MAC)
     
 	buffer_size = 128
 	file = open(file_path, 'rb')
