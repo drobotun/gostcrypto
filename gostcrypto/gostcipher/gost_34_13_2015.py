@@ -917,3 +917,12 @@ class GOST34132015mac(GOST34132015):
 
 class GOSTCipherError(Exception):
     """The class that implements exceptions."""
+
+    def __init__(self, msg: str) -> None:
+        """
+        Initialize exception.
+
+        Parameters
+        - msg: message to output when an exception occurs.
+        """
+        self.msg = msg
