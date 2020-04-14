@@ -15,21 +15,7 @@ GOSTCipherError class and several General functions.
 
 from copy import deepcopy
 
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Text,
-    Tuple,
-    TypeVar,
-    Union,
-    Set,
-    Iterable,
-    Sequence,
-)
+from typing import Any, Union
 
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import int_to_bytearray
