@@ -758,13 +758,13 @@ class GOSTSignatureError(Exception):
     The class that implements exceptions.
 
     Exceptions
-    - unsupported signature mode
-    - invalid parameters of the elliptic curve
-    - invalid private key value
-    - invalid digest value
-    - invalid random value
-    - invalid public key value
-    - invalid signature value
+    - unsupported signature mode.
+    - invalid parameters of the elliptic curve.
+    - invalid private key value.
+    - invalid digest value.
+    - invalid random value.
+    - invalid public key value.
+    - invalid signature value.
     """
 
     def __init__(self, msg: str) -> None:

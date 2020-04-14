@@ -1,5 +1,8 @@
-"""The module that implements pseudo-random sequence generation in accordance with
-R 1323565.1.006-2017.
+"""
+The GOST password-based key derivation function.
+
+The module implementing the password-based key derivation function in accordance
+with R 50.1.111-2016.
 """
 
 __title__ = 'gostrandom'

@@ -451,8 +451,8 @@ class GOSTHashError(Exception):
     The class that implements exceptions.
 
     Exceptions
-    - unsupported hash type
-    - invalid data value
+    - unsupported hash type.
+    - invalid data value.
     """
 
     def __init__(self, msg: str) -> None:

@@ -217,9 +217,9 @@ class GOSTHMACError(Exception):
     The class that implements exceptions.
 
     Exceptions
-    - unsupported mode
-    - invalid key value
-    - invalid data value
+    - unsupported mode.
+    - invalid key value.
+    - invalid data value.
     """
 
     def __init__(self, msg: str) -> None:

@@ -83,7 +83,7 @@ class Test(unittest.TestCase):
 
     def test_new_urandom(self):
         with mock.patch('os.urandom', os_urandom):
-            test_random = gostcrypto.gostrandom.new(32, None, gostcrypto.gostrandom.SIZE_S_256)
+            test_random = gostcrypto.gostrandom.new(32, b'', gostcrypto.gostrandom.SIZE_S_256)
         self.assertEqual(test_random.random(), TEST_RAND)
 
     def test_reset_urandom(self):

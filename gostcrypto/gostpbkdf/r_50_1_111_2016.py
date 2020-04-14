@@ -166,9 +166,9 @@ class GOSTPBKDFError(Exception):
     The class that implements exceptions.
 
     Exceptions
-    - invalid password value
-    - invalid salt value
-    - invalid size of the derived key
+    - invalid password value.
+    - invalid salt value.
+    - invalid size of the derived key.
     """
 
     def __init__(self, msg: str) -> None:
