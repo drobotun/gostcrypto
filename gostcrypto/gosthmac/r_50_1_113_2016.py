@@ -91,9 +91,9 @@ class R5011132016:
             self._key = key
         key = bytearray(len(key))
         if name == 'HMAC_GOSTR3411_2012_256':
-            self._hasher_obj = GOST34112012('streebog256', data=None)
+            self._hasher_obj = GOST34112012('streebog256', data=b'')
         elif name == 'HMAC_GOSTR3411_2012_512':
-            self._hasher_obj = GOST34112012('streebog512', data=None)
+            self._hasher_obj = GOST34112012('streebog512', data=b'')
         self._counter = 0
 
     def __del__(self):
@@ -118,7 +118,7 @@ class R5011132016:
 
     def digest(self):
         """Returns the HMAC message authentication code."""
-        fin_hasher_obj = GOST34112012(self._hasher_obj.name, data=None)
+        fin_hasher_obj = GOST34112012(self._hasher_obj.name, data=b'')
         fin_hasher_obj.update(add_xor(self._key, _O_PAD) + self._hasher_obj.digest())
         result = fin_hasher_obj.digest()
         fin_hasher_obj.reset()

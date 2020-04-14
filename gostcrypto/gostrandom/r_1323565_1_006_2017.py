@@ -72,7 +72,7 @@ class R132356510062017:
         self._q = rand_size // _SIZE_H
         self._r = rand_size % _SIZE_H
         self._limit = 2 ** (_SIZE_M - self._size_s)
-        self._hash_obj = GOST34112012('streebog512', data=None)
+        self._hash_obj = GOST34112012('streebog512', data=b'')
 
     def __del__(self):
         """Delete the random object."""

@@ -1,10 +1,16 @@
-"""The module that implements processes for creating and verifying an electronic
-digital signature according to GOST 34.10-2012.
+#The GOST cryptographic functions.
+#
+#Author: Evgeny Drobotun (c) 2020
+#License: MIT
 
-Author: Evgeny Drobotun (c) 2020
-License: MIT
- """
+"""
+The GOST digital signature functions.
+
+The module that implements processes for creating and verifying an electronic
+digital signature according to GOST 34.10-2012.
+"""
 import os
+from typing import Any, Tuple
 
 from gostcrypto.utils import zero_fill
 from gostcrypto.utils import bytearray_to_int
@@ -16,15 +22,14 @@ from gostcrypto.utils import check_value
 MODE_256: int = 0x01
 MODE_512: int = 0x02
 
-__all__ = [
+__all__ = (
     'GOST34102012',
     'new',
     'MODE_256',
     'MODE_512',
     'CURVES_R_1323565_1_024_2019'
-]
+)
 
-"""Parameters of elliptic curves in accordance with R 1323565.1.024-2019."""
 CURVES_R_1323565_1_024_2019 = {
     'id-tc26-gost-3410-2012-256-paramSetB': dict(
         p=bytearray_to_int(bytearray([
@@ -449,21 +454,21 @@ CURVES_R_1323565_1_024_2019 = {
 }
 
 
-def new(mode, curve):
-    """Creates a new signature object and returns it.
+def new(mode: int, curve: dict) -> 'GOST34102012':
+    """
+    Create a new signature object and returns it.
 
-    Args:
-    :mode: Signature generation or verification mode.
-    :curve: Parameters of the elliptic curve.
+    Parameters
+    - mode: signature generation or verification mode.
+    - curve: parameters of the elliptic curve.
 
-    Return:
-    New signature object.
+    Return: new signature object.
 
-    Exception:
-    - GOSTSignatureError('unsupported signature mode') - in case of unsupported signature
-    mode.
-    - GOSTSignatureError('invalid parameters of the elliptic curve') - if the elliptic
-    curve parameters are incorrect.
+    Exception
+    - GOSTSignatureError('unsupported signature mode'): in case of unsupported
+    signature mode.
+    - GOSTSignatureError('invalid parameters of the elliptic curve'): if the
+    elliptic curve parameters are incorrect.
     """
     if mode not in (MODE_256, MODE_512):
         raise GOSTSignatureError('unsupported signature mode')
@@ -471,18 +476,18 @@ def new(mode, curve):
 
 
 class GOST34102012:
-    """Сlass that implements processes for creating and verifying an electronic digital
-    signature with GOST 34.10-2012.
-
-    Methods:
-    :sign(): creating a signature.
-    :verify(): signature verification.
-    :public_key_generate(): generating a public key.
-
     """
+    Class that implements digital signature function.
+
+    Methods
+    - sign(): creating a signature.
+    - verify(): signature verification.
+    - public_key_generate(): generating a public key.
+    """
+
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, mode, curve):
-        #Initialize the signature object
+    def __init__(self, mode: int, curve: dict) -> None:
+        """Initialize the signature object."""
         self._set_size(mode)
         self._p = curve.get('p', 1)
         self._a = curve.get('a', 0)
@@ -500,22 +505,19 @@ class GOST34102012:
             raise GOSTSignatureError('invalid parameters of the elliptic curve')
     # pylint: enable=too-many-instance-attributes
 
-    def _set_size(self, mode):
-        """Sets the size of the signature (256 or 512 bits)."""
+    def _set_size(self, mode: int) -> None:
         if mode == MODE_256:
             self._size = 32
         else:
             self._size = 64
 
-    def _check_p_m(self):
-        """Checking 'p' and 'm' parameters are correct."""
+    def _check_p_m(self) -> bool:
         result = True
         if self._m == self._p:
             result = False
         return result
 
-    def _check_x_y(self):
-        """Checking 'x' and 'y' parameters are correct."""
+    def _check_x_y(self) -> bool:
         result = True
         right_side_equation = self._y * self._y % self._p
         left_side_equation = (self._x ** 3 + self._x * self._a + self._b) % self._p
@@ -523,8 +525,7 @@ class GOST34102012:
             result = False
         return result
 
-    def _check_p(self):
-        """Checking 'p' parameter are correct."""
+    def _check_p(self) -> bool:
         result = True
         check_b = 32
         if self._size == 64:
@@ -534,16 +535,14 @@ class GOST34102012:
                 result = result or result
         return result
 
-    def _check_q(self):
-        """Checking 'q' parameter are correct."""
+    def _check_q(self) -> bool:
         result = True
         if self._q < 2 ** (self._size * 8 - self._size // 16) or self._q > 2 ** (self._size * 8):
             result = False
         return result
 
-    def _check_curve(self):
+    def _check_curve(self) -> bool:
         result = True
-        """Checking whether elliptic curve parameters are correct."""
         if (
                 (not self._check_p_m()) or (
                     (not self._check_x_y()) or (not self._check_p()) or (not self._check_q())
@@ -553,11 +552,8 @@ class GOST34102012:
         return result
 
     @staticmethod
-    def _invert(value, n_mod):
-        """Function for finding the inverse value in the residue
-        ring (based on the extended Euclid algorithm).
-        """
-        def gcdex(value, n_mod):
+    def _invert(value: int, n_mod: int) -> int:
+        def gcdex(value: int, n_mod: int) -> Tuple[int, int, int]:
             if n_mod == 0:
                 gcd_result = value, 1, 0
             else:
@@ -569,8 +565,7 @@ class GOST34102012:
             result = result + n_mod
         return result
 
-    def _add(self, x_1, x_2, y_1, y_2):
-        """Function for adding two points on a curve."""
+    def _add(self, x_1: int, x_2: int, y_1: int, y_2: int) -> Tuple[int, int]:
         compare_x = compare(int_to_bytearray(x_1, self._size), int_to_bytearray(x_2, self._size))
         compare_y = compare(int_to_bytearray(y_1, self._size), int_to_bytearray(y_2, self._size))
         if compare_x and compare_y:
@@ -584,16 +579,15 @@ class GOST34102012:
         return x_3, y_3
 
     @staticmethod
-    def _bits(value):
-        """Function for getting the bit representation of a number."""
+    def _bits(value: int):
         while value:
             yield value & 1
             value = value >> 1
 
-    def _mul_point(self, mul_value, x_op=None, y_op=None):
-        """Function for calculating a multiple point of an elliptic curve."""
+    def _mul_point(self, mul_value: int, x_op: int = -1,
+                   y_op: Any = - 1) -> Tuple[int, int]:
         mul_value = mul_value - 1
-        if x_op or y_op:
+        if x_op > 0 and y_op > 0:
             x_prev = x_op
             y_prev = y_op
         else:
@@ -607,10 +601,7 @@ class GOST34102012:
             x_prev, y_prev = self._add(x_prev, x_prev, y_prev, y_prev)
         return x_next, y_next
 
-    def _edvards_to_canonical(self):
-        """Translation function to canonical representation of an elliptic curve
-        from the representation as twisted Edwards curves.
-        """
+    def _edvards_to_canonical(self) -> None:
         if self._a == 0 and self._b == 0 and self._x == 0 and self._y == 0:
             ed_s = (self._e - self._d) * self._invert(4, self._p) % self._p
             ed_t = (self._e + self._d) * self._invert(6, self._p) % self._p
@@ -621,39 +612,40 @@ class GOST34102012:
             self._y = ((ed_s * (1 + self._v)) * self._invert((1 - self._v) * self._u, self._p))\
                 % self._p
 
-    def _get_rand_k(self):
-        """Generating a random value."""
-        rand_k = os.urandom(self._size)
+    def _get_rand_k(self) -> bytearray:
+        rand_k = bytearray(os.urandom(self._size))
         while bytearray_to_int(rand_k) >= self._q:
-            rand_k = os.urandom(self._size)
+            rand_k = bytearray(os.urandom(self._size))
         return rand_k
 
-    def _set_e(self, digest):
-        """Calculating the 'e' value from the digest (step 2,
-        paragraph 6.1 of GOST 34.10-2012).
-        """
+    def _set_e(self, digest: bytearray) -> int:
         result = bytearray_to_int(digest) % self._q
         if compare_to_zero(int_to_bytearray(result, self._size)):
             result = 1
         return result
 
-    def sign(self, private_key, digest, rand_k=None):
-        """Creating a signature.
+    def sign(self, private_key: bytearray, digest: bytearray,
+             rand_k: bytearray = bytearray(b'')) -> int:
+        """
+        Create a signature.
 
-        Args:
-        :private_key: Private signature key (as a byte object).
-        :digest: Digest for which the signature is calculated.
-        :rand_k: Random (pseudo-random) number (as a byte object). By default, it is
-        generated by the function itself.
+        Parameters
+        - private_key: private signature key (as a byte object).
+        - digest: digest for which the signature is calculated.  This value
+        must be obtained using the 'streebog' algorithm in accordance with
+        GOST 34.11-2012.
+        - rand_k: random (pseudo-random) number (as a byte object). By default,
+        it is generated by the function itself.
 
-        Return:
-        Signature for provided digest (as a byte object).
+        Return: signature for provided digest (as a byte object).
 
-        Exception:
-        - GOSTSignatureError('invalid private key value') - if the private key value is
+        Exception
+        - GOSTSignatureError('invalid private key value'): if the private key
+        value is incorrect.
+        - GOSTSignatureError('invalid digest value'): if the digest value is
         incorrect.
-        - GOSTSignatureError('invalid digest value') - if the digest value is incorrect.
-        - GOSTSignatureError('invalid random value') - if the random value is incorrect.
+        - GOSTSignatureError('invalid random value'): if the random value is
+        incorrect.
         """
         if not check_value(private_key, self._size):
             raise GOSTSignatureError('invalid private key value')
@@ -663,7 +655,7 @@ class GOST34102012:
         sign_r = 0
         sign_s = 0
         sign_k = 0
-        if rand_k is None:
+        if rand_k == bytearray(b''):
             rand_k = self._get_rand_k()
         if not isinstance(rand_k, (bytes, bytearray)):
             private_key = zero_fill(private_key)
@@ -682,40 +674,36 @@ class GOST34102012:
         private_key = zero_fill(private_key)
         return sign_r + sign_s
 
-    def _get_r_s(self, signature):
-        """Getting r and s values from the signature (step 1,
-        paragraph 6.2 of GOST 34.10-2012).
-        """
+    def _get_r_s(self, signature: bytearray) -> Tuple[int, int]:
         sign_r = bytearray_to_int(signature[:self._size])
         sign_s = bytearray_to_int(signature[self._size:])
         return sign_r, sign_s
 
-    def _verify_step_1(self, sign_r, sign_s):
-        """Verification of the signature (step 1,
-        paragraph 6.2 of GOST 34.10-2012).
-        """
+    def _verify_step_1(self, sign_r: int, sign_s: int) -> bool:
         result = True
         if sign_r <= 0 or sign_r >= self._q or sign_s <= 0 or sign_s >= self._q:
             result = False
         return result
 
-    def verify(self, public_key, digest, signature):
-        """Verify a signature.
+    def verify(self, public_key: Any, digest: bytearray,
+               signature: bytearray) -> bool:
+        """
+        Verify a signature.
 
-        Args:
-        :public_key: Public signature key (as a byte object).
-        :digest: Digest for which to be checked signature (as a byte object).
-        :signature: Signature of the digest being checked (as a byte object).
+        Parameters
+        - public_key: public signature key (as a byte object).
+        - digest: digest for which to be checked signature (as a byte object).
+        - signature: signature of the digest being checked (as a byte object).
 
-        Return:
-        The result of the signature verification ('True' or 'False').
+        Return: the result of the signature verification ('True' or 'False').
 
-        Exception:
-        - GOSTSignatureError('invalid public key value') - if the public key value is
+        Exception
+        - GOSTSignatureError('invalid public key value'): if the public key
+        value is incorrect.
+        - GOSTSignatureError('invalid signature value'): if the signature value
+        is incorrect.
+        - GOSTSignatureError('invalid digest value'): if the digest value is
         incorrect.
-        - GOSTSignatureError('invalid signature value') - if the signature value is
-        incorrect.
-        - GOSTSignatureError('invalid digest value') - if the digest value is incorrect.
         """
         if not check_value(public_key, self._size * 2):
             raise GOSTSignatureError('invalid public key value')
@@ -741,18 +729,18 @@ class GOST34102012:
         return compare(int_to_bytearray(sign_r_check, self._size),
                        int_to_bytearray(sign_r, self._size))
 
-    def public_key_generate(self, private_key):
-        """Generating a public key
+    def public_key_generate(self, private_key: Any) -> bytearray:
+        """
+        Generate a public key.
 
-        Args:
-        :private_key: Private signature key (as a byte object).
+        Parameters
+        - private_key: private signature key (as a byte object).
 
-        Return:
-        Public key (as a byte object).
+        Return: public key (as a byte object).
 
-        Exception:
-        - GOSTSignatureError('invalid private key') - if the private key value is
-        incorrect.
+        Exception
+        - GOSTSignatureError('invalid private key') - if the private key value
+        is incorrect.
         """
         if not check_value(private_key, self._size):
             raise GOSTSignatureError('invalid private key')
@@ -765,6 +753,24 @@ class GOST34102012:
 
 
 class GOSTSignatureError(Exception):
-    """The class that implements exceptions that may occur when module class methods
-    are used.
     """
+    The class that implements exceptions.
+
+    Exceptions
+    - unsupported signature mode
+    - invalid parameters of the elliptic curve
+    - invalid private key value
+    - invalid digest value
+    - invalid random value
+    - invalid public key value
+    - invalid signature value
+    """
+
+    def __init__(self, msg: str) -> None:
+        """
+        Initialize exception.
+
+        Parameters
+        - msg: message to output when an exception occurs.
+        """
+        self.msg = msg

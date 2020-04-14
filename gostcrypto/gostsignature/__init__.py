@@ -1,5 +1,8 @@
-"""The module that implements processes for creating and verifying an electronic digital
-signature according to GOST 34.10-2012.
+"""
+The GOST digital signature functions.
+
+The module that implements processes for creating and verifying an electronic
+digital signature according to GOST 34.10-2012.
 """
 
 __title__ = 'gostsignature'
