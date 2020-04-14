@@ -112,14 +112,14 @@ class GOST34122015Kuznechik:
         return result
 
     @staticmethod
-    def _cipher_s_reverse(data: bytearray) -> bytearray::
+    def _cipher_s_reverse(data: bytearray) -> bytearray:
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK):
             result[i] = S_BOX_REVERSE[data[i]]
         return result
 
     @staticmethod
-    def _cipher_gf(op_a: bytearray, op_b: bytearray) -> bytearray::
+    def _cipher_gf(op_a: bytearray, op_b: bytearray) -> bytearray:
         result = 0
         for _ in range(8):
             if op_b & 1:
@@ -132,7 +132,7 @@ class GOST34122015Kuznechik:
         return result
 
     @staticmethod
-    def _cipher_r(data: bytearray) -> bytearray::
+    def _cipher_r(data: bytearray) -> bytearray:
         a_0 = 0
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK):
@@ -142,7 +142,7 @@ class GOST34122015Kuznechik:
         return result
 
     @staticmethod
-    def _cipher_r_reverse(data: bytearray) -> bytearray::
+    def _cipher_r_reverse(data: bytearray) -> bytearray:
         a_15 = 0
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         for i in range(_BLOCK_SIZE_KUZNECHIK - 1, -1, -1):
@@ -152,7 +152,7 @@ class GOST34122015Kuznechik:
         return result
 
     @staticmethod
-    def _cipher_l(data: bytearray) -> bytearray::
+    def _cipher_l(data: bytearray) -> bytearray:
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         result = data
         for _ in range(16):
@@ -160,7 +160,7 @@ class GOST34122015Kuznechik:
         return result
 
     @staticmethod
-    def _cipher_l_reverse(data: bytearray) -> bytearray::
+    def _cipher_l_reverse(data: bytearray) -> bytearray:
         result = bytearray(_BLOCK_SIZE_KUZNECHIK)
         result = data
         for _ in range(16):
@@ -411,7 +411,7 @@ class GOST34122015Magma:
         return result
 
     def encrypt(self, block: bytearray) -> bytearray:
-                """
+        """
         Encrypting a block of plaintext.
 
         Parameters
