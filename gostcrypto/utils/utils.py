@@ -14,7 +14,7 @@ GOSTcrypto module.
 def check_value(value: bytearray, size_value: int) -> bool:
     """
     Check the correctness of the variable.
-    
+
     This function checks the type ('bytes' or 'bytearray') and whether
     the size of the 'value' variable matches the 'size_value' value.
 
