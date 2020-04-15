@@ -1,4 +1,5 @@
-"""The GOST password-based key derivation function."""
+"""The GOST pseudo-random sequence generation function."""
+
 
 __title__ = 'gostrandom'
 __author__ = 'Evgeny Drobotun'
