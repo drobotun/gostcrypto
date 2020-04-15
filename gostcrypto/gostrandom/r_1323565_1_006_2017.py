@@ -4,7 +4,7 @@
 #License: MIT
 
 """
-The GOST pseudo-random sequence generation derivation function.
+The GOST pseudo-random sequence generation function.
 
 The module that implements pseudo-random sequence generation in accordance
 with R 1323565.1.006-2017.
