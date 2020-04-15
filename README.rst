@@ -85,7 +85,7 @@ String encryption in ECB mode
         0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
     ])
 
-    plain_text = = bytearray([
+    plain_text = bytearray([
         0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
         0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
         0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
@@ -95,7 +95,7 @@ String encryption in ECB mode
     cipher_obj = gostcrypto.gostcipher.new('kuznechik',
                                             key,
                                             gostcrypto.gostcipher.MODE_ECB,
-                                            pad_mode=PAD_MODE_1)
+                                            pad_mode=gostcrypto.gostcipher.PAD_MODE_1)
 
     cipher_text = cipher_obj.encrypt(plain_text)
 
@@ -227,7 +227,7 @@ Usage **'gostrandom'** module
 
     random_obj = gostcrypto.gostrandom.new(32,
                                            rand_k,
-                                           gostcrypto.gostrandom.SIZE_S_320)
+                                           gostcrypto.gostrandom.SIZE_S_256)
     random_result = random_obj.random()
     random_obj.clear()
 
@@ -279,7 +279,7 @@ Usage **'gostpbkdf'** module
     password = b'password'
     salt = b'salt'
 
-    pbkdf_obj = new(password, salt, 4096)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt, 4096)
     pbkdf_result = pbkdf_obj.derive(32)
 
 License

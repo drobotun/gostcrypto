@@ -67,6 +67,7 @@ class R132356510062017:
     def __init__(self, rand_size: int, rand_k: bytearray, size_s: int) -> None:
         """Initialize the random object."""
         self._size_s = size_s
+        self._rand_u = bytearray(b'')
         if rand_k == bytearray(b''):
             self._rand_u = os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1)
             self._rand_u = bytearray(self._rand_u)
@@ -129,7 +130,7 @@ class R132356510062017:
             result = result + rand_c[_SIZE_H - self._r:_SIZE_H:]
         return result
 
-    def reset(self, rand_k: bytearray = bytearray(b'')):
+    def reset(self, rand_k: bytearray = bytearray(b'')) -> None:
         """
         Reset the counter and setting a new initial filling.
 
@@ -152,7 +153,7 @@ class R132356510062017:
             self._rand_u = bytearray(self._rand_u)
         self._hash_obj.reset()
 
-    def clear(self):
+    def clear(self) -> None:
         """Clear the counter value."""
         self._rand_u = zero_fill(self._rand_u)
 
