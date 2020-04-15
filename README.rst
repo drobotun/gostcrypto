@@ -49,7 +49,7 @@ Getting a hash for a string
     hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
     hash_obj = gostcrypto.gosthash.new('streebog256')
     hash_obj.update(hash_string)
-    result = hash_obj.hexdigest()
+    hash_result = hash_obj.hexdigest()
 
 Getting a hash for a file
 -------------------------
@@ -68,7 +68,7 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
         while len(buffer) > 0:
             hash_obj.update(buffer)
             buffer = file.read(buffer_size)
-    result = hash_obj.hexdigest()
+    hash_result = hash_obj.hexdigest()
 
 Usage **'gostcipher'** module
 """""""""""""""""""""""""""""
@@ -118,7 +118,7 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
     ])
 
     plain_file_path = 'd:/plain file.txt'
-	cipher_file_path = 'd:/cipher file.txt'
+    cipher_file_path = 'd:/cipher file.txt'
     cipher_obj = gostcrypto.gostcipher.new('kuznechik',
                                             key,
                                             gostcrypto.gostcipher.MODE_CTR,
@@ -126,10 +126,10 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
 
     buffer_size = 128
     plain_file = open(plain_file_path, 'rb')
-    cipher_file = open(cipher_file_path', 'wb')
+    cipher_file = open(cipher_file_path, 'wb')
     buffer = plain_file.read(buffer_size)
     while len(buffer) > 0:
-        cipher_data = cipher.decrypt(buffer)
+        cipher_data = cipher_obj.decrypt(buffer)
         cipher_file.write(cipher_data)
         buffer = plain_file.read(buffer_size)
 
@@ -148,7 +148,7 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
     ])
 
     file_path = 'd:/file.txt'
-    cipher = gostcrypto.gostcipher.new('kuznechik',
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
                                         key,
                                         gostcrypto.gostcipher.MODE_MAC)
     
@@ -156,9 +156,9 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
 	file = open(file_path, 'rb')
     buffer = file.read(buffer_size)
     while len(buffer) > 0:
-        cipher.update(buffer)
+        cipher_obj.update(buffer)
         buffer = file.read(buffer_size)
-    mac_result = cipher.digest(8)
+    mac_result = cipher_obj.digest(8)
 
 Usage **'gostsignature'** module
 """"""""""""""""""""""""""""""""
