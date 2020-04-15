@@ -6,8 +6,8 @@
 """
 The GOST password-based key derivation function.
 
-The module implementing the password-based key derivation function in accordance
-with R 50.1.111-2016.
+The module implementing the password-based key derivation function in
+accordance with R 50.1.111-2016.
 """
 import os
 

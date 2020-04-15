@@ -10,7 +10,7 @@ The module implements block encryption algorithms 'magma' and 'kuznechik',
 described in GOST 34.12-2015.  The module includes the GOST34122015Kuznechik
 class, which implements encryption and decryption procedures for the
 'kuznechik' algorithm, and the GOST34122015Magma class, which implements
-encryption and decryption procedures for the 'magma'algorithm.
+encryption and decryption procedures for the 'magma' algorithm.
 """
 
 from struct import pack
