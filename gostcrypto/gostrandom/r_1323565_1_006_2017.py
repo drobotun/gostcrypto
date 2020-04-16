@@ -36,10 +36,9 @@ _SIZE_H: int = 64
 
 def new(rand_size: int, **kwargs) -> 'R132356510062017':
     """
-    Creates a new pseudo-random sequence generation object and returns it.
+    Create a new pseudo-random sequence generation object and returns it.
 
     Parameters
-
     - rand_size: size of the generated random variable (in bytes).
 
     Keyword args
@@ -67,12 +66,15 @@ class R132356510062017:
     - reset(): resetting the counter and setting a new initial filling.
     - clear(): clearing the counter value.
     """
+
     def __init__(self, rand_size: int, rand_k: bytearray, size_s: int) -> None:
         """Initialize the random object."""
         self._size_s = size_s
         self._rand_u = bytearray(b'')
         if rand_k == bytearray(b''):
-            self._rand_u = bytearray(os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1))
+            self._rand_u = bytearray(
+                os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1)
+            )
         else:
             if not check_value(rand_k, self._size_s):
                 raise GOSTRandomError('GOSTRandomError: invalid seed value')
@@ -148,7 +150,9 @@ class R132356510062017:
         invalid size of initial filling.
         """
         if rand_k == bytearray(b''):
-            self._rand_u = bytearray(os.urandom(self._size_s) + bytearray(b'\x00' * (_SIZE_M - self._size_s - 1)))
+            self._rand_u = bytearray(
+                os.urandom(self._size_s) + bytearray(b'\x00' * (_SIZE_M - self._size_s - 1))
+            )
         else:
             if not check_value(rand_k, self._size_s):
                 raise GOSTRandomError('GOSTRandomError: invalid seed value')
