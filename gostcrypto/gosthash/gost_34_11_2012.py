@@ -195,7 +195,7 @@ _C: list = [bytearray([
 ])]
 
 
-def new(name: str, data: bytearray = bytearray(b'')) -> 'GOST34112012':
+def new(name: str, **kwargs) -> 'GOST34112012':
     """
     Create a new hashing object and returns it.
 
@@ -203,21 +203,25 @@ def new(name: str, data: bytearray = bytearray(b'')) -> 'GOST34112012':
     - name: the string with the name of the hashing algorithm ('streebog256'
     for the GOST R 34.11-2012 algorithm with the resulting hash length of
     32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
+
+    Keyword args
     - data: the data from which to get the hash (as a byte object).  If this
     argument is passed to a function, you can immediately use the 'digest'
-    (or 'hexdigest') method to calculate the MAC value after calling 'new'.
+    (or 'hexdigest') method to calculate the hash value after calling 'new'.
     If the argument is not passed to the function, then you must use the
     'update(data)' method before the 'digest' (or 'hexdigest') method.
 
     Return: new hashing object.
 
     Exception
-    - GOSTHashError('unsupported hash type'): in case of invalid value 'name'.
-    - GOSTHashError('invalid data value'): in case where the data is not byte
-    object.
+    - GOSTHashError('GOSTHashError: unsupported hash type'): in case of invalid
+    value 'name'.
+    - GOSTHashError('GOSTHashError: invalid data value'): in case where the
+    data is not byte object.
     """
     if name not in ('streebog512', 'streebog256'):
         raise GOSTHashError('GOSTHashError: unsupported hash type')
+    data = kwargs.get('data', bytearray(b''))
     return GOST34112012(name, data)
 
 
@@ -333,11 +337,11 @@ class GOST34112012:
         'm.update(a+b)'.
 
         Exception
-        - GOSTHashError('invalid data value'): in case where the data is not
-        byte object.
+        - GOSTHashError('GOSTHashError: invalid data value'): in case where the
+        data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
-            raise GOSTHashError('invalid data value')
+            raise GOSTHashError('GOSTHashError: invalid data value')
         data = self._buff + data
         self._num_block = len(data) // _BLOCK_SIZE
         for i in range(0, self._num_block * _BLOCK_SIZE, _BLOCK_SIZE):

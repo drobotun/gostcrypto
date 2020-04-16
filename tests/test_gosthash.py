@@ -83,7 +83,7 @@ class Test(unittest.TestCase):
         self.assertEqual(test_hasher._hash_h, _test_hasher._hash_h)
         self.assertEqual(test_hasher._hash_n, _test_hasher._hash_n)
         self.assertEqual(test_hasher._hash_sigma, _test_hasher._hash_sigma)
-        test_hasher = gostcrypto.gosthash.new('streebog512', self.TEST_MSG_LONG)
+        test_hasher = gostcrypto.gosthash.new('streebog512', data=self.TEST_MSG_LONG)
         test_result = '1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28'
         result = test_hasher.digest()
         self.assertEqual(''.join(format(x, '02x') for x in result), test_result)

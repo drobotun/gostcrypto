@@ -129,7 +129,7 @@ In this case the ``buffer_size`` value must be a multiple of the ``block_size`` 
     cipher_file = open(cipher_file_path, 'wb')
     buffer = plain_file.read(buffer_size)
     while len(buffer) > 0:
-        cipher_data = cipher_obj.decrypt(buffer)
+        cipher_data = cipher_obj.encrypt(buffer)
         cipher_file.write(cipher_data)
         buffer = plain_file.read(buffer_size)
 
@@ -279,7 +279,7 @@ Usage **'gostpbkdf'** module
     password = b'password'
     salt = b'salt'
 
-    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt, 4096)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=4096)
     pbkdf_result = pbkdf_obj.derive(32)
 
 License

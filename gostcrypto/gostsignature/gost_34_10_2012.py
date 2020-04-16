@@ -8,7 +8,9 @@ The GOST digital signature functions.
 
 The module that implements processes for creating and verifying an electronic
 digital signature according to GOST 34.10-2012.  The module includes the
-GOST34102012 class, the GOSTSignatureError class and several general functions.
+GOST34102012 class, the GOSTSignatureError class, several general functions and
+set of the parameters of elliptic curves (in accordance with
+R 1323565.1.024-2019).
 """
 import os
 from typing import Any, Tuple
@@ -466,13 +468,13 @@ def new(mode: int, curve: dict) -> 'GOST34102012':
     Return: new signature object.
 
     Exception
-    - GOSTSignatureError('unsupported signature mode'): in case of unsupported
-    signature mode.
-    - GOSTSignatureError('invalid parameters of the elliptic curve'): if the
-    elliptic curve parameters are incorrect.
+    - GOSTSignatureError('GOSTSignatureError: unsupported signature mode'): in
+    case of unsupported signature mode.
+    - GOSTSignatureError('GOSTSignatureError: invalid parameters of the
+    elliptic curve'): if the elliptic curve parameters are incorrect.
     """
     if mode not in (MODE_256, MODE_512):
-        raise GOSTSignatureError('unsupported signature mode')
+        raise GOSTSignatureError('GOSTSignatureError: unsupported signature mode')
     return GOST34102012(mode, curve)
 
 
@@ -503,7 +505,7 @@ class GOST34102012:
         self._v = curve.get('v', 0)
         self._edvards_to_canonical()
         if not self._check_curve():
-            raise GOSTSignatureError('invalid parameters of the elliptic curve')
+            raise GOSTSignatureError('GOSTSignatureError: invalid parameters of the elliptic curve')
     # pylint: enable=too-many-instance-attributes
 
     def _set_size(self, mode: int) -> None:
@@ -626,7 +628,7 @@ class GOST34102012:
         return result
 
     def sign(self, private_key: bytearray, digest: bytearray,
-             rand_k: bytearray = bytearray(b'')) -> int:
+             rand_k: bytearray = bytearray(b'')) -> bytearray:
         """
         Create a signature.
 
@@ -641,17 +643,17 @@ class GOST34102012:
         Return: signature for provided digest (as a byte object).
 
         Exception
-        - GOSTSignatureError('invalid private key value'): if the private key
-        value is incorrect.
-        - GOSTSignatureError('invalid digest value'): if the digest value is
-        incorrect.
-        - GOSTSignatureError('invalid random value'): if the random value is
-        incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid private key value'):
+        if the private key value is incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid digest value'): if
+        the digest value is incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid random value'): if
+        the random value is incorrect.
         """
         if not check_value(private_key, self._size):
-            raise GOSTSignatureError('invalid private key value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid private key value')
         if not check_value(digest, self._size):
-            raise GOSTSignatureError('invalid digest value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid digest value')
         sign_e = self._set_e(digest)
         sign_r = 0
         sign_s = 0
@@ -660,20 +662,19 @@ class GOST34102012:
             rand_k = self._get_rand_k()
         if not isinstance(rand_k, (bytes, bytearray)):
             private_key = zero_fill(private_key)
-            raise GOSTSignatureError('invalid random value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid random value')
         if bytearray_to_int(rand_k) >= self._q:
             private_key = zero_fill(private_key)
-            raise GOSTSignatureError('invalid random value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid random value')
         while compare_to_zero(int_to_bytearray(sign_s, self._size)):
             while compare_to_zero(int_to_bytearray(sign_r, self._size)):
                 sign_k = bytearray_to_int(rand_k)
                 sign_c = self._mul_point(sign_k)
                 sign_r = sign_c[0] % self._q
             sign_s = (sign_r * bytearray_to_int(private_key) + sign_k * sign_e) % self._q
-        sign_r = int_to_bytearray(sign_r, self._size)
-        sign_s = int_to_bytearray(sign_s, self._size)
+        result = int_to_bytearray(sign_r, self._size) + int_to_bytearray(sign_s, self._size)
         private_key = zero_fill(private_key)
-        return sign_r + sign_s
+        return result
 
     def _get_r_s(self, signature: bytearray) -> Tuple[int, int]:
         sign_r = bytearray_to_int(signature[:self._size])
@@ -699,19 +700,19 @@ class GOST34102012:
         Return: the result of the signature verification ('True' or 'False').
 
         Exception
-        - GOSTSignatureError('invalid public key value'): if the public key
-        value is incorrect.
-        - GOSTSignatureError('invalid signature value'): if the signature value
-        is incorrect.
-        - GOSTSignatureError('invalid digest value'): if the digest value is
-        incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid public key value'):
+        if the public key value is incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid signature value'): if
+        the signature value is incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid digest value'): if
+        the digest value is incorrect.
         """
         if not check_value(public_key, self._size * 2):
-            raise GOSTSignatureError('invalid public key value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid public key value')
         if not check_value(signature, self._size * 2):
-            raise GOSTSignatureError('invalid signature value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid signature value')
         if not check_value(digest, self._size):
-            raise GOSTSignatureError('invalid digest value')
+            raise GOSTSignatureError('GOSTSignatureError: invalid digest value')
         public_key = (
             bytearray_to_int(public_key[:self._size]),
             bytearray_to_int(public_key[self._size:])
@@ -740,11 +741,11 @@ class GOST34102012:
         Return: public key (as a byte object).
 
         Exception
-        - GOSTSignatureError('invalid private key') - if the private key value
-        is incorrect.
+        - GOSTSignatureError('GOSTSignatureError: invalid private key') - if
+        the private key value is incorrect.
         """
         if not check_value(private_key, self._size):
-            raise GOSTSignatureError('invalid private key')
+            raise GOSTSignatureError('GOSTSignatureError: invalid private key')
         private_key = bytearray_to_int(private_key)
         public_key = self._mul_point(private_key)
         public_key_x = int_to_bytearray(public_key[0], self._size)

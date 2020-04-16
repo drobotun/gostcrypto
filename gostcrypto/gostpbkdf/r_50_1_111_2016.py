@@ -25,13 +25,14 @@ __all__ = (
 _BLOCK_SIZE: int = 64
 
 
-def new(password: bytearray, salt: bytearray = bytearray(b''),
-        counter: int = 1000) -> 'R5011112016':
+def new(password: bytearray, **kwargs) -> 'R5011112016':
     """
     Create a new PBKDF object and returns it.
 
     Parameters
     - password: password that is a byte object at Unicode UTF-8 encoding.
+
+    Keyword args
     - salt: random value.  If this argument is not passed to the function, the
     'os.urandom' function is used to generate this value with the length of the
     generated value of 32 bytes.
@@ -40,10 +41,13 @@ def new(password: bytearray, salt: bytearray = bytearray(b''),
     Return: new object for the password-based key derivation function.
 
     Exception:
-    - GOSTPBKDFError('invalid password value'): if the password value is
-    incorrect.
-    - GOSTPBKDFError('invalid salt value'): if the salt value is incorrect.
+    - GOSTPBKDFError('GOSTPBKDFError: invalid password value'): if the password
+    value is incorrect.
+    - GOSTPBKDFError('GOSTPBKDFError: invalid salt value'): if the salt value
+    is incorrect.
     """
+    salt = kwargs.get('salt', bytearray(b''))
+    counter = kwargs.get('counter', 1000)
     return R5011112016(password, salt, counter)
 
 
@@ -64,7 +68,7 @@ class R5011112016:
                  iterations: int) -> None:
         """Initialize the PBKDF object."""
         if not isinstance(password, (bytes, bytearray)):
-            raise GOSTPBKDFError('invalid password value')
+            raise GOSTPBKDFError('GOSTPBKDFError: invalid password value')
         self._password = bytearray(password)
         self._salt = salt
         if self._salt == bytearray(b''):
@@ -72,12 +76,13 @@ class R5011112016:
         if not isinstance(self._salt, (bytes, bytearray)):
             password = zero_fill(password)
             self._password = zero_fill(self._password)
-            raise GOSTPBKDFError('invalid salt value')
+            raise GOSTPBKDFError('GOSTPBKDFError: invalid salt value')
         self._salt = bytearray(self._salt)
         self._iterations = iterations
         self._num_block = 0
         self._counter = 0
-        self._hmac_obj = R5011132016('HMAC_GOSTR3411_2012_512', self._password)
+        self._hmac_obj = R5011132016('HMAC_GOSTR3411_2012_512', self._password,
+                                     data=bytearray(b''))
         password = zero_fill(password)
 
     def __del__(self) -> None:
@@ -127,11 +132,11 @@ class R5011112016:
         Return: derived key as a byte object with the length 'dk_len'.
 
         Exception:
-        - GOSTPBKDFError('invalid size of the derived key'): if the size of the
+        - GOSTPBKDFError('GOSTPBKDFError: invalid size of the derived key'): if the size of the
         derived key is incorrect.
         """
         if dk_len > (2 ** 32 - 1) * 64:
-            raise GOSTPBKDFError('invalid size of the derived key')
+            raise GOSTPBKDFError('GOSTPBKDFError: invalid size of the derived key')
         return self._calculate_pbkdf(dk_len)[:dk_len]
 
     def hexderive(self, dk_len: int) -> str:
@@ -144,11 +149,11 @@ class R5011112016:
         Return: derived key as a hexadecimal string with the length 'dk_len'.
 
         Exception:
-        - GOSTPBKDFError('invalid size of the derived key'): if the size of the
-        derived key is incorrect.
+        - GOSTPBKDFError(GOSTPBKDFError: 'invalid size of the derived key'): if
+        the size of the derived key is incorrect.
         """
         if dk_len > (2 ** 32 - 1) * 64:
-            raise GOSTPBKDFError('invalid size of the derived key')
+            raise GOSTPBKDFError('GOSTPBKDFError: invalid size of the derived key')
         return self._calculate_pbkdf(dk_len)[:dk_len].hex()
 
     def clear(self):

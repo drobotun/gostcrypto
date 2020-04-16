@@ -34,14 +34,15 @@ _SIZE_M: int = 64
 _SIZE_H: int = 64
 
 
-def new(rand_size: int, rand_k: bytearray = bytearray(b''),
-        size_s: int = SIZE_S_384) -> 'R132356510062017':
+def new(rand_size: int, **kwargs) -> 'R132356510062017':
     """
     Creates a new pseudo-random sequence generation object and returns it.
 
     Parameters
 
     - rand_size: size of the generated random variable (in bytes).
+
+    Keyword args
     - rand_k: initial filling (seed).  If this argument is not passed to the
     function, the 'os.urandom' function is used to generate the initial filling.
     - size_s: size of the initial filling (in bytes).
@@ -49,9 +50,11 @@ def new(rand_size: int, rand_k: bytearray = bytearray(b''),
     Return: new object of generate random value.
 
     Exception:
-    - GOSTRandomError('invalid seed value'): in case of invalid value of
-    initial filling.
+    - GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
+    invalid value of initial filling.
     """
+    rand_k = kwargs.get('rand_k', bytearray(b''))
+    size_s = kwargs.get('size_s', SIZE_S_384)
     return R132356510062017(rand_size, rand_k, size_s)
 
 
@@ -69,17 +72,16 @@ class R132356510062017:
         self._size_s = size_s
         self._rand_u = bytearray(b'')
         if rand_k == bytearray(b''):
-            self._rand_u = os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1)
-            self._rand_u = bytearray(self._rand_u)
+            self._rand_u = bytearray(os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1))
         else:
             if not check_value(rand_k, self._size_s):
-                raise GOSTRandomError('invalid seed value')
+                raise GOSTRandomError('GOSTRandomError: invalid seed value')
             self._rand_u = rand_k + bytearray(b'\x00' * (_SIZE_M - self._size_s - 1))
             self._rand_u = bytearray(self._rand_u)
         self._q = rand_size // _SIZE_H
         self._r = rand_size % _SIZE_H
         self._limit = 2 ** (_SIZE_M - self._size_s)
-        self._hash_obj = GOST34112012('streebog512', data=b'')
+        self._hash_obj = GOST34112012('streebog512', data=bytearray(b''))
 
     def __del__(self) -> None:
         """
@@ -91,8 +93,8 @@ class R132356510062017:
         self.clear()
 
     def _inc_rand_u(self) -> None:
-        self._rand_u = bytearray_to_int(self._rand_u) + 1 % (2 ** (_SIZE_M - 1))
-        self._rand_u = int_to_bytearray(self._rand_u, _SIZE_M - 1)
+        int_rand_u = bytearray_to_int(self._rand_u) + 1 % (2 ** (_SIZE_M - 1))
+        self._rand_u = int_to_bytearray(int_rand_u, _SIZE_M - 1)
 
     def random(self) -> bytearray:
         """
@@ -101,18 +103,20 @@ class R132356510062017:
         Return: new random value.
 
         Exception
-        - GOSTRandomError ('exceeded the limit value of the counter'): when the
+        - GOSTRandomError ('GOSTRandomError: exceeded the limit value of the
+        counter'): when the
         counter limit is exceeded.
-        - GOSTRandomError('the seed value is zero'): if the seed value is zero.
+        - GOSTRandomError('GOSTRandomError: the seed value is zero'): if the
+        seed value is zero.
         """
         if bytearray_to_int(self._rand_u[:self._size_s]) == 0:
-            raise GOSTRandomError('the seed value is zero')
+            raise GOSTRandomError('GOSTRandomError: the seed value is zero')
         i = self._q
         result = bytearray(0)
         while i > 0:
             if bytearray_to_int(self._rand_u[self._size_s::]) >= self._limit:
                 self._rand_u = zero_fill(self._rand_u)
-                raise GOSTRandomError('exceeded the limit value of the counter')
+                raise GOSTRandomError('GOSTRandomError: exceeded the limit value of the counter')
             self._inc_rand_u()
             self._hash_obj.update(self._rand_u)
             rand_c = self._hash_obj.digest()
@@ -122,7 +126,7 @@ class R132356510062017:
         if self._r != 0:
             if bytearray_to_int(self._rand_u[self._size_s::]) >= self._limit:
                 self._rand_u = zero_fill(self._rand_u)
-                raise GOSTRandomError('exceeded the limit value of the counter')
+                raise GOSTRandomError('GOSTRandomError: exceeded the limit value of the counter')
             self._inc_rand_u()
             self._hash_obj.update(self._rand_u)
             rand_c = self._hash_obj.digest()
@@ -140,22 +144,22 @@ class R132356510062017:
         initial filling.
 
         Exception
-        - GOSTRandomError('invalid seed value'): in case of invalid size of
-        initial filling.
+        - GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
+        invalid size of initial filling.
         """
         if rand_k == bytearray(b''):
-            self._rand_u = os.urandom(self._size_s) + b'\x00' * (_SIZE_M - self._size_s - 1)
-            self._rand_u = bytearray(self._rand_u)
+            self._rand_u = bytearray(os.urandom(self._size_s) + bytearray(b'\x00' * (_SIZE_M - self._size_s - 1)))
         else:
             if not check_value(rand_k, self._size_s):
-                raise GOSTRandomError('invalid seed value')
+                raise GOSTRandomError('GOSTRandomError: invalid seed value')
             self._rand_u = rand_k + b'\x00' * (_SIZE_M - self._size_s - 1)
             self._rand_u = bytearray(self._rand_u)
         self._hash_obj.reset()
 
     def clear(self) -> None:
         """Clear the counter value."""
-        self._rand_u = zero_fill(self._rand_u)
+        if hasattr(self, '_rand_u'):
+            self._rand_u = zero_fill(self._rand_u)
 
 
 class GOSTRandomError(Exception):

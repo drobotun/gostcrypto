@@ -47,7 +47,7 @@ _O_PAD: bytearray = bytearray([
 ])
 
 
-def new(name: str, key: bytearray) -> 'R5011132016':
+def new(name: str, key: bytearray, **kwargs) -> 'R5011132016':
     """
     Create a new authentication code calculation object and returns it.
 
@@ -56,13 +56,23 @@ def new(name: str, key: bytearray) -> 'R5011132016':
     ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512').
     - key: authentication key.
 
+    Keyword args
+    - data: the data from which to get the HMAC (as a byte object).  If this
+    argument is passed to a function, you can immediately use the 'digest'
+    (or 'hexdigest') method to calculate the HMAC value after calling 'new'.
+    If the argument is not passed to the function, then you must use the
+    'update(data)' method before the 'digest' (or 'hexdigest') method.
+
     Return: new authentication code calculation object.
 
     Exception
-    - GOSTHMACError('unsupported mode'): in case of unsupported mode.
-    - GOSTHMACError('invalid key value'): in case of invalid key value.
+    - GOSTHMACError('GOSTHMACError: unsupported mode'): in case of unsupported
+    mode.
+    - GOSTHMACError('GOSTHMACError: invalid key value'): in case of invalid key
+    value.
     """
-    return R5011132016(name, key)
+    data = kwargs.get('data', bytearray(b''))
+    return R5011132016(name, key, data)
 
 
 class R5011132016:
@@ -84,12 +94,12 @@ class R5011132016:
     algorithm.
     """
 
-    def __init__(self, name: str, key: bytearray):
+    def __init__(self, name: str, key: bytearray, data: bytearray) -> None:
         """Initialize the HMAC object."""
         if name not in ('HMAC_GOSTR3411_2012_256', 'HMAC_GOSTR3411_2012_512'):
-            raise GOSTHMACError('unsupported mode')
+            raise GOSTHMACError('GOSTHMACError: unsupported mode')
         if (not isinstance(key, (bytes, bytearray))) or len(key) > _KEY_SIZE:
-            raise GOSTHMACError('invalid key value')
+            raise GOSTHMACError('GOSTHMACError: invalid key value')
         if len(key) < _KEY_SIZE:
             add = bytearray(_KEY_SIZE - len(key))
             self._key = key + add
@@ -98,10 +108,12 @@ class R5011132016:
             self._key = key
         key = bytearray(len(key))
         if name == 'HMAC_GOSTR3411_2012_256':
-            self._hasher_obj = GOST34112012('streebog256', data=b'')
+            self._hasher_obj = GOST34112012('streebog256', data=bytearray(b''))
         elif name == 'HMAC_GOSTR3411_2012_512':
-            self._hasher_obj = GOST34112012('streebog512', data=b'')
+            self._hasher_obj = GOST34112012('streebog512', data=bytearray(b''))
         self._counter = 0
+        if data != bytearray(b''):
+            self.update(data)
 
     def __del__(self) -> None:
         """
@@ -124,11 +136,11 @@ class R5011132016:
         'm.update(a+b)'.
 
         Exception
-        - GOSTHMACError('invalid data value'): in case where the data is not
-        byte object.
+        - GOSTHMACError('GOSTHMACError: invalid data value'): in case where the
+        data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
-            raise GOSTHMACError('invalid data value')
+            raise GOSTHMACError('GOSTHMACError: invalid data value')
         self._counter = self._counter + 1
         if self._counter == 1:
             self._hasher_obj.update(add_xor(self._key, _I_PAD) + data)
@@ -143,7 +155,7 @@ class R5011132016:
 
         Return: HMAC message authentication code as a byte object.
         """
-        fin_hasher_obj = GOST34112012(self._hasher_obj.name, data=b'')
+        fin_hasher_obj = GOST34112012(self._hasher_obj.name, data=bytearray(b''))
         fin_hasher_obj.update(add_xor(self._key, _O_PAD) + self._hasher_obj.digest())
         result = fin_hasher_obj.digest()
         fin_hasher_obj.reset()

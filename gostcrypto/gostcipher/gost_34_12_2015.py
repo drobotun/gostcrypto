@@ -266,7 +266,7 @@ class GOST34122015Magma:
         self._expand_iter_key(key)
         self._expand_iter_key(key)
         self._expand_iter_key_final(key)
-        key = zero_fill(len(key))
+        key = zero_fill(key)
 
     def __del__(self):
         """
@@ -278,7 +278,7 @@ class GOST34122015Magma:
         self.clear()
 
     def _expand_iter_key(self, key: bytearray) -> None:
-        iter_key = b''
+        iter_key = bytearray(b'')
         for j in range(8):
             iter_key = bytearray(4)
             for i in range(4):
