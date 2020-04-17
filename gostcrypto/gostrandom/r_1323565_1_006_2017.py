@@ -82,7 +82,7 @@ class R132356510062017:
             self._rand_u = bytearray(self._rand_u)
         self._q = rand_size // _SIZE_H
         self._r = rand_size % _SIZE_H
-        self._limit = 2 ** (_SIZE_M - self._size_s)
+        self._limit = 2 ** ((_SIZE_M - self._size_s) * 8)
         self._hash_obj = GOST34112012('streebog512', data=bytearray(b''))
 
     def __del__(self) -> None:
