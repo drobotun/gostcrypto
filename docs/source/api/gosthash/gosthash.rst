@@ -259,7 +259,7 @@ GOSTHashError
     import gostcrypto
 
     hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
-	try:
+    try:
         hash_obj = gostcrypto.gosthash.new('streebog256')
         hash_obj.update(hash_string)
     except GOSTHashError as err:
