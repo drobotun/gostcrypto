@@ -1,7 +1,7 @@
 """The GOST cryptographic functions."""
 
 __title__ = 'gostcrypto'
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 __author__ = 'Evgeny Drobotun'
 __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'
