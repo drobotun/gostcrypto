@@ -70,6 +70,8 @@ def new(name: str, key: bytearray, **kwargs) -> 'R5011132016':
     mode.
     - GOSTHMACError('GOSTHMACError: invalid key value'): in case of invalid key
     value.
+    - GOSTHMACError('GOSTHMACError: invalid data value'): in case where the
+    data is not byte object.
     """
     data = kwargs.get('data', bytearray(b''))
     return R5011132016(name, key, data)
@@ -234,11 +236,4 @@ class GOSTHMACError(Exception):
     - invalid data value.
     """
 
-    def __init__(self, msg: str) -> None:
-        """
-        Initialize exception.
-
-        Parameters
-        - msg: message to output when an exception occurs.
-        """
-        self.msg = msg
+    pass

@@ -1,11 +1,58 @@
-**'gosthmac'** module
-=====================
+API of the 'gostcrypto.gosthmac' module
+=======================================
 
-The module implementing the calculating the HMAC message authentication code in accordance with R 50.1.113-2016. The module includes the R5011132016 class and the ``new`` function.
+Introductoon
+""""""""""""
 
-new(name, key)
-""""""""""""""""""""""""""""""
-    Creates a new authentication code calculation object and returns it.
+The module implementing the calculating the hash-based message authentication code (HMAC) in accordance with R 50.1.113-2016. The module includes the R5011132016 and GOSTHMACError classes and the ``new`` function.
+
+API principles
+""""""""""""""
+
+.. figure:: gosthmac.png
+    :align: center
+    :figwidth: 50%
+
+    Generic state diagram for a HMAC object
+
+The first message fragment for a HMAC can be passed to the ``new()`` function with the ``data`` parameter after specifying the name of the HMAC algorithm (``'HMAC_GOSTR3411_2012_256'`` or ``'HMAC_GOSTR3411_2012_512'`` ) and after specifying key value:
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')	
+    hmac_string = bytearray.fromhex('0126bdb87800af214341456563780100')
+
+    hmac_obj = gostrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=hmac_string)
+
+The ``data`` argument is optional and may be not passed to the ``new`` function. In this case, the ``data`` parameter must be passed in the ``update()`` method, which is called after ``new()``:
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')	
+    hmac_string = bytearray.fromhex('0126bdb87800af214341456563780100')
+
+    hmac_obj = gostrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
+    hmac_obj.update(hmac_string)
+
+After that, the ``update`` method can be called any number of times as needed, with other parts of the message
+
+Passing the first part of the message to the ``new ()`` function, and the subsequent parts to the ``update()`` method:
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
+	
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=b'first part message')
+    hmac_obj.update(b'second part message')
+    hmac_obj.update(b'third part message')
+
+Passing the first part of the message and subsequent parts to the ``update()`` method:
 
 .. code-block:: python
 
@@ -14,11 +61,49 @@ new(name, key)
     key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
 
     hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
+    hmac_obj.update(b'first part message')
+    hmac_obj.update(b'second part message')
+    hmac_obj.update(b'third part message')
+
+HMAC calculation is completed using the ``digest()`` or ``hexdigest()`` method:
+
+.. code-block:: python
+
+    import gostcrypto
+	
+	key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
+
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
+    hmac_obj.update(b'first part message')
+    hmac_obj.update(b'second part message')
+    hmac_obj.update(b'third part message')
+    hmac_result = hmac_obj.digest()
+
+Functions
+"""""""""
+
+new(name, key, \**kwargs)
+'''''''''''''''''''''''''
+    Creates a new authentication code calculation object and returns it.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
+    hmac_string = bytearray.fromhex('0126bdb87800af214341456563780100')
+
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=hmac_string)
 
 .. rubric:: **Arguments:**
 
 - **name** - name of the authentication code calculation mode ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512').
 - **key** - authentication key (as a byte object between 32 and 64 bytes in size).
+
+.. rubric:: **Keyword arguments:**
+
+- **data** - the data from which to get the HMAC (as a byte object).  If this argument is passed to a function, you can immediately use the ``digest()``
+    (or ``hexdigest()``) method to calculate the HMAC value after calling ``new()``. If the argument is not passed to the function, then you must use the``update()`` method before the ``digest()`` (or ``hexdigest()``) method.
 
 .. rubric:: **Return:**
 
@@ -26,13 +111,17 @@ new(name, key)
 
 .. rubric:: **Exceptions:**
 
-- ValueError('unsupported mode') - in case of unsupported mode.
-- ValueError('invalid key size') - in case of invalid key size.
+- GOSTHMACError('unsupported mode') - in case of unsupported mode.
+- GOSTHMACError('invalid key value') - in case of invalid key value.
+- GOSTHMACError('invalid data value'): in case where the data is not byte object.
 
 *****
 
+Classes
+"""""""
+
 R5011132016
-"""""""""""
+'''''''''''
 
 Methods:
 --------
@@ -54,6 +143,10 @@ update(data)
 .. rubric:: **Arguments:**
 
 - **data** - the message for which want to calculate the authentication code. Repeated calls are equivalent to a single call with the concatenation of all the arguments: ``m.update(a)``; ``m.update(b)`` is equivalent to ``m.update(a+b)``.
+
+.. rubric:: **Exceptions:**
+
+- GOSTHMACError('invalid data value'): in case where the data is not byte object.
 
 *****
 
@@ -202,11 +295,36 @@ name
 
 *****
 
+GOSTHMACError
+'''''''''''''
+    The class that implements exceptions.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
+    data = bytearray.fromhex('0126bdb87800af214341456563780100')
+
+    try:
+        hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
+        hmac_obj.update(data)
+    exception GOSTHMACError as err:
+        print(err)
+    else:
+        hmac_result = hmac_obj.digest()
+
+Exception types:
+
+- ``unsupported mode`` - in case of unsupported mode.
+- ``invalid key value`` - in case of invalid key value.
+- ``invalid data value`` - in case where the data is not byte object.
+
 Example of use
 """"""""""""""
 
 Getting a HMAC for a string
----------------------------
+'''''''''''''''''''''''''''
 
 .. code-block:: python
 
@@ -215,27 +333,20 @@ Getting a HMAC for a string
     key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f1011121315161718191a1b1c1d1e1f')
     data = bytearray.fromhex('0126bdb87800af214341456563780100')
 
-    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
-    hmac_obj.update(data)
-    result = hmac_obj.digest()
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=data)
+    hmac_result = hmac_obj.digest()
 
 Getting a HMAC for a file
--------------------------
+'''''''''''''''''''''''''
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+In this case the ``buffer_size`` value must be a multiple of the ``block_size`` value.
 
 .. code-block:: python
 
     import gostcrypto
 
     key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f1011121315161718191a1b1c1d1e1f')
-    file_path = 'd:/file.txt'
+    data = bytearray.fromhex('0126bdb87800af214341456563780100')
 
-    buffer_size = 128
-    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
-    with open(file_path, 'rb') as file:
-        buffer = file.read(buffer_size)
-        while len(buffer) > 0:
-            hmac_obj.update(buffer)
-            buffer = file.read(buffer_size)
-    result = hmac_obj.hexdigest()
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=data)
+    hmac_result = hmac_obj.digest()

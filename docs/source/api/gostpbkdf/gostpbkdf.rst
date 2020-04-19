@@ -1,10 +1,16 @@
-**'gostpbkdf'** module
-======================
+API of the 'gostcrypto.gostpbkdf' module
+========================================
 
-The module implementing the password-based key derivation function in accordance with R 50.1.111-2016. The module includes the R5011112016 class and the ``new`` function.
+Introduction
+""""""""""""
 
-new(password, salt, counter)
-""""""""""""""""""""""""""""
+The module implementing the password-based key derivation function in accordance with R 50.1.111-2016. The module includes the R5011112016 and GOSTPBKDFError classes and the ``new`` function.
+
+Functions
+"""""""""
+
+new(password, \**kwargs)
+''''''''''''''''''''''''''''
     Creates a new object for the password-based key derivation function and returns it.
 
 .. code-block:: python
@@ -14,11 +20,14 @@ new(password, salt, counter)
     password = b'password'
     salt = b'salt'
 	
-    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt, 2000)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=2000)
 
 .. rubric:: **Arguments:**
 
 - **password** - password that is a character string in Unicode UTF-8 encoding.
+
+.. rubric:: **Keyword arguments:**
+
 - **salt** - random value. If this argument is not passed to the function, the ``os.urandom`` function is used to generate this value with the length of the generated value of 32 bytes.
 - **counter** - number of iterations. The default value is 1000.
 
@@ -28,12 +37,16 @@ new(password, salt, counter)
 
 .. rubric:: **Exception:**
 
-- ValueError('invalid password value') - in case of invalid password value.
+- GOSTPBKDFError(invalid password value') - if the password value is incorrect.
+- GOSTPBKDFError('invalid salt value') - if the salt value is incorrect.
 
 *****
 
+Classes
+"""""""
+
 R5011112016
-"""""""""""
+'''''''''''
     Class that implementing the calculating the password-based key derivation function in accordance with R 50.1.111-2016.
 
 Methods:
@@ -50,7 +63,7 @@ derive(dk_len)
     password = b'password'
     salt = b'salt'
 	
-    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt, 2000)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=2000)
     pbkdf_result = pbkdf_obj.derive(32)
 
 .. rubric:: **Arguments:**
@@ -63,7 +76,7 @@ derive(dk_len)
 
 .. rubric:: **Exception:**
 
-- ValueError('invalid size of the derived key') - in case of invalid size of the derived key.
+- GOSTPBKDFError('invalid size of the derived key') - in case of invalid size of the derived key.
 
 *****
 
@@ -78,7 +91,7 @@ hexderive(dk_len)
     password = b'password'
     salt = b'salt'
 	
-    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt, 2000)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=2000)
     pbkdf_result = pbkdf_obj.hexderive(32)
 
 .. rubric:: **Arguments:**
@@ -91,7 +104,7 @@ hexderive(dk_len)
 
 .. rubric:: **Exception:**
 
-- ValueError('invalid size of the derived key') - in case of invalid size of the derived key.
+- GOSTPBKDFError('invalid size of the derived key') - in case of invalid size of the derived key.
 
 *****
 
@@ -106,7 +119,7 @@ clear()
     password = b'password'
     salt = b'salt'
 	
-    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt, 2000)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=2000)
     pbkdf_obj.clear()
 
 *****
@@ -129,6 +142,31 @@ salt
 
 *****
 
+GOSTPBKDFError
+''''''''''''''
+    The class that implements exceptions.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    password = b'password'
+    salt = b'salt'
+	
+    try: 
+        pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=2000)
+        pbkdf_result = pbkdf_obj.hexderive(32)
+    except GOSTPBKDFError as err:
+        print(err)
+    else:
+        print(pbkdf_result)
+
+Exception types:
+
+- ``invalid password value`` - if the password value is incorrect.
+- ``invalid salt value`` - if the salt value is incorrect.
+- ``invalid size of the derived key`` - if the size of the derived key is incorrect.
+
 Example of use
 """"""""""""""
 
@@ -139,5 +177,5 @@ Example of use
     password = b'password'
     salt = b'salt'
 
-    pbkdf_obj = new(password, salt, 4096)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=4096)
     pbkdf_result = pbkdf_obj.derive(32)

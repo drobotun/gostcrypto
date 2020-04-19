@@ -206,10 +206,10 @@ def new(name: str, **kwargs) -> 'GOST34112012':
 
     Keyword args
     - data: the data from which to get the hash (as a byte object).  If this
-    argument is passed to a function, you can immediately use the 'digest'
-    (or 'hexdigest') method to calculate the hash value after calling 'new'.
+    argument is passed to a function, you can immediately use the 'digest()'
+    (or 'hexdigest()') method to calculate the hash value after calling 'new()'.
     If the argument is not passed to the function, then you must use the
-    'update(data)' method before the 'digest' (or 'hexdigest') method.
+    'update()' method before the 'digest()' (or 'hexdigest()') method.
 
     Return: new hashing object.
 
@@ -459,11 +459,4 @@ class GOSTHashError(Exception):
     - invalid data value.
     """
 
-    def __init__(self, msg: str) -> None:
-        """
-        Initialize exception.
-
-        Parameters
-        - msg: message to output when an exception occurs.
-        """
-        self.msg = msg
+    pass

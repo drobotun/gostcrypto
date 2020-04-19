@@ -1,6 +1,12 @@
 Release History
 """""""""""""""
 
+.. rubric:: 1.1.1 (20.04.2020)
+
+- Use ``**kvargs`` in the ``new`` function with default parameters (**gostrandom**, **gosthash**, **gosthmac**, **gostpbkdf**)
+- Add the ability to pass data to the ``new`` function from **gosthmac**
+- Fixed some minor bugs in the **gostrandom** module
+
 .. rubric:: 1.1.0 (15.04.2020)
 
 - Refactoring code **gostcipher** module (changed the class structure)

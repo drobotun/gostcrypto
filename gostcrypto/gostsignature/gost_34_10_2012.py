@@ -768,11 +768,4 @@ class GOSTSignatureError(Exception):
     - invalid signature value.
     """
 
-    def __init__(self, msg: str) -> None:
-        """
-        Initialize exception.
-
-        Parameters
-        - msg: message to output when an exception occurs.
-        """
-        self.msg = msg
+    pass

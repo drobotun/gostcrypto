@@ -147,7 +147,7 @@ class R132356510062017:
 
         Exception
         - GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
-        invalid size of initial filling.
+        invalid value of initial filling.
         """
         if rand_k == bytearray(b''):
             self._rand_u = bytearray(
@@ -176,11 +176,4 @@ class GOSTRandomError(Exception):
     - the seed value is zero.
     """
 
-    def __init__(self, msg: str) -> None:
-        """
-        Initialize exception.
-
-        Parameters
-        - msg: message to output when an exception occurs.
-        """
-        self.msg = msg
+    pass

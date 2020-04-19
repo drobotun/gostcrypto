@@ -1,19 +1,55 @@
 Introduction
 ============
 
-.. warning:: This documentation describes the ghostscript package version 1.0.0. On the https://pypi.org/project/gostcrypto/ a new version of the package is available (1.1.0). Documentation for version 1.1.0 will be published as soon as possible. Most of the documentation for version 1.0.1 is also relevant for the new version 1.1.0. You can find out more about using the new version's features using __doc__.
-
 Overview
 ~~~~~~~~
 
-The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
+The package **goscrypto** implements various cryptographic functions defined in the State standards of the Russian Federation. All cryptographic functionalities are organized in modules; each modules is dedicated to solving a specific class of problems.
 
-- **gosthash**: The module implements functions for calculating hash amounts in accordance with GOST R 34.11-2012.
-- **gostcipher**: The module implements block encryption functions in accordance with GOST R 34.12-2015 and their use modes in accordance with GOST R 34.13-2015.
-- **gostsignature**: The module implements the functions of forming and verifying an electronic digital signature in accordance with GOST R 34.10-2012.
-- **gostrandom**: The module implements functions for generating pseudo-random sequences in accordance with R 1323565.1.006-2017.
-- **gosthmac**: The module implements the functions of calculating the HMAC message authentication code in accordance with R 50.1.113-2016.
-- **gostpbkdf**: The module implements the password-based key derivation function in accordance with R 50.1.111-2016.
+.. csv-table::
+    :header: **Package**, **Description**
+    :widths: 20, 80
+
+    :doc:`gostcrypto.gosthash <api/gosthash/gosthash>`, "The module implements functions for calculating hash amounts in accordance with `GOST R 34.11-2012 <https://files.stroyinf.ru/Data2/1/4293788/4293788459.pdf>`_."
+    :doc:`gostcrypto.gostcipher <api/gostcipher/gostcipher>`, "The module implements block encryption functions in accordance with `GOST R 34.12-2015 <https://files.stroyinf.ru/Data/603/60339.pdf>`_ and their use modes in accordance with `GOST R 34.13-2015 <https://files.stroyinf.ru/Data2/1/4293762/4293762703.pdf>`_."
+    :doc:`gostcrypto.gostsignature <api/gostsignature/gostsignature>`, "The module implements the functions of forming and verifying an electronic digital signature in accordance with `GOST R 34.10-2012 <https://files.stroyinf.ru/Data2/1/4293788/4293788463.pdf>`_."
+    :doc:`gostcrypto.gostrandom <api/gostrandom/gostrandom>`, "The module implements functions for generating pseudo-random sequences in accordance with `R 1323565.1.006-2017 <https://files.stroyinf.ru/Data2/1/4293740/4293740893.pdf>`_."
+    :doc:`gostcrypto.gosthmac <api/gosthmac/gosthmac>`, "The module implements the functions of calculating the HMAC message authentication code in accordance with `R 50.1.113-2016 <https://files.stroyinf.ru/Data2/1/4293748/4293748842.pdf>`_."
+    :doc:`gostcrypto.gostpbkdf <api/gostpbkdf/gostpbkdf>`, "The module implements the password-based key derivation function in accordance with `R 50.1.111-2016 <https://files.stroyinf.ru/Data2/1/4293748/4293748845.pdf>`_."
+
+Features
+""""""""
+
+- **Symmetric ciphers:**
+
+    - kuznechik
+    - magma
+
+- **Traditional modes of operations for symmetric ciphers:**
+
+    - ECB
+    - CBC
+    - CFB
+    - OFB
+    - CTR
+ 
+- **Cryptographic hashes:**
+ 
+    - streebog 512
+    - streebog 256
+ 
+- **Message Authentication Codes (MAC):**
+
+    - MAC
+    - HMAC	
+
+- **Asymmetric digital signatures:**
+
+    - (EC)DSA
+
+- **Key derivation:**
+
+    - PBKDF2
 
 Installation
 """"""""""""
@@ -22,8 +58,8 @@ Installation
 
     $ pip install gostcrypto
 
-Usage **'gosthash'** module
-"""""""""""""""""""""""""""
+Usage gosthash module
+"""""""""""""""""""""
 
 Getting a hash for a string
 ---------------------------
@@ -33,20 +69,20 @@ Getting a hash for a string
     import gostcrypto
 
     hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
-    hash_obj = gostcrypto.gosthash.new('streebog256')
-    hash_obj.update(hash_string)
-    result = hash_obj.hexdigest()
+    hash_obj = gostcrypto.gosthash.new('streebog256', data=hash_string))
+    hash_result = hash_obj.hexdigest()
 
 Getting a hash for a file
 -------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+.. Note::
+    In this case the ``buffer_size`` value must be a multiple of the ``block_size`` value.
 
 .. code-block:: python
 
     import gostcrypto
 
-    file_path = 'd:/hash file.txt'
+    file_path = 'hash_file.txt'
     buffer_size = 128
     hash_obj = gostcrypto.gosthash.new('streebog512')
     with open(file_path, 'rb') as file:
@@ -54,17 +90,15 @@ Getting a hash for a file
         while len(buffer) > 0:
             hash_obj.update(buffer)
             buffer = file.read(buffer_size)
-    result = hash_obj.hexdigest()
+    hash_result = hash_obj.hexdigest()
 
-Usage **'gostcipher'** module
-"""""""""""""""""""""""""""""
+Usage gostcipher module
+"""""""""""""""""""""""
 
 String encryption in ECB mode
 -----------------------------
 
 .. code-block:: python
-
-    .. code-block:: python
 
     import gostcrypto
 
@@ -73,7 +107,7 @@ String encryption in ECB mode
         0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
     ])
 
-    plain_text = = bytearray([
+    plain_text = bytearray([
         0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
         0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a,
         0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xee, 0xff, 0x0a, 0x00,
@@ -83,14 +117,15 @@ String encryption in ECB mode
     cipher_obj = gostcrypto.gostcipher.new('kuznechik',
                                             key,
                                             gostcrypto.gostcipher.MODE_ECB,
-                                            pad_mode=PAD_MODE_1)
+                                            pad_mode=gostcrypto.gostcipher.PAD_MODE_1)
 
     cipher_text = cipher_obj.encrypt(plain_text)
 
 File encryption in CTR mode
 ---------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+.. note::
+     In this case the ``buffer_size`` value must be a multiple of the ``block_size`` value.
 
 .. code-block:: python
 
@@ -105,26 +140,28 @@ File encryption in CTR mode
         0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0,
     ])
 
-    plain_file_path = 'd:/plain file.txt'
-	cipher_file_path = 'd:/cipher file.txt'
+    plain_file_path = 'plain_file.txt'
+    cipher_file_path = 'cipher_file.txt'
     cipher_obj = gostcrypto.gostcipher.new('kuznechik',
                                             key,
                                             gostcrypto.gostcipher.MODE_CTR,
                                             init_vect=init_vect)
 
     buffer_size = 128
+
     plain_file = open(plain_file_path, 'rb')
-    cipher_file = open(cipher_file_path', 'wb')
+    cipher_file = open(cipher_file_path, 'wb')
     buffer = plain_file.read(buffer_size)
     while len(buffer) > 0:
-        cipher_data = cipher.decrypt(buffer)
+        cipher_data = cipher_obj.encrypt(buffer)
         cipher_file.write(cipher_data)
-        buffer = plain_file.read(buffer_size)
+        buffer = plain_file.read(buffer_size))
 
 Calculating MAC of the file
 ---------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+.. note::
+    In this case the ``buffer_size`` value must be a multiple of the ``block_size`` value.
 
 .. code-block:: python
 
@@ -135,22 +172,22 @@ Calculating MAC of the file
         0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
     ])
 
-    file_path = 'd:/file.txt'
-    cipher = gostcrypto.gostcipher.new('kuznechik',
-                                        key,
-                                        gostcrypto.gostcipher.MODE_MAC,
-                                        pad_mode=gostcrypto.gostcipher.PAD_MODE_3)
-    
-	buffer_size = 128
-	file = open(file_path, 'rb')
-    buffer = file.read(buffer_size)
-    while len(buffer) > 0:
-        cipher.update(buffer)
-        buffer = file.read(buffer_size)
-    mac_result = cipher.digest(8)
+    plain_file_path = 'plain_file.txt'
+    cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+                                            key,
+                                            gostcrypto.gostcipher.MODE_MAC)
 
-Usage **'gostsignature'** module
-""""""""""""""""""""""""""""""""
+    buffer_size = 128
+
+    plain_file = open(plain_file_path, 'rb')
+    buffer = plain_file.read(buffer_size)
+    while len(buffer) > 0:
+        cipher_obj.update(buffer)
+        buffer = plain_file.read(buffer_size)
+    mac_result = cipher_obj.digest(8)
+
+Usage gostsignature module
+""""""""""""""""""""""""""
 
 Signing
 -------
@@ -172,11 +209,9 @@ Verify
 
 .. code-block:: python
 
-    import gostcrypto
-
-    public_key = bytearray.fromhex('7f2b49e270db6d90d8595bec458b50c58585ba1d4e9b788f6689dbd8e56fd80b26f1b489d6701dd185c8413a977b3cbbaf64d1c593d26627dffb101a87ff77da')
+    public_key = bytearray.fromhex('fd21c21ab0dc84c154f3d218e9040bee64fff48bdff814b232295b09d0df72e45026dec9ac4f07061a2a01d7a2307e0659239a82a95862df86041d1458e45049')
     digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
-    signature = bytearray.fromhex('41aa28d2f1ab148280cd9ed56feda41974053554a42767b83ad043fd39dc049301456c64ba4642a1653c235a98a60249bcd6d3f746b631df928014f6c5bf9c40')
+    signature = bytearray.fromhex('4b6dd64fa33820e90b14f8f4e49ee92eb2660f9eeb4e1b313517b6ba173979656df13cd4bceaf606ed32d410f48f2a5c2596c146e8c2fa4455d08cf68fc2b2a7')
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
                                             gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
@@ -191,8 +226,6 @@ Generating a public key
 
 .. code-block:: python
 
-    import gostcrypto
-
     private_key = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
@@ -200,28 +233,28 @@ Generating a public key
 
     public_key = sign_obj.public_key_generate(private_key)
 
-Usage **'gostrandom'** module
-"""""""""""""""""""""""""""""
+Usage gostrandom module
+"""""""""""""""""""""""
 
 .. code-block:: python
 
     import gostcrypto
 
     rand_k = bytearray([
-        0xa8, 0xe2, 0xf9, 0x00, 0xdd, 0x4d, 0x7e, 0x24,
-        0x5f, 0x09, 0x75, 0x3d, 0x01, 0xe8, 0x75, 0xfc,
-        0x38, 0xf1, 0x4f, 0xf5, 0x25, 0x4c, 0x94, 0xea,
-        0xdb, 0x45, 0x1e, 0x4a, 0xb6, 0x03, 0xb1, 0x47,
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10,
+        0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
     ])
 
     random_obj = gostcrypto.gostrandom.new(32,
-                                           rand_k,
-                                           gostcrypto.gostrandom.SIZE_S_320)
+                                       rand_k=rand_k,
+                                       size_s=gostcrypto.gostrandom.SIZE_S_256)
     random_result = random_obj.random()
     random_obj.clear()
 
-Usage **'gosthmac'** module
-"""""""""""""""""""""""""""
+Usage gosthmac module
+"""""""""""""""""""""
 
 Getting a HMAC for a string
 ---------------------------
@@ -233,22 +266,21 @@ Getting a HMAC for a string
     key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f1011121315161718191a1b1c1d1e1f')
     data = bytearray.fromhex('0126bdb87800af214341456563780100')
 
-    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
-    hmac_obj.update(data)
-    result = hmac_obj.digest()
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=data)
+    hmac_result = hmac_obj.digest()
 
 Getting a HMAC for a file
 -------------------------
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+.. note::
+    In this case the ``buffer_size`` value must be a multiple of the ``block_size`` value.
 
 .. code-block:: python
 
     import gostcrypto
 
     key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f1011121315161718191a1b1c1d1e1f')
-    file_path = 'd:/file.txt'
-
+    file_path = 'hmac_file.txt'
     buffer_size = 128
     hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
     with open(file_path, 'rb') as file:
@@ -256,10 +288,10 @@ Getting a HMAC for a file
         while len(buffer) > 0:
             hmac_obj.update(buffer)
             buffer = file.read(buffer_size)
-    result = hmac_obj.hexdigest()
+    hmac_result = hmac_obj.hexdigest()
 
-Usage **'gostpbkdf'** module
-""""""""""""""""""""""""""""
+Usage gostpbkdf module
+""""""""""""""""""""""
 
 .. code-block:: python
 
@@ -268,7 +300,7 @@ Usage **'gostpbkdf'** module
     password = b'password'
     salt = b'salt'
 
-    pbkdf_obj = new(password, salt, 4096)
+    pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=4096)
     pbkdf_result = pbkdf_obj.derive(32)
 
 License
@@ -283,6 +315,21 @@ Package source code: https://github.com/drobotun/gostcrypto
 
 Release History
 ~~~~~~~~~~~~~~~
+
+.. rubric:: 1.1.1 (20.04.2020)
+
+- Use ``**kvargs`` in the ``new`` function with default parameters (**gostrandom**, **gosthash**, **gosthmac**, **gostpbkdf**)
+- Add the ability to pass data to the ``new`` function from **gosthmac**
+- Fixed some minor bugs in the **gostrandom** module
+
+.. rubric:: 1.1.0 (15.04.2020)
+
+- Refactoring code **gostcipher** module (changed the class structure)
+- Each module has its own exception class added
+- In the ``new`` function of the **gostcipher** module for MAC mode, it is now possible to pass data for MAC calculation, followed by calling the ``digest`` method without first calling the ``update`` method
+- In the ``new`` function of the **gosthash** module, it is now possible to pass data for hash calculation, followed by calling the ``digest`` method without first calling the ``update`` method
+- Added new exceptions for various conflict situations
+- Fixed some minor bugs
 
 .. rubric:: 1.0.0 (08.04.2020)
 

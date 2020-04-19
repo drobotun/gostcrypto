@@ -1,7 +1,10 @@
-**'gostsignature'** module
-==========================
+API of the 'gostcrypto.gostsignature' module
+============================================
 
-The module implements the functions of forming and verifying an electronic digital signature in accordance with GOST R 34.10-2012. The module includes the GOST34102012 class, the ``new`` function and constants.
+Introduction
+""""""""""""
+
+The module implements the functions of forming and verifying an electronic digital signature in accordance with GOST R 34.10-2012. The module includes the GOST34102012 and GOSTSignatureError classes, the ``new`` function and constants.
 
 Constants
 """""""""
@@ -173,12 +176,15 @@ All parameters of the elliptic curve must be set as integers. In this case the `
     )
 
 .. note::
-    It is possible to use other parameters of elliptic curves besides those defined in this module. Then these parameters must meet the requirements presented in paragraph 5. 2 of GOST 34.10-2012.
+    It is possible to use other parameters of elliptic curves besides those defined in this module. Then these parameters must meet the requirements presented in paragraph 5.2 of GOST 34.10-2012.
 
 *****
 
+Functions
+"""""""""
+
 new(mode, curve)
-""""""""""""""""
+''''''''''''''''
     Creates a new signature object and returns it .
 
 .. code-block:: python
@@ -186,7 +192,7 @@ new(mode, curve)
     import gostcrypto
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-	                                        CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
 
 .. rubric:: **Arguments:**
 
@@ -199,13 +205,16 @@ new(mode, curve)
 
 .. rubric:: **Exceptions:**
 
-- ValueError('unsupported signature mode') - in case of unsupported signature mode.
-- ValueError('invalid parameters of the elliptic curve') - if the elliptic curve parameters are incorrect.
+- GOSTSignatureError('unsupported signature mode') - in case of unsupported signature mode.
+- GOSTSignatureError('invalid parameters of the elliptic curve') - if the elliptic curve parameters are incorrect.
 
 *****
 
+Classes
+"""""""
+
 GOST34102012
-""""""""""""
+''''''''''''
 
 Сlass that implements processes for creating and verifying an electronic digital signature with GOST 34.10-2012.
 
@@ -219,7 +228,7 @@ sign(private_key, digest, rand_k)
 .. code-block:: python
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-	                                        gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
 
     private_key = = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
     digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
@@ -239,7 +248,9 @@ sign(private_key, digest, rand_k)
 
 .. rubric:: **Exception:**
 
-- ValueError('invalid random value size') - in case of invalid ``rand_k`` size.
+- GOSTSignatureError('invalid private key value') - if the private key value is incorrect.
+- GOSTSignatureError('invalid digest value') - if the digest value is incorrect.
+- GOSTSignatureError('invalid random value') - if the random value is incorrect.
 
 *****
 
@@ -250,10 +261,10 @@ verify(public_key, digest, signature)
 .. code-block:: python
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-	                                        gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
 
     public_key = = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
-	digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
+    digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
     signature = bytearray.fromhex('41aa28d2f1ab148280cd9ed56feda41974053554a42767b83ad043fd39dc049301456c64ba4642a1653c235a98a60249bcd6d3f746b631df928014f6c5bf9c40')
 
     if sign_obj.verify(public_key, digest, signature):
@@ -273,7 +284,9 @@ verify(public_key, digest, signature)
 
 .. rubric:: **Exception:**
 
-- ValueError('Invalid signature size') - if the signature size is incorrect. 
+- GOSTSignatureError('invalid public key value') - if the public key value is incorrect.
+- GOSTSignatureError('invalid digest value') - if the digest value is incorrect.
+- GOSTSignatureError('invalid random value') - if the random value is incorrect.
 
 *****
 
@@ -283,7 +296,7 @@ public_key_generate(private_key)
 .. code-block:: python
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-	                                        gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
 
     private_key = = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
 
@@ -299,16 +312,43 @@ public_key_generate(private_key)
 
 .. rubric:: **Exception:**
 
-- ValueError('ValueError: invalid private key size') - in case of invalid private key size.
-- ValueError('ValueError: invalid private key value') - in case of invalid private key value.
+- GOSTSignatureError('invalid private key value') - if the private key value is incorrect.
 
 *****
+
+GOSTSignatureError
+''''''''''''''''''
+    The class that implements exceptions.
+
+.. code-block:: python
+
+    private_key = = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
+    digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
+    rand_k = bytearray.fromhex('77105c9b20bcd3122823c8cf6fcc7b956de33814e95b7fe64fed924594dceab3')
+	try:
+        sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+	                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+        signature = sign_obj.sign(private_key, digest, rand_k)
+    except GOSTSignatureError as err:
+	    print(err)
+    else:
+        print(signature)
+
+Exception types:
+
+- ``unsupported signature mode`` - in case of unsupported signature mode.
+- ``invalid parameters of the elliptic curve`` - if the elliptic curve parameters are incorrect.
+- ``invalid private key value`` - if the private key value is incorrect.
+- ``invalid digest value`` - if the digest value is incorrect.
+- ``invalid random value`` - if the random value is incorrect.
+- ``invalid public key value`` - if the public key value is incorrect.
+- ``invalid signature value`` - if the signature value is incorrect.
 
 Example of use
 """"""""""""""
 
 Signing
--------
+'''''''
 
 .. code-block :: python
 
@@ -319,19 +359,17 @@ Signing
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
                                             gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
-    
+
     signature = sign_obj.sign(private_key, digest)
 
 Verify
-------
+''''''
 
 .. code-block:: python
 
-    import gostcrypto
-
-    public_key = bytearray.fromhex('7f2b49e270db6d90d8595bec458b50c58585ba1d4e9b788f6689dbd8e56fd80b26f1b489d6701dd185c8413a977b3cbbaf64d1c593d26627dffb101a87ff77da')
+    public_key = bytearray.fromhex('fd21c21ab0dc84c154f3d218e9040bee64fff48bdff814b232295b09d0df72e45026dec9ac4f07061a2a01d7a2307e0659239a82a95862df86041d1458e45049')
     digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
-    signature = bytearray.fromhex('41aa28d2f1ab148280cd9ed56feda41974053554a42767b83ad043fd39dc049301456c64ba4642a1653c235a98a60249bcd6d3f746b631df928014f6c5bf9c40')
+    signature = bytearray.fromhex('4b6dd64fa33820e90b14f8f4e49ee92eb2660f9eeb4e1b313517b6ba173979656df13cd4bceaf606ed32d410f48f2a5c2596c146e8c2fa4455d08cf68fc2b2a7')
 
     sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
                                             gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
@@ -342,11 +380,9 @@ Verify
         print('Signature is not correct')
 
 Generating a public key
------------------------
+'''''''''''''''''''''''
 
 .. code-block:: python
-
-    import gostcrypto
 
     private_key = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
 

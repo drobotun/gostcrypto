@@ -54,4 +54,9 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# Ensure that text wrapping works in a table, by overring some CSS.
+# See https://github.com/rtfd/sphinx_rtd_theme/issues/117
+def setup(app):
+    app.add_stylesheet('theme_overrides.css')
+
 master_doc = 'index'

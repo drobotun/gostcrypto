@@ -1,34 +1,114 @@
-**'gosthash'** module
-=====================
+API of the 'gostcrypto.gosthash' module
+=======================================
 
-The module implementing the hash calculation algorithm GOST 34.11-2012 ('Streebog'). The module includes the GOST34112012 class and the ``new`` function.
+Introduction
+""""""""""""
 
-new(name)
+The module that implements the 'Streebog' hash calculation algorithm in accordance with GOST 34.11-2012 with a hash size of 512 bits and 256 bits.  The module includes the ``GOST34112012`` class, the ``GOSTHashError`` class and ``new`` function.
+
+.. note::
+    You can hash only **byte strings** or **byte arrays** (for example ``b'hash_text'`` or ``bytearray([0x68, 0x61, 0x73, 0x68, 0x5f, 0x74, 0x65, 0x78, 0x74])``).
+
+API principles
+""""""""""""""
+
+.. figure:: gosthash.png
+    :align: center
+    :figwidth: 50%
+
+    Generic state diagram for a hash object
+
+The first message fragment for a hash can be passed to the ``new()`` function with the ``data`` parameter after specifying the name of the hashing algorithm (``'streebog256'`` or ``'streebog512'`` ):
+
+.. code-block:: python
+
+    import gostcrypto
+	
+	hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
+	hash_obj = gostrypto.gosthash.new('streebog256', data=hash_string)
+
+The ``data`` argument is optional and may be not passed to the ``new`` function. In this case, the ``data`` parameter must be passed in the ``update()`` method, which is called after ``new()``:
+
+.. code-block:: python
+
+    import gostcrypto
+	
+	hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
+	hash_obj = gostrypto.gosthash.new('streebog256')
+	hash_obj.update(hash_string)
+
+After that, the ``update`` method can be called any number of times as needed, with other parts of the message
+
+Passing the first part of the message to the ``new ()`` function, and the subsequent parts to the ``update()`` method:
+
+.. code-block:: python
+
+    import gostcrypto
+	
+	hash_obj = gostcrypto.gosthash.new('streebog512', data=b'first part message')
+	hash_obj.update(b'second part message')
+	hash_obj.update(b'third part message')
+
+Passing the first part of the message and subsequent parts to the ``update()`` method:
+
+.. code-block:: python
+
+    import gostcrypto
+	
+	hash_obj = gostcrypto.gosthash.new('streebog512')
+	hash_obj.update(b'first part message')
+	hash_obj.update(b'second part message')
+	hash_obj.update(b'third part message')
+
+Hash calculation is completed using the ``digest()`` or ``hexdigest()`` method:
+
+.. code-block:: python
+
+    import gostcrypto
+	
+	hash_obj = gostcrypto.gosthash.new('streebog512')
+	hash_obj.update(b'first part message')
+	hash_obj.update(b'second part message')
+	hash_obj.update(b'third part message')
+	hash_result = hash_obj.digest()
+
+Functions
 """""""""
+
+new(name, \**kwargs)
+''''''''''''''''''''
     Creates a new hashing object and returns it.
 
 .. code-block:: python
 
     import gostcrypto
-
-    hash_obj = gostcrypto.gosthash.new('streebog256')
+	
+	hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
+	hash_obj = gostrypto.gosthash.new('streebog256', data=hash_string)
 
 .. rubric:: **Arguments:**
 
 - **name** - the string with the name of the hashing algorithm (``'streebog256'`` for the GOST R 34.11-2012 algorithm with the resulting hash length of 32 bytes or ``'streebog512'`` with the resulting hash length of 64 bytes.
 
+.. rubric:: **Keyword arguments:**
+
+- **data** - the data from which to get the hash (as a byte object). If this argument is passed to a function, you can immediately use the ``digest()`` (or ``hexdigest()``) method to calculate the hash value after calling ``new()``. If the argument is not passed to the function, then you must use the ``update()`` method before the ``digest()`` (or ``hexdigest()``) method.
+
 .. rubric:: **Return:**
 
-- New hashing object (as an instance of the GOST34112012 class).
+- New hashing object (as an instance of the ``GOST34112012`` class).
 
 .. rubric:: **Exceptions:**
 
-- ValueError('unsupported hash type') - in case of invalid value ``name``.
+- GOSTHashError('unsupported hash type') - in case of invalid value ``name``.
 
 *****
 
+Classes
+"""""""
+
 GOST34112012
-""""""""""""
+''''''''''''
     Class that implements the hash calculation algorithm GOST 34.11-2012 ('Streebog').
 	
 Methods:
@@ -170,31 +250,54 @@ name
 
 *****
 
-Example of use
-""""""""""""""
-
-Getting a hash for a string
----------------------------
+GOSTHashError
+'''''''''''''
+    The class that implements exceptions.
 
 .. code-block:: python
 
     import gostcrypto
 
     hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
-    hash_obj = gostcrypto.gosthash.new('streebog256')
-    hash_obj.update(hash_string)
-    result = hash_obj.hexdigest()
+	try:
+        hash_obj = gostcrypto.gosthash.new('streebog256')
+        hash_obj.update(hash_string)
+    except GOSTHashError as err:
+	    print(err)
+    else:
+        result = hash_obj.digest()
 
-Getting a hash for a file
--------------------------
+Exception types:
 
-.. warning:: In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+- ``unsupported hash type`` - in case of invalid value ``name``.
+- ``invalid data value`` - in case where the data is not byte object.
+
+*****
+
+Example of use
+""""""""""""""
+
+Getting a hash for a string
+'''''''''''''''''''''''''''
 
 .. code-block:: python
 
     import gostcrypto
 
-    file_path = 'd:/hash file.txt'
+    hash_string = u'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'.encode('cp1251')
+    hash_obj = gostcrypto.gosthash.new('streebog256', data=hash_string))
+    hash_result = hash_obj.hexdigest()
+
+Getting a hash for a file
+'''''''''''''''''''''''''
+
+In this case the 'buffer_size' value must be a multiple of the 'block_size' value.
+
+.. code-block:: python
+
+    import gostcrypto
+
+    file_path = 'hash_file.txt'
     buffer_size = 128
     hash_obj = gostcrypto.gosthash.new('streebog512')
     with open(file_path, 'rb') as file:
@@ -202,5 +305,4 @@ Getting a hash for a file
         while len(buffer) > 0:
             hash_obj.update(buffer)
             buffer = file.read(buffer_size)
-    result = hash_obj.hexdigest()
-
+    hash_result = hash_obj.hexdigest()
