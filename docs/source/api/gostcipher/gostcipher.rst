@@ -1039,7 +1039,7 @@ GOSTCipherError
     ])
 
     try:
-		cipher_obj = gostcrypto.gostcipher.new('kuznechik',
+        cipher_obj = gostcrypto.gostcipher.new('kuznechik',
                                                 key,
                                                 gostcrypto.gostcipher.MODE_ECB,
                                                 pad_mode=gostcrypto.gostcipher.PAD_MODE_2)

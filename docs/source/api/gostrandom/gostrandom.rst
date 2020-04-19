@@ -156,12 +156,12 @@ GOSTRandomError
         0xdb, 0x45, 0x1e, 0x4a, 0xb6, 0x03, 0xb1, 0x47,
     ])
     try:
-	    random_obj = gostcrypto.gostrandom.new(64,
+        random_obj = gostcrypto.gostrandom.new(64,
                                                random_k=random_k,
                                                size_s=gostcrypto.gostrandom.SIZE_S_256)
         random_result = random_obj.random()
-    exception GOSTRandomError as err:
-	    print(err)
+    except GOSTRandomError as err:
+        print(err)
     else:
         print(random_result.hex())
 
@@ -186,7 +186,7 @@ Example of use
     ])
 
     random_obj = gostcrypto.gostrandom.new(32,
-                                       rand_k=rand_k,
-                                       size_s=gostcrypto.gostrandom.SIZE_S_256)
+                                           rand_k=rand_k,
+                                           size_s=gostcrypto.gostrandom.SIZE_S_256)
     random_result = random_obj.random()
     random_obj.clear()

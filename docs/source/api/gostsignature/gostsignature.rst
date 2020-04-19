@@ -325,9 +325,9 @@ GOSTSignatureError
     private_key = = bytearray.fromhex('7a929ade789bb9be10ed359dd39a72c11b60961f49397eee1d19ce9891ec3b28')
     digest = bytearray.fromhex('2dfbc1b372d89a1188c09c52e0eec61fce52032ab1022e8e67ece6672b043ee5')
     rand_k = bytearray.fromhex('77105c9b20bcd3122823c8cf6fcc7b956de33814e95b7fe64fed924594dceab3')
-	try:
+    try:
         sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
-	                                            gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+                                                gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
         signature = sign_obj.sign(private_key, digest, rand_k)
     except GOSTSignatureError as err:
 	    print(err)

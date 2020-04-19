@@ -204,7 +204,7 @@ copy()
     import gostcrypto
 
     hash_obj_1 = gostcrypto.gosthash.new('streebog256')
-	hash_obj_2 = hash_obj_1.copy()
+    hash_obj_2 = hash_obj_1.copy()
 
 *****
 
