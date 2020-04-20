@@ -8,7 +8,7 @@ The package **goscrypto** implements various cryptographic functions defined in 
 
 .. csv-table::
     :header: **Package**, **Description**
-    :widths: 20, 80
+    :widths: 40, 80
 
     :doc:`gostcrypto.gosthash <api/gosthash/gosthash>`, "The module implements functions for calculating hash amounts in accordance with `GOST R 34.11-2012 <https://files.stroyinf.ru/Data2/1/4293788/4293788459.pdf>`_."
     :doc:`gostcrypto.gostcipher <api/gostcipher/gostcipher>`, "The module implements block encryption functions in accordance with `GOST R 34.12-2015 <https://files.stroyinf.ru/Data/603/60339.pdf>`_ and their use modes in accordance with `GOST R 34.13-2015 <https://files.stroyinf.ru/Data2/1/4293762/4293762703.pdf>`_."
