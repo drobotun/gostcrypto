@@ -309,7 +309,7 @@ GOSTHMACError
     try:
         hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
         hmac_obj.update(data)
-    except GOSTHMACError as err:
+    except gostcrypto.gosthmac.GOSTHMACError as err:
         print(err)
     else:
         hmac_result = hmac_obj.digest()

@@ -262,7 +262,7 @@ GOSTHashError
     try:
         hash_obj = gostcrypto.gosthash.new('streebog256')
         hash_obj.update(hash_string)
-    except GOSTHashError as err:
+    except gostcrypto.gosthash.GOSTHashError as err:
         print(err)
     else:
         result = hash_obj.digest()

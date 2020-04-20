@@ -160,7 +160,7 @@ GOSTRandomError
                                                random_k=random_k,
                                                size_s=gostcrypto.gostrandom.SIZE_S_256)
         random_result = random_obj.random()
-    except GOSTRandomError as err:
+    except gostcrypto.gostrandom.GOSTRandomError as err:
         print(err)
     else:
         print(random_result.hex())

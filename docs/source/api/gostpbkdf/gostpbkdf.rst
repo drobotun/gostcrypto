@@ -156,7 +156,7 @@ GOSTPBKDFError
     try: 
         pbkdf_obj = gostcrypto.gostpbkdf.new(password, salt=salt, counter=2000)
         pbkdf_result = pbkdf_obj.hexderive(32)
-    except GOSTPBKDFError as err:
+    except gostcrypto.gostpbkdf.GOSTPBKDFError as err:
         print(err)
     else:
         print(pbkdf_result)
