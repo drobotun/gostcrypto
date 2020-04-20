@@ -62,6 +62,13 @@ html_static_path = ['_static']
 def setup(app):
     app.add_stylesheet('theme_overrides.css')
 
+# The suffix of source filenames.
+source_suffix = '.rst'
+
+# The encoding of source files.
+source_encoding = 'utf-8-sig'
+
+# The master toctree document.
 master_doc = 'index'
 
 latex_elements = {
@@ -83,6 +90,6 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'Sphinx.tex', u'Документация API VirusTotal',
-   u'Дроботун Евгений', 'manual'),
+  ('index', 'Sphinx.tex', 'GOST cryptographic function',
+   'Drobotun Evgeny', 'manual'),
 ]
