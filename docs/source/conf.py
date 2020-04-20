@@ -78,3 +78,11 @@ latex_elements = {
 'fontenc': '\usepackage[T1,T2A]{fontenc}',
 'utf8extra':'\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}',
 }
+
+# Grouping the document tree into LaTeX files. List of tuples
+# (source start file, target name, title,
+#  author, documentclass [howto, manual, or own class]).
+latex_documents = [
+  ('index', 'Sphinx.tex', u'Документация API VirusTotal',
+   u'Дроботун Евгений', 'manual'),
+]
