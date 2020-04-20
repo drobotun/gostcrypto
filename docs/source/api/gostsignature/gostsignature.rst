@@ -330,7 +330,7 @@ GOSTSignatureError
                                                 gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
         signature = sign_obj.sign(private_key, digest, rand_k)
     except GOSTSignatureError as err:
-	    print(err)
+        print(err)
     else:
         print(signature)
 

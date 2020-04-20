@@ -1045,7 +1045,7 @@ GOSTCipherError
                                                 pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
         cipher_text = cipher_obj.encrypt(plain_text)
     except GOSTCipherError as err:
-	    print(err)
+        print(err)
     else:
         print(cipher_text.hex())
 
