@@ -4,7 +4,7 @@ API of the 'gostcrypto.gostrandom' module
 Introduction
 """"""""""""
 
-The module that implements pseudo-random sequence generation in accordance with R 1323565.1.006-2017. The module includes the R132356510062017 and GOSTRandomError classes, the ``new`` function and constants.
+The module that implements pseudo-random sequence generation in accordance with R 1323565.1.006-2017. The module includes the ``R132356510062017`` and ``GOSTRandomError`` classes, the ``new`` function and constants.
 
 Constants
 """""""""

@@ -4,7 +4,7 @@ API of the 'gostcrypto.gosthmac' module
 Introductoon
 """"""""""""
 
-The module implementing the calculating the hash-based message authentication code (HMAC) in accordance with R 50.1.113-2016. The module includes the R5011132016 and GOSTHMACError classes and the ``new`` function.
+The module implementing the calculating the hash-based message authentication code (HMAC) in accordance with R 50.1.113-2016. The module includes the ``R5011132016`` and ``GOSTHMACError`` classes and the ``new`` function.
 
 API principles
 """"""""""""""
