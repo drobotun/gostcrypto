@@ -248,8 +248,8 @@ Usage gostrandom module
     ])
 
     random_obj = gostcrypto.gostrandom.new(32,
-                                       rand_k=rand_k,
-                                       size_s=gostcrypto.gostrandom.SIZE_S_256)
+                                           rand_k=rand_k,
+                                           size_s=gostcrypto.gostrandom.SIZE_S_256)
     random_result = random_obj.random()
     random_obj.clear()
 
