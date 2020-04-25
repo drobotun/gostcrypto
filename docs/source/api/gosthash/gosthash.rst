@@ -88,7 +88,7 @@ new(name, \**kwargs)
 
 .. rubric:: **Arguments:**
 
-- **name** - the string with the name of the hashing algorithm (``'streebog256'`` for the GOST R 34.11-2012 algorithm with the resulting hash length of 32 bytes or ``'streebog512'`` with the resulting hash length of 64 bytes.
+- **name** - the string with the name of the hashing algorithm ``'streebog256'`` for the GOST R 34.11-2012 algorithm with the resulting hash length of 32 bytes or ``'streebog512'`` with the resulting hash length of 64 bytes.
 
 .. rubric:: **Keyword arguments:**
 
