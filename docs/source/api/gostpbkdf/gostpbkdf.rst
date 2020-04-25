@@ -4,7 +4,7 @@ API of the 'gostcrypto.gostpbkdf' module
 Introduction
 """"""""""""
 
-The module implementing the password-based key derivation function in accordance with R 50.1.111-2016. The module includes the R5011112016 and GOSTPBKDFError classes and the ``new`` function.
+The module implementing the password-based key derivation function in accordance with R 50.1.111-2016. The module includes the ``R5011112016`` and ``GOSTPBKDFError`` classes and the ``new`` function.
 
 Functions
 """""""""
