@@ -4,7 +4,7 @@ API of the 'gostcrypto.gostsignature' module
 Introduction
 """"""""""""
 
-The module implements the functions of forming and verifying an electronic digital signature in accordance with GOST R 34.10-2012. The module includes the GOST34102012 and GOSTSignatureError classes, the ``new`` function and constants.
+The module implements the functions of forming and verifying an electronic digital signature in accordance with GOST R 34.10-2012. The module includes the ``GOST34102012`` and ``GOSTSignatureError`` classes, the ``new`` function and constants.
 
 Constants
 """""""""
