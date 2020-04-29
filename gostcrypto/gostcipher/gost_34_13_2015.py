@@ -554,7 +554,7 @@ class GOST34132015cbc(GOST34132015CipherPadding):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
         self._init_vect = init_vect
-        self._init_vect = bytearray(self._init_vect) 
+        self._init_vect = bytearray(self._init_vect)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
