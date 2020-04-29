@@ -800,7 +800,7 @@ class GOST34132015ctr(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
-        result = super().decrypt(data)
+        super().decrypt(data)
         return self.encrypt(data)
 
 
