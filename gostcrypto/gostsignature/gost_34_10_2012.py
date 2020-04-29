@@ -33,6 +33,7 @@ __all__ = (
     'CURVES_R_1323565_1_024_2019'
 )
 
+# pylint: disable=RP0801
 # pylint: disable=duplicate-code
 # pylint: disable=min-similarity-lines
 CURVES_R_1323565_1_024_2019: dict = {
