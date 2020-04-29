@@ -33,7 +33,6 @@ __all__ = (
     'CURVES_R_1323565_1_024_2019'
 )
 
-# pylint: enable=duplicate-code
 CURVES_R_1323565_1_024_2019: dict = {
     'id-tc26-gost-3410-2012-256-paramSetB': dict(
         p=bytearray_to_int(bytearray([
@@ -456,7 +455,6 @@ CURVES_R_1323565_1_024_2019: dict = {
         ])),
     ),
 }
-# pylint: disable=duplicate-code
 
 
 def new(mode: int, curve: dict) -> 'GOST34102012':
