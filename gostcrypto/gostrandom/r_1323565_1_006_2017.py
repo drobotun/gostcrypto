@@ -94,6 +94,16 @@ class R132356510062017:
         """
         self.clear()
 
+    def _rand_iter(self) -> bytearray:
+        if bytearray_to_int(self._rand_u[self._size_s::]) >= self._limit:
+            self._rand_u = zero_fill(self._rand_u)
+            raise GOSTRandomError('GOSTRandomError: exceeded the limit value of the counter')
+        self._inc_rand_u()
+        self._hash_obj.update(self._rand_u)
+        result = self._hash_obj.digest()
+        self._hash_obj.reset()
+        return result
+
     def _inc_rand_u(self) -> None:
         int_rand_u = bytearray_to_int(self._rand_u) + 1 % (2 ** (_SIZE_M - 1))
         self._rand_u = int_to_bytearray(int_rand_u, _SIZE_M - 1)
@@ -116,24 +126,10 @@ class R132356510062017:
         i = self._q
         result = bytearray(0)
         while i > 0:
-            if bytearray_to_int(self._rand_u[self._size_s::]) >= self._limit:
-                self._rand_u = zero_fill(self._rand_u)
-                raise GOSTRandomError('GOSTRandomError: exceeded the limit value of the counter')
-            self._inc_rand_u()
-            self._hash_obj.update(self._rand_u)
-            rand_c = self._hash_obj.digest()
-            self._hash_obj.reset()
-            result = result + rand_c
+            result = result + self._rand_iter()
             i = i - 1
         if self._r != 0:
-            if bytearray_to_int(self._rand_u[self._size_s::]) >= self._limit:
-                self._rand_u = zero_fill(self._rand_u)
-                raise GOSTRandomError('GOSTRandomError: exceeded the limit value of the counter')
-            self._inc_rand_u()
-            self._hash_obj.update(self._rand_u)
-            rand_c = self._hash_obj.digest()
-            self._hash_obj.reset()
-            result = result + rand_c[_SIZE_H - self._r:_SIZE_H:]
+            result = result + self._rand_iter()[_SIZE_H - self._r:_SIZE_H:]
         return result
 
     def reset(self, rand_k: bytearray = bytearray(b'')) -> None:
