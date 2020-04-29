@@ -617,7 +617,7 @@ class GOST34132015cbc(GOST34132015CipherPadding):
             )
         return result
 
-    # pylint: disable=invalid-name
+
     @property
     def iv(self) -> bytearray:
         """Return the value of the initializing vector."""
