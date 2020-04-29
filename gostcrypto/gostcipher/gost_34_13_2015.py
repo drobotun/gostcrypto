@@ -293,7 +293,7 @@ class GOST34132015:
         return self._cipher_obj.block_size
 
 
-class GOST34132015cipher(GOST34132015):
+class GOST34132015Cipher(GOST34132015):
     """
     Base class of the cipher object for encryption modes.
 
@@ -348,7 +348,127 @@ class GOST34132015cipher(GOST34132015):
         return bytearray()
 
 
-class GOST34132015ecb(GOST34132015cipher):
+class GOST34132015CipherPadding(GOST34132015Cipher):
+    """
+    Base class of the cipher object for encryption modes with padding.
+
+    Methods
+    - encrypt(): base method for encrypting plaintext.
+    - decrypt(): base method for decrypting ciphertext.
+    - clear(): clearing the values of iterative cipher keys.
+
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    """
+
+    def __init__(self, algorithm: str, key: bytearray, pad_mode: int) -> None:
+        """Initialize the ciphering object."""
+        super().__init__(algorithm, key)
+        if pad_mode not in (PAD_MODE_1, PAD_MODE_2):
+            self.clear()
+            raise GOSTCipherError('GOSTCipherError: invalid padding mode')
+        self._pad_mode = pad_mode
+
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption (base method).
+
+        Parameters
+        - data: plaintext data to be encrypted (as a byte object).
+
+        Return: an empty value of the bytearray type.
+
+        Exception
+        - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
+        where the plaintext data is not byte object.
+        """
+        result = super().encrypt(data)
+        data = set_padding(data, self.block_size, self._pad_mode)
+        return result, data
+
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption (base method).
+
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
+
+        Return: an empty value of the bytearray type.
+
+        Exception
+        - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
+        where the ciphertext data is not byte object.
+        """
+        if not isinstance(data, (bytes, bytearray)):
+            self.clear()
+            raise GOSTCipherError('GOSTCipherError: invalid ciphertext data')
+        return bytearray()
+
+
+class GOST34132015CipherFeedBack(GOST34132015Cipher):
+    """
+    Base class of the cipher object for encryption modes with feedback.
+
+    Methods
+    - encrypt(): base method for encrypting plaintext.
+    - decrypt(): base method for decrypting ciphertext.
+    - clear(): clearing the values of iterative cipher keys.
+
+    Attributes
+    - block_size: an integer value the internal block size of the cipher
+    algorithm in bytes.
+    - iv: the initial value.
+    """
+
+    def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
+        """Initialize the ciphering object."""
+        super().__init__(algorithm, key)
+        if not check_init_vect_value(init_vect, self.block_size):
+            self.clear()
+            raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
+        self._init_vect = init_vect
+        self._init_vect = bytearray(self._init_vect)
+
+    def encrypt(self, data: bytearray) -> bytearray:
+        """
+        Plaintext encryption (base method).
+
+        Parameters
+        - data: plaintext data to be encrypted (as a byte object).
+
+        Return: an empty two value of the bytearray type.
+
+        Exception
+        - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
+        where the plaintext data is not byte object.
+        """
+        return super().encrypt(data), bytearray()
+
+    def decrypt(self, data: bytearray) -> bytearray:
+        """
+        Ciphertext decryption (base method).
+
+        Parameters
+        - data: ciphertext data to be decrypted (as a byte object).
+
+        Return: an empty value of the bytearray type.
+
+        Exception
+        - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
+        where the ciphertext data is not byte object.
+        """
+        return super().decrypt(data), bytearray()
+
+    # pylint: disable=invalid-name
+    @property
+    def iv(self) -> bytearray:
+        """Return the value of the initializing vector."""
+        return self._init_vect[len(self._init_vect) - self.block_size::]
+    # pylint: enable=invalid-name
+
+
+class GOST34132015ecb(GOST34132015CipherPadding):
     """
     The class that implements ECB mode of block encryption.
 
@@ -364,11 +484,7 @@ class GOST34132015ecb(GOST34132015cipher):
 
     def __init__(self, algorithm: str, key: bytearray, pad_mode: int) -> None:
         """Initialize the ciphering object in ECB mode."""
-        super().__init__(algorithm, key)
-        if pad_mode not in (PAD_MODE_1, PAD_MODE_2):
-            self.clear()
-            raise GOSTCipherError('GOSTCipherError: invalid padding mode')
-        self._pad_mode = pad_mode
+        super().__init__(algorithm, key, pad_mode)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -383,8 +499,7 @@ class GOST34132015ecb(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
-        result = super().encrypt(data)
-        data = set_padding(data, self.block_size, self._pad_mode)
+        result, data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             result = (
                 result + self._cipher_obj.encrypt(
@@ -416,7 +531,7 @@ class GOST34132015ecb(GOST34132015cipher):
         return result
 
 
-class GOST34132015cbc(GOST34132015cipher):
+class GOST34132015cbc(GOST34132015CipherPadding):
     """
     The class that implements CBC mode of block encryption.
 
@@ -434,16 +549,12 @@ class GOST34132015cbc(GOST34132015cipher):
     def __init__(self, algorithm: str, key: bytearray,
                  init_vect: bytearray, pad_mode: int) -> None:
         """Initialize the ciphering object in CBC mode."""
-        super().__init__(algorithm, key)
-        if pad_mode not in (PAD_MODE_1, PAD_MODE_2):
-            self.clear()
-            raise GOSTCipherError('GOSTCipherError: invalid padding mode')
-        self._pad_mode = pad_mode
+        super().__init__(algorithm, key, pad_mode)
         if not check_init_vect_value(init_vect, self.block_size):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
         self._init_vect = init_vect
-        self._init_vect = bytearray(self._init_vect)
+        self._init_vect = bytearray(self._init_vect) 
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -458,8 +569,7 @@ class GOST34132015cbc(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
-        result = super().encrypt(data)
-        data = set_padding(data, self.block_size, self._pad_mode)
+        result, data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             cipher_blk = (
                 self._cipher_obj.encrypt(add_xor(
@@ -515,7 +625,7 @@ class GOST34132015cbc(GOST34132015cipher):
     # pylint: enable=invalid-name
 
 
-class GOST34132015cfb(GOST34132015cipher):
+class GOST34132015cfb(GOST34132015CipherFeedBack):
     """
     The class that implements CFB mode of block encryption.
 
@@ -532,12 +642,7 @@ class GOST34132015cfb(GOST34132015cipher):
 
     def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """Initialize the ciphering object in CFB mode."""
-        super().__init__(algorithm, key)
-        if not check_init_vect_value(init_vect, self.block_size):
-            self.clear()
-            raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
-        self._init_vect = init_vect
-        self._init_vect = bytearray(self._init_vect)
+        super().__init__(algorithm, key, init_vect)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -552,8 +657,7 @@ class GOST34132015cfb(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
-        result = super().encrypt(data)
-        gamma = bytearray()
+        result, gamma = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._cipher_obj.encrypt(self._init_vect[0:self.block_size])
             cipher_blk = (
@@ -587,8 +691,7 @@ class GOST34132015cfb(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
-        result = super().decrypt(data)
-        gamma = bytearray()
+        result, gamma = super().decrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._cipher_obj.encrypt(self._init_vect[0:self.block_size])
             cipher_blk = data[self.block_size * i:self.block_size + self.block_size * i]
@@ -607,15 +710,8 @@ class GOST34132015cfb(GOST34132015cipher):
             result = result + cipher_blk
         return result
 
-    # pylint: disable=invalid-name
-    @property
-    def iv(self) -> bytearray:
-        """Return the value of the initializing vector."""
-        return self._init_vect[len(self._init_vect) - self.block_size::]
-    # pylint: enable=invalid-name
 
-
-class GOST34132015ofb(GOST34132015cipher):
+class GOST34132015ofb(GOST34132015CipherFeedBack):
     """
     The class that implements OFB mode of block encryption.
 
@@ -632,12 +728,7 @@ class GOST34132015ofb(GOST34132015cipher):
 
     def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """Initialize the ciphering object in OFB mode."""
-        super().__init__(algorithm, key)
-        if not check_init_vect_value(init_vect, self.block_size):
-            self.clear()
-            raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
-        self._init_vect = init_vect
-        self._init_vect = bytearray(self._init_vect)
+        super().__init__(algorithm, key, init_vect)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -653,8 +744,7 @@ class GOST34132015ofb(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid plaintext data') - in case
         where the plaintext data is not byte object.
         """
-        result = super().encrypt(data)
-        gamma = bytearray()
+        result, gamma = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._cipher_obj.encrypt(self._init_vect[0:self.block_size])
             cipher_blk = add_xor(
@@ -688,8 +778,7 @@ class GOST34132015ofb(GOST34132015cipher):
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
-        result = super().decrypt(data)
-        gamma = bytearray()
+        result, gamma = super().decrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._cipher_obj.encrypt(self._init_vect[0:self.block_size])
             cipher_blk = add_xor(
@@ -710,15 +799,7 @@ class GOST34132015ofb(GOST34132015cipher):
             result = result + cipher_blk
         return result
 
-    # pylint: disable=invalid-name
-    @property
-    def iv(self) -> bytearray:
-        """Return the value of the initializing vector."""
-        return self._init_vect[len(self._init_vect) - self.block_size::]
-    # pylint: enable=invalid-name
-
-
-class GOST34132015ctr(GOST34132015cipher):
+class GOST34132015ctr(GOST34132015Cipher):
     """
     The class that implements CTR mode of block encryption.
 
