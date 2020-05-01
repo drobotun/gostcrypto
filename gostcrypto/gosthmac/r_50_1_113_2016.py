@@ -16,12 +16,6 @@ from gostcrypto.gosthash import GOST34112012
 from gostcrypto.utils import zero_fill
 from gostcrypto.utils import add_xor
 
-__all__ = (
-    'R5011132016',
-    'new',
-    'GOSTHMACError'
-)
-
 _KEY_SIZE: int = 64
 
 _I_PAD: bytearray = bytearray([
@@ -51,27 +45,29 @@ def new(name: str, key: bytearray, **kwargs) -> 'R5011132016':
     """
     Create a new authentication code calculation object and returns it.
 
-    Parameters
-    - name: name of the authentication code calculation mode
-    ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512').
-    - key: authentication key.
+    Args:
+        name: Name of the authentication code calculation mode
+          ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512').
+        key: Authentication key.
 
-    Keyword args
-    - data: the data from which to get the HMAC (as a byte object).  If this
-    argument is passed to a function, you can immediately use the 'digest'
-    (or 'hexdigest') method to calculate the HMAC value after calling 'new'.
-    If the argument is not passed to the function, then you must use the
-    'update(data)' method before the 'digest' (or 'hexdigest') method.
+    Keyword args:
+        data: The data from which to get the HMAC (as a byte object).  If this
+          argument is passed to a function, you can immediately use the 'digest'
+          (or 'hexdigest') method to calculate the HMAC value after calling
+          'new'.  If the argument is not passed to the function, then you must
+          use the 'update(data)' method before the 'digest' (or 'hexdigest')
+          method.
 
-    Return: new authentication code calculation object.
+    Returns:
+        New authentication code calculation object.
 
-    Exception
-    - GOSTHMACError('GOSTHMACError: unsupported mode'): in case of unsupported
-    mode.
-    - GOSTHMACError('GOSTHMACError: invalid key value'): in case of invalid key
-    value.
-    - GOSTHMACError('GOSTHMACError: invalid data value'): in case where the
-    data is not byte object.
+    Raises:
+        GOSTHMACError('GOSTHMACError: unsupported mode'): in case of unsupported
+          mode.
+        GOSTHMACError('GOSTHMACError: invalid key value'): in case of invalid
+          key value.
+        GOSTHMACError('GOSTHMACError: invalid data value'): in case where the
+          data is not byte object.
     """
     data = kwargs.get('data', bytearray(b''))
     return R5011132016(name, key, data)
@@ -81,19 +77,19 @@ class R5011132016:
     """
     Class that implementing the calculating the HMAC.
 
-    Methods
-    - update(): update the HMAC object with the bytes-like object.
-    - digest(): getting the authentication code.
-    - clear(): clears the key value.
-    - copy(): returns a copy (“clone”) of the HMAC object.
+    Methods:
+        update(): Update the HMAC object with the bytes-like object.
+        digest(): Getting the authentication code.
+        clear(): Clears the key value.
+        copy(): Returns a copy (“clone”) of the HMAC object.
 
-    Attributes
-    - digest_size: an integer value of the size of the resulting HMAC digest
-    in bytes.
-    - block_size: an integer value the internal block size of the hash
-    algorithm in bytes.
-    - name: a text string is the name of the authentication code calculation
-    algorithm.
+    Attributes:
+        digest_size: an integer value of the size of the resulting HMAC digest
+          in bytes.
+        block_size: an integer value the internal block size of the hash
+          algorithm in bytes.
+        name: a text string is the name of the authentication code calculation
+          algorithm.
     """
 
     def __init__(self, name: str, key: bytearray, data: bytearray) -> None:
@@ -131,15 +127,15 @@ class R5011132016:
         """
         Update the HMAC object with the bytes-like object.
 
-        Parameters
-        - data: the message for which want to calculate the authentication code.
-        Repeated calls are equivalent to a single call with the concatenation
-        of all the arguments: 'm.update(a)'; 'm.update(b)' is equivalent to
-        'm.update(a+b)'.
+        Args:
+            data: the message for which want to calculate the authentication
+              code.  Repeated calls are equivalent to a single call with the
+              concatenation of all the arguments: 'm.update(a)'; 'm.update(b)'
+              is equivalent to 'm.update(a+b)'.
 
-        Exception
-        - GOSTHMACError('GOSTHMACError: invalid data value'): in case where the
-        data is not byte object.
+        Raises:
+            GOSTHMACError('GOSTHMACError: invalid data value'): in case where
+              the data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
             raise GOSTHMACError('GOSTHMACError: invalid data value')
@@ -155,7 +151,8 @@ class R5011132016:
 
         This method is called after calling the 'update ()' method.
 
-        Return: HMAC message authentication code as a byte object.
+        Returns:
+            HMAC message authentication code as a byte object.
         """
         fin_hasher_obj = GOST34112012(self._hasher_obj.name, data=bytearray(b''))
         fin_hasher_obj.update(add_xor(self._key, _O_PAD) + self._hasher_obj.digest())
@@ -169,7 +166,8 @@ class R5011132016:
 
         This method is called after calling the 'update ()' method.
 
-        Return: HMAC message authentication code as a hexadecimal string.
+        Returns:
+            HMAC message authentication code as a hexadecimal string.
         """
         return self.digest().hex()
 
@@ -227,13 +225,4 @@ class R5011132016:
 
 
 class GOSTHMACError(Exception):
-    """
-    The class that implements exceptions.
-
-    Exceptions
-    - unsupported mode.
-    - invalid key value.
-    - invalid data value.
-    """
-
-    pass
+    """The class that implements exceptions."""

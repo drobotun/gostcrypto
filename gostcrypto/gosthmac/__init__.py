@@ -11,3 +11,8 @@ from .r_50_1_113_2016 import (
     new,
     GOSTHMACError
 )
+
+__all__ = (
+    'new',
+    'GOSTHMACError'
+)
