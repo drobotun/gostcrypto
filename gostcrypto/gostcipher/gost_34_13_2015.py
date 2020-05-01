@@ -266,7 +266,7 @@ class GOST34132015(ABC):
         """
         self.clear()
 
-    def _get_block(self, data, count_block):
+    def _get_block(self, data, count_block) -> bytearray:
         return data[self.block_size * count_block:self.block_size + (self.block_size * count_block)]
 
     def clear(self) -> None:
@@ -322,7 +322,7 @@ class GOST34132015Cipher(GOST34132015, ABC):
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid plaintext data')
-        return bytearray()
+        return data
 
     @abstractmethod
     def decrypt(self, data: bytearray) -> bytearray:
@@ -342,7 +342,7 @@ class GOST34132015Cipher(GOST34132015, ABC):
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid ciphertext data')
-        return bytearray()
+        return data
 
 
 class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
@@ -384,9 +384,8 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result = GOST34132015Cipher.encrypt(self, data)
-        data = set_padding(data, self.block_size, self._pad_mode)
-        return result, data
+        data = set_padding(GOST34132015Cipher.encrypt(self, data), self.block_size, self._pad_mode)
+        return data
 
     @abstractmethod
     def decrypt(self, data: bytearray) -> bytearray:
@@ -403,8 +402,8 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        result = GOST34132015Cipher.decrypt(self, data)
-        return result
+        data = GOST34132015Cipher.decrypt(self, data)
+        return data
 
 
 class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
@@ -436,7 +435,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
     def _get_gamma(self) -> bytearray:
         return self._cipher_obj.encrypt(self._init_vect[0:self.block_size])
 
-    def _set_init_vect(self, data: bytearray) -> bytearray:
+    def _set_init_vect(self, data: bytearray):
         iter_iv_hi = self._init_vect[self.block_size:len(self._init_vect)]
         self._init_vect[0:len(self._init_vect) - self.block_size] = iter_iv_hi
         begin_iv_low = len(self._init_vect) - self.block_size
@@ -466,7 +465,8 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        return GOST34132015Cipher.encrypt(self, data), bytearray()
+        data = GOST34132015Cipher.encrypt(self, data)
+        return data
 
     @abstractmethod
     def decrypt(self, data: bytearray) -> bytearray:
@@ -483,7 +483,8 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        return GOST34132015Cipher.decrypt(self, data), bytearray()
+        data = GOST34132015Cipher.decrypt(self, data)
+        return data
 
     # pylint: disable=invalid-name
     @property
@@ -525,7 +526,8 @@ class GOST34132015ecb(GOST34132015CipherPadding):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result, data = super().encrypt(data)
+        result = bytearray() 
+        data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             result = result + self._cipher_obj.encrypt(self._get_block(data, i))
         return result
@@ -544,7 +546,8 @@ class GOST34132015ecb(GOST34132015CipherPadding):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        result = super().decrypt(data)
+        result = bytearray()
+        data = super().decrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             result = result + self._cipher_obj.decrypt(self._get_block(data, i))
         return result
@@ -585,7 +588,8 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result, data = GOST34132015CipherPadding.encrypt(self, data)
+        result = bytearray()
+        data = GOST34132015CipherPadding.encrypt(self, data)
         for i in range(get_num_block(data, self.block_size)):
             internal = add_xor(self._init_vect[0:self.block_size], self._get_block(data, i))
             cipher_block = self._cipher_obj.encrypt(internal)
@@ -607,7 +611,8 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        result = GOST34132015CipherPadding.decrypt(self, data)
+        result = bytearray() 
+        data = GOST34132015CipherPadding.decrypt(self, data)
         for i in range(get_num_block(data, self.block_size)):
             internal = self._cipher_obj.decrypt(self._get_block(data, i))
             cipher_block = add_xor(self._init_vect[0:self.block_size], internal)
@@ -650,7 +655,9 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result, gamma = super().encrypt(data)
+        result = bytearray()
+        gamma = bytearray()
+        data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._get_gamma()
             cipher_block = add_xor(gamma, self._get_block(data, i))
@@ -674,7 +681,9 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        result, gamma = super().decrypt(data)
+        result = bytearray()
+        gamma = bytearray()
+        data = super().decrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._get_gamma()
             cipher_block = self._get_block(data, i)
@@ -719,7 +728,9 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result, gamma = super().encrypt(data)
+        result = bytearray()
+        gamma = bytearray()
+        data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._get_gamma()
             cipher_block = self._get_block(data, i)
@@ -801,8 +812,9 @@ class GOST34132015ctr(GOST34132015Cipher):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result = super().encrypt(data)
+        result = bytearray()
         gamma = bytearray()
+        data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             gamma = self._cipher_obj.encrypt(self._counter)
             self._counter = self._inc_ctr(self._counter)
@@ -829,7 +841,7 @@ class GOST34132015ctr(GOST34132015Cipher):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        super().decrypt(data)
+        data = super().decrypt(data)
         return self.encrypt(data)
 
 

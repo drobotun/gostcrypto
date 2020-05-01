@@ -60,23 +60,23 @@ class GOST34122015Kuznechik:
     """
     Class that implements the 'kuznechik' block encryption algorithm.
 
-    Methods
-    - decrypt(): decrypting a block of ciphertext.
-    - encrypt(): encrypting a block of plaintext.
-    - clear(): Сlearing the values of iterative encryption keys.
+    Methods:
+        decrypt(): Decrypting a block of ciphertext.
+        encrypt(): Encrypting a block of plaintext.
+        clear(): Сlearing the values of iterative encryption keys.
 
-    Attributes
-    - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
-    - key_size: an integer value the cipher key size.
+    Attributes:
+        block_size: An integer value the internal block size of the cipher
+           algorithm in bytes.
+        key_size: An integer value the cipher key size.
     """
 
     def __init__(self, key: bytearray):
         """
         Initialize the ciphering object.
 
-        Parameters
-        - key: cipher key.
+        Args:
+            key: cipher key.
         """
         self._cipher_c: List[bytearray] = []
         self._cipher_iter_key = []
@@ -200,11 +200,12 @@ class GOST34122015Kuznechik:
         """
         Decrypting a block of ciphertext.
 
-        Parameters
-        - block: the block of ciphertext to be decrypted (the block size is
-        16 bytes).
+        Args:
+            block: the block of ciphertext to be decrypted (the block size is
+               16 bytes).
 
-        Return: the block of plaintext.
+        Returns:
+            The block of plaintext.
         """
         block = bytearray(block)
         block = add_xor(self._cipher_iter_key[9], block)
@@ -218,11 +219,12 @@ class GOST34122015Kuznechik:
         """
         Encrypting a block of plaintext.
 
-        Parameters
-        - block: the block of plaintext to be encrypted (the block size is
-        16 bytes).
+        Args:
+            block: the block of plaintext to be encrypted (the block size is
+               16 bytes).
 
-        Return: the block of ciphertext.
+        Returns:
+            The block of ciphertext.
         """
         block = bytearray(block)
         for i in range(9):
@@ -242,15 +244,15 @@ class GOST34122015Magma:
     """
     Class that implements the 'magma' block encryption algorithm.
 
-    Methods
-    - decrypt(): decrypting a block of ciphertext.
-    - encrypt(): encrypting a block of plaintext.
-    - clear(): clearing the values of iterative encryption keys.
+    Methods:
+        decrypt(): Decrypting a block of ciphertext.
+        encrypt(): Encrypting a block of plaintext.
+        clear(): Clearing the values of iterative encryption keys.
 
-    Attributes
-    - block_size: an integer value the internal block size of the cipher
+    Attributes:
+        block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
-    - key_size: an integer value the cipher key size.
+        key_size: An integer value the cipher key size.
 
     """
 
@@ -258,8 +260,8 @@ class GOST34122015Magma:
         """
         Initialize the ciphering object.
 
-        Parameters
-        - key: Cipher key.
+        Args:
+            key: Cipher key.
         """
         self._cipher_iter_key: List[bytearray] = []
         self._expand_iter_key(key)
@@ -338,39 +340,37 @@ class GOST34122015Magma:
         return result
 
     @staticmethod
-    def _cipher_g_prev(cipher_k: bytearray, cipher_a: bytearray) -> bytearray:
-        cipher_k = bytearray(cipher_k)
-        cipher_a = bytearray(cipher_a)
-        a_0 = bytearray(4)
-        a_1 = bytearray(4)
-        cipher_g = bytearray(4)
+    def _cipher_g_iter_result(a_0: bytearray, a_1: bytearray) -> bytearray:
         result = bytearray(_BLOCK_SIZE_MAGMA)
-        a_1 = cipher_a[0:4]
-        a_0 = cipher_a[4:_BLOCK_SIZE_MAGMA]
-        cipher_g = GOST34122015Magma._cipher_g(cipher_k, a_0)
-        cipher_g = add_xor(a_1, cipher_g)
-        a_1 = a_0
-        a_0 = cipher_g
         result[0:4] = a_1
         result[4:_BLOCK_SIZE_MAGMA] = a_0
         return result
 
     @staticmethod
-    def _cipher_g_fin(cipher_k: bytearray, cipher_a: bytearray) -> bytearray:
+    def _cipher_g_iter(cipher_k: bytearray, cipher_a: bytearray) -> tuple:
         cipher_k = bytearray(cipher_k)
         cipher_a = bytearray(cipher_a)
         a_0 = bytearray(4)
         a_1 = bytearray(4)
         cipher_g = bytearray(4)
-        result = bytearray(_BLOCK_SIZE_MAGMA)
         a_1 = cipher_a[0:4]
         a_0 = cipher_a[4:_BLOCK_SIZE_MAGMA]
         cipher_g = GOST34122015Magma._cipher_g(cipher_k, a_0)
         cipher_g = add_xor(a_1, cipher_g)
+        return a_0, a_1, cipher_g
+
+    @staticmethod
+    def _cipher_g_prev(cipher_k: bytearray, cipher_a: bytearray) -> bytearray:
+        a_0, a_1, cipher_g = GOST34122015Magma._cipher_g_iter(cipher_k, cipher_a)
+        a_1 = a_0
+        a_0 = cipher_g
+        return GOST34122015Magma._cipher_g_iter_result(a_0, a_1)
+
+    @staticmethod
+    def _cipher_g_fin(cipher_k: bytearray, cipher_a: bytearray) -> bytearray:
+        a_0, a_1, cipher_g = GOST34122015Magma._cipher_g_iter(cipher_k, cipher_a)
         a_1 = cipher_g
-        result[0:4] = a_1
-        result[4:_BLOCK_SIZE_MAGMA] = a_0
-        return result
+        return GOST34122015Magma._cipher_g_iter_result(a_0, a_1)
 
     @property
     def block_size(self) -> int:
@@ -396,11 +396,12 @@ class GOST34122015Magma:
         """
         Decrypting a block of ciphertext.
 
-        Parameters
-        - block: the block of ciphertext to be decrypted (the block size is
-        8 bytes).
+        Args:
+            block: the block of ciphertext to be decrypted (the block size is
+               8 bytes).
 
-        Return: the block of plaintext.
+        Returns:
+            The block of plaintext.
         """
         result = bytearray(_BLOCK_SIZE_MAGMA)
         result = GOST34122015Magma._cipher_g_prev(
@@ -419,11 +420,12 @@ class GOST34122015Magma:
         """
         Encrypting a block of plaintext.
 
-        Parameters
-        - block: the block of plaintext to be encrypted (the block size is
-        8 bytes).
+        Args:
+            block: The block of plaintext to be encrypted (the block size is
+               8 bytes).
 
-        Return: the block of ciphertext.
+        Returns:
+            The block of ciphertext.
         """
         result = bytearray(_BLOCK_SIZE_MAGMA)
         result = GOST34122015Magma._cipher_g_prev(
