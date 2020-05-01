@@ -67,7 +67,7 @@ class GOST34122015Kuznechik:
 
     Attributes:
         block_size: An integer value the internal block size of the cipher
-           algorithm in bytes.
+          algorithm in bytes.
         key_size: An integer value the cipher key size.
     """
 
@@ -202,7 +202,7 @@ class GOST34122015Kuznechik:
 
         Args:
             block: the block of ciphertext to be decrypted (the block size is
-               16 bytes).
+              16 bytes).
 
         Returns:
             The block of plaintext.
@@ -221,7 +221,7 @@ class GOST34122015Kuznechik:
 
         Args:
             block: the block of plaintext to be encrypted (the block size is
-               16 bytes).
+              16 bytes).
 
         Returns:
             The block of ciphertext.
@@ -251,7 +251,7 @@ class GOST34122015Magma:
 
     Attributes:
         block_size: An integer value the internal block size of the cipher
-    algorithm in bytes.
+          algorithm in bytes.
         key_size: An integer value the cipher key size.
 
     """
@@ -422,7 +422,7 @@ class GOST34122015Magma:
 
         Args:
             block: The block of plaintext to be encrypted (the block size is
-               8 bytes).
+              8 bytes).
 
         Returns:
             The block of ciphertext.

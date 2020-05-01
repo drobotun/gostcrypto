@@ -18,12 +18,6 @@ from struct import unpack
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import S_BOX
 
-__all__ = (
-    'GOST34112012',
-    'new',
-    'GOSTHashError'
-)
-
 _BLOCK_SIZE: int = 64
 
 _V_0: bytearray = bytearray(_BLOCK_SIZE)
@@ -199,25 +193,27 @@ def new(name: str, **kwargs) -> 'GOST34112012':
     """
     Create a new hashing object and returns it.
 
-    Parameters
-    - name: the string with the name of the hashing algorithm ('streebog256'
-    for the GOST R 34.11-2012 algorithm with the resulting hash length of
-    32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
+    Args:
+        name: The string with the name of the hashing algorithm ('streebog256'
+          for the GOST R 34.11-2012 algorithm with the resulting hash length of
+          32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
 
-    Keyword args
-    - data: the data from which to get the hash (as a byte object).  If this
-    argument is passed to a function, you can immediately use the 'digest()'
-    (or 'hexdigest()') method to calculate the hash value after calling 'new()'.
-    If the argument is not passed to the function, then you must use the
-    'update()' method before the 'digest()' (or 'hexdigest()') method.
+    Keyword args:
+        data: The data from which to get the hash (as a byte object).  If this
+          argument is passed to a function, you can immediately use the
+          'digest()' (or 'hexdigest()') method to calculate the hash value
+          after calling 'new()'.  If the argument is not passed to the
+          function, then you must use the 'update()' method before the
+          'digest()' (or 'hexdigest()') method.
 
-    Return: new hashing object.
+    Returns:
+        New hashing object.
 
-    Exception
-    - GOSTHashError('GOSTHashError: unsupported hash type'): in case of invalid
-    value 'name'.
-    - GOSTHashError('GOSTHashError: invalid data value'): in case where the
-    data is not byte object.
+    Raises:
+        GOSTHashError('GOSTHashError: unsupported hash type'): in case of
+          invalid value 'name'.
+        GOSTHashError('GOSTHashError: invalid data value'): in case where the
+          data is not byte object.
     """
     if name not in ('streebog512', 'streebog256'):
         raise GOSTHashError('GOSTHashError: unsupported hash type')
@@ -229,20 +225,20 @@ class GOST34112012:
     """
     Class that implements the hash calculation algorithm.
 
-    Methods
-    - update(): update the hash object with the bytes-like object.
-    - copy(): returns a copy ('clone') of the hash object.
-    - digest(): returns the digest of the data passed to the 'update()' method
-    so far.
-    - hexdigest(): returns a digest of the hexadecimal data passed so far to
-    the 'update()' method.
-    - reset(): resets the values of all class attributes.
+    Methods:
+        update(): Update the hash object with the bytes-like object.
+        copy(): Returns a copy ('clone') of the hash object.
+        digest(): Returns the digest of the data passed to the 'update()' method
+          so far.
+        hexdigest(): Returns a digest of the hexadecimal data passed so far to
+          the 'update()' method.
+        reset(): Resets the values of all class attributes.
 
-    Attributes
-    - digest_size: an integer value the size of the resulting hash in bytes.
-    - block_size: an integer value the internal block size of the hash algorithm
-    in bytes.
-    - name: a text string value the name of the hashing algorithm.
+    Attributes:
+        digest_size: an integer value the size of the resulting hash in bytes.
+        block_size: an integer value the internal block size of the hash
+          algorithm in bytes.
+        name: a text string value the name of the hashing algorithm.
     """
 
     def __init__(self, name: str, data: bytearray) -> None:
@@ -330,15 +326,15 @@ class GOST34112012:
         """
         Update the hash object with the bytes-like object.
 
-        Parameters
-        - data: The string from which to get the hash. Repeated calls are
-        equivalent to a single call with the concatenation of all the
-        arguments: 'm.update(a)'; 'm.update(b)' is equivalent to
-        'm.update(a+b)'.
+        Args:
+            data: The string from which to get the hash. Repeated calls are
+              equivalent to a single call with the concatenation of all the
+              arguments: 'm.update(a)'; 'm.update(b)' is equivalent to
+              'm.update(a+b)'.
 
-        Exception
-        - GOSTHashError('GOSTHashError: invalid data value'): in case where the
-        data is not byte object.
+        Raises:
+            GOSTHashError('GOSTHashError: invalid data value'): in case where
+              the data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
             raise GOSTHashError('GOSTHashError: invalid data value')
@@ -451,12 +447,4 @@ class GOST34112012:
 
 
 class GOSTHashError(Exception):
-    """
-    The class that implements exceptions.
-
-    Exceptions
-    - unsupported hash type.
-    - invalid data value.
-    """
-
-    pass
+    """The class that implements exceptions."""

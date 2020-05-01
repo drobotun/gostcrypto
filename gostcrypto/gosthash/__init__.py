@@ -11,3 +11,8 @@ from .gost_34_11_2012 import (
     new,
     GOSTHashError
 )
+
+__all__ = (
+    'new',
+    'GOSTHashError'
+)
