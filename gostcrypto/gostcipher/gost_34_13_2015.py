@@ -163,12 +163,12 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
     Create a new ciphering object and returns it.
 
     Args:
-        - algorithm: the string with the name of the ciphering algorithm of the
-    GOST R 34.12-201 ('kuznechik' with block size 128 bit or 'magma' with
-    block size 64 bit).
-        - key: byte object with 256-bit encryption key.
-        - mode: mode of operation of the block encryption algorithm (valid value:
-    MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB,MODE_OFB or MODE_MAC).
+        algorithm: The string with the name of the ciphering algorithm of the
+           GOST R 34.12-201 ('kuznechik' with block size 128 bit or 'magma' with
+           block size 64 bit).
+        key: Byte object with 256-bit encryption key.
+        mode: Mode of operation of the block encryption algorithm (valid value:
+           MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB,MODE_OFB or MODE_MAC).
 
     Keyword args:
         - init_vect: byte object with initialization vector.  Used in MODE_CTR,
