@@ -18,11 +18,12 @@ def check_value(value: bytearray, size_value: int) -> bool:
     This function checks the type ('bytes' or 'bytearray') and whether
     the size of the 'value' variable matches the 'size_value' value.
 
-    Parameters
-    - value: the variable that you want to check.
-    - saize_value: the required size of the variable.
+    Args:
+        value: The variable that you want to check.
+        saize_value: The required size of the variable.
 
-    Return: check result.
+    Returns:
+        Check result.
     """
     result = True
     if (not isinstance(value, (bytes, bytearray))) or len(value) != size_value:
@@ -34,9 +35,9 @@ def msb(value: bytearray) -> int:
     """
     Return the value of the highest digit of the number 'value'.
 
-    Parameters
-    - value: the number for which you want to determine the value of the
-    high order.
+    Args:
+        value: The number for which you want to determine the value of the
+          high order.
     """
     return value[-1] & 0x80
 
@@ -45,11 +46,12 @@ def add_xor(op_a: bytearray, op_b: bytearray) -> bytearray:
     """
     Byte-by-byte 'xor' operation for byte objects.
 
-    Parameters
-    - op_a: the first operand.
-    - op_b: the second operand.
+    Args:
+        op_a: The first operand.
+        op_b: The second operand.
 
-    Return: result of the byte-by-byte 'xor' operation.
+    Returns:
+        Result of the byte-by-byte 'xor' operation.
     """
     op_a = bytearray(op_a)
     op_b = bytearray(op_b)
@@ -64,10 +66,11 @@ def zero_fill(value: bytearray) -> bytearray:
     """
     Zeroing byte objects.
 
-    Parameters
-    - value: the byte object that you want to reset.
+    Args:
+        value: The byte object that you want to reset.
 
-    Return: reset value.
+    Returns:
+        Reset value.
     """
     result = b''
     if isinstance(value, (bytes, bytearray)):
@@ -80,10 +83,11 @@ def bytearray_to_int(value: bytearray) -> int:
     """
     Convert a 'bytearray' object to a long integer.
 
-    Parameters
-    - value: the 'bytearray' object to convert.
+    Args:
+        value: the 'bytearray' object to convert.
 
-    Return: long integer value from 'bytearray' object.
+    Returns:
+        Long integer value from 'bytearray' object.
     """
     return int.from_bytes(value, byteorder='big')
 
@@ -92,11 +96,12 @@ def int_to_bytearray(value: int, num_byte: int) -> bytearray:
     """
     Convert a long integer to a 'bytearray' object.
 
-    Parameters
-    - value: the long integer value to convert.
-    - num_byte: number of bytes in the 'bytearray' object.
+    Args:
+        value: The long integer value to convert.
+        num_byte: Number of bytes in the 'bytearray' object.
 
-    Return: 'bytearray' object from long integer value.
+    Returns:
+        The 'bytearray' object from long integer value.
     """
     return bytearray(
         [(value & (0xff << pos * 8)) >> pos * 8 for pos in range(num_byte - 1, -1, -1)]
@@ -110,11 +115,12 @@ def compare(op_a: bytearray, op_b: bytearray) -> bool:
     This function, in contrast to the simple comparison operation '==', is
     performed in constant time to prevent timing attacks.
 
-    Parameters
-    - op_a: first array to compare.
-    - op_b: second array to compare.
+    Args:
+        op_a: First array to compare.
+        op_b: Second array to compare.
 
-    Return: comparison result (boolean).
+    Returns:
+        Comparison result (boolean).
     """
     op_a = bytearray(op_a)
     op_b = bytearray(op_b)
@@ -133,10 +139,11 @@ def compare_to_zero(value):
     This function, in contrast to the simple comparison operation '==', is
     performed in constant time to prevent timing attacks.
 
-    Parameters
-    - value: array to compare.
+    Args:
+        value: Array to compare.
 
-    Return: comparison result (boolean).
+    Returns:
+        Comparison result (boolean).
     """
     value = bytearray(value)
     res_check = 0

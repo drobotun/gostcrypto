@@ -233,4 +233,6 @@ class R5011132016:
 
 
 class GOSTHMACError(Exception):
-    """The class that implements exceptions."""
+    """
+    The class that implements exceptions.
+    """

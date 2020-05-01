@@ -454,4 +454,6 @@ class GOST34112012:
 
 
 class GOSTHashError(Exception):
-    """The class that implements exceptions."""
+    """
+    The class that implements exceptions.
+    """

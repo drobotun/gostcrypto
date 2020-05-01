@@ -987,4 +987,6 @@ class GOST34132015mac(GOST34132015):
 
 
 class GOSTCipherError(Exception):
-    """The class that implements exceptions."""
+    """
+    The class that implements exceptions.
+    """

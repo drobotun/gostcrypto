@@ -38,19 +38,21 @@ def new(rand_size: int, **kwargs) -> 'R132356510062017':
     """
     Create a new pseudo-random sequence generation object and returns it.
 
-    Parameters
-    - rand_size: size of the generated random variable (in bytes).
+    Args:
+        rand_size: Size of the generated random variable (in bytes).
 
-    Keyword args
-    - rand_k: initial filling (seed).  If this argument is not passed to the
-    function, the 'os.urandom' function is used to generate the initial filling.
-    - size_s: size of the initial filling (in bytes).
+    Keyword args:
+        rand_k: Initial filling (seed).  If this argument is not passed to the
+          function, the 'os.urandom' function is used to generate the initial
+          filling.
+        size_s: Size of the initial filling (in bytes).
 
-    Return: new object of generate random value.
+    Returns:
+        New object of generate random value.
 
-    Exception:
-    - GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
-    invalid value of initial filling.
+    Raises:
+        GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
+          invalid value of initial filling.
     """
     rand_k = kwargs.get('rand_k', bytearray(b''))
     size_s = kwargs.get('size_s', SIZE_S_384)
@@ -61,14 +63,21 @@ class R132356510062017:
     """
     Class that implements pseudo-random sequence generation function.
 
-    Methods
-    - random(): generating the next value from a pseudo-random sequence.
-    - reset(): resetting the counter and setting a new initial filling.
-    - clear(): clearing the counter value.
+    Methods:
+        random(): Generating the next value from a pseudo-random sequence.
+        reset(): Resetting the counter and setting a new initial filling.
+        clear(): Clearing the counter value.
     """
 
     def __init__(self, rand_size: int, rand_k: bytearray, size_s: int) -> None:
-        """Initialize the random object."""
+        """
+        Initialize the random object.
+
+        Args:
+            rand_size: Size of the generated random variable (in bytes).
+            rand_k: Initial filling (seed).
+            size_s: Size of the initial filling (in bytes).
+        """
         self._size_s = size_s
         self._rand_u = bytearray(b'')
         if rand_k == bytearray(b''):
@@ -112,14 +121,14 @@ class R132356510062017:
         """
         Generate the next value from a pseudo-random sequence.
 
-        Return: new random value.
+        Returns:
+            New random value.
 
-        Exception
-        - GOSTRandomError ('GOSTRandomError: exceeded the limit value of the
-        counter'): when the
-        counter limit is exceeded.
-        - GOSTRandomError('GOSTRandomError: the seed value is zero'): if the
-        seed value is zero.
+        Raises:
+            GOSTRandomError ('GOSTRandomError: exceeded the limit value of the
+              counter'): when the counter limit is exceeded.
+            GOSTRandomError('GOSTRandomError: the seed value is zero'): if the
+              seed value is zero.
         """
         if bytearray_to_int(self._rand_u[:self._size_s]) == 0:
             raise GOSTRandomError('GOSTRandomError: the seed value is zero')
@@ -136,14 +145,14 @@ class R132356510062017:
         """
         Reset the counter and setting a new initial filling.
 
-        Parameters
-        - rand_k: new initial filling (seed).  If this argument is not passed
-        to the function, the 'os.urandom' function is used to generate the
-        initial filling.
+        Args:
+            rand_k: New initial filling (seed).  If this argument is not passed
+              to the function, the 'os.urandom' function is used to generate
+              the initial filling.
 
-        Exception
-        - GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
-        invalid value of initial filling.
+        Raises:
+            GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
+              invalid value of initial filling.
         """
         if rand_k == bytearray(b''):
             self._rand_u = bytearray(
@@ -165,11 +174,4 @@ class R132356510062017:
 class GOSTRandomError(Exception):
     """
     The class that implements exceptions.
-
-    Exceptions
-    - invalid seed value.
-    - exceeded the limit value of the counter.
-    - the seed value is zero.
     """
-
-    pass
