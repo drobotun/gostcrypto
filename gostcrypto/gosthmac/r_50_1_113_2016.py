@@ -93,7 +93,15 @@ class R5011132016:
     """
 
     def __init__(self, name: str, key: bytearray, data: bytearray) -> None:
-        """Initialize the HMAC object."""
+        """
+        Initialize the HMAC object.
+
+        Args:
+            name: String with the name of the HMAC algorithm
+              ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512')
+            key: Authentication key.
+            data: The data from which to get the HMAC (as a byte object).
+        """
         if name not in ('HMAC_GOSTR3411_2012_256', 'HMAC_GOSTR3411_2012_512'):
             raise GOSTHMACError('GOSTHMACError: unsupported mode')
         if (not isinstance(key, (bytes, bytearray))) or len(key) > _KEY_SIZE:
