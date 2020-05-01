@@ -11,3 +11,8 @@ from .r_50_1_111_2016 import (
     new,
     GOSTPBKDFError
 )
+
+__all__ = (
+    'new',
+    'GOSTPBKDFError'
+)
