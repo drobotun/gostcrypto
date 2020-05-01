@@ -171,37 +171,38 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
            MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB,MODE_OFB or MODE_MAC).
 
     Keyword args:
-        - init_vect: byte object with initialization vector.  Used in MODE_CTR,
-    MODE_OFB, MODE_CBC and MODE_CFB modes.  For MODE_CTR mode, the
-    initialization vector length is equal to half the block size (default
-    value iz '_DEFAULT_IV_CTR').  For MODE_CBC, MODE_OFB and MODE_CFB modes,
-    it is a multiple of the block size (default value iz '_DEFAULT_IV').
-        - data: the data from which to get the MAC (as a byte object).  For
-    MODE_MAC mode only.  If this argument is passed to a function, you can
-    immediately use the 'digest' (or 'hexdigest') method to calculate the MAC
-    value after calling 'new'.  If the argument is not passed to the function,
-    then you must use the 'update(data)' method before the 'digest'
-    (or 'hexdigest') method.
-        - pad_mode: padding mode for ECB or CBC (the default value is
-    PAD_MODE_1).
+        init_vect: Byte object with initialization vector.  Used in MODE_CTR,
+           MODE_OFB, MODE_CBC and MODE_CFB modes.  For MODE_CTR mode, the
+           initialization vector length is equal to half the block size (default
+           value iz '_DEFAULT_IV_CTR').  For MODE_CBC, MODE_OFB and MODE_CFB
+           modes, it is a multiple of the block size (default value is
+           '_DEFAULT_IV').
+        data: The data from which to get the MAC (as a byte object).  For
+           MODE_MAC mode only.  If this argument is passed to a function, you
+           can immediately use the 'digest' (or 'hexdigest') method to calculate
+           the MAC value after calling 'new'.  If the argument is not passed to
+           the function, then you must use the 'update(data)' method before the
+           'digest' (or 'hexdigest') method.
+        pad_mode: Padding mode for ECB or CBC (the default value is PAD_MODE_1).
 
-    Return: new ciphering object.
+    Return:
+        New ciphering object.
 
     Raises:
-        - GOSTCipherError('GOSTCipherError: unsupported cipher mode'): in case
+        GOSTCipherError('GOSTCipherError: unsupported cipher mode'): in case
     of unsupported cipher mode (is not MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB,
     MODE_CTR or MODE_MAC).
-        - GOSTCipherError('GOSTCipherError: unsupported cipher algorithm'): in
+        GOSTCipherError('GOSTCipherError: unsupported cipher algorithm'): in
     case of invalid value 'algorithm'.
-        - GOSTCipherError('GOSTCipherError: invalid key value'): in case of
+        GOSTCipherError('GOSTCipherError: invalid key value'): in case of
     invalid 'key' value (the key value is not a byte object ('bytearray' or
     'bytes') or its length is not 256 bits).
-        - GOSTCipherError('GOSTCipherError: invalid padding mode'): in case
+        GOSTCipherError('GOSTCipherError: invalid padding mode'): in case
     padding mode is incorrect (for MODE_ECB and MODE_CBC modes).
-        - GOSTCipherError('GOSTCipherError: invalid initialization vector
+        GOSTCipherError('GOSTCipherError: invalid initialization vector
     value'): in case initialization vector value is incorrect (for all modes
     except ECB mode).
-        - GOSTCipherError('GOSTCipherError: invalid text data'): in case where
+        GOSTCipherError('GOSTCipherError: invalid text data'): in case where
     the text data is not byte object (for MODE_MAC mode).
     """
     result: Any = None
@@ -235,11 +236,11 @@ class GOST34132015(ABC):
     Base class of the cipher object.
 
     Methods:
-        - clear(): clearing the values of iterative cipher keys.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
+        block_size: An integer value the internal block size of the cipher
+           algorithm in bytes.
     """
 
     @abstractmethod
@@ -289,12 +290,12 @@ class GOST34132015Cipher(GOST34132015, ABC):
     Base class of the cipher object for implementing encryption modes.
 
     Methods:
-        - encrypt(): method for encrypting plaintext (abstract method).
-        - decrypt(): method for decrypting ciphertext (abstract method).
-        - clear(): clearing the values of iterative cipher keys.
+        encrypt(): Encrypting plaintext (abstract method).
+        decrypt(): Decrypting ciphertext (abstract method).
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
+        block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
@@ -309,12 +310,13 @@ class GOST34132015Cipher(GOST34132015, ABC):
         Plaintext encryption (abstract method).
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: an empty value of the bytearray type.
+        Return:
+            An empty value of the bytearray type.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -328,12 +330,13 @@ class GOST34132015Cipher(GOST34132015, ABC):
         Ciphertext decryption (abstract method).
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: an empty value of the bytearray type.
+        Return:
+            An empty value of the bytearray type.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -348,13 +351,13 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
     padding.
 
     Methods:
-        - encrypt(): method for encrypting plaintext (abstract method).
-        - decrypt(): method for decrypting ciphertext (abstract method).
-        - clear(): clearing the values of iterative cipher keys.
+        encrypt(): Encrypting plaintext (abstract method).
+        decrypt(): Decrypting ciphertext (abstract method).
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-    - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
+        block_size: An integer value the internal block size of the cipher
+           algorithm in bytes.
     """
 
     @abstractmethod
@@ -372,12 +375,13 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
         Plaintext encryption (abstract method).
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: an empty value of the bytearray type.
+        Return:
+            An empty value of the bytearray type.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         result = GOST34132015Cipher.encrypt(self, data)
@@ -390,12 +394,13 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
         Ciphertext decryption (abstract method).
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: an empty value of the bytearray type.
+        Return:
+            An empty value of the bytearray type.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         result = GOST34132015Cipher.decrypt(self, data)
@@ -408,14 +413,14 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
     feedback.
 
     Methods:
-        - encrypt(): method for encrypting plaintext (abstract method).
-        - decrypt(): method for decrypting ciphertext (abstract method).
-        - clear(): clearing the values of iterative cipher keys.
+        encrypt(): Encrypting plaintext (abstract method).
+        decrypt(): Decrypting ciphertext (abstract method).
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
-        - iv: the initial vector value.
+        block_size: An integer value the internal block size of the cipher
+           algorithm in bytes.
+        iv: The initial vector value.
     """
 
     @abstractmethod
@@ -452,12 +457,13 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
         Plaintext encryption ((abstract method)).
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: an empty two value of the bytearray type.
+        Return:
+            An empty two value of the bytearray type.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         return GOST34132015Cipher.encrypt(self, data), bytearray()
@@ -468,12 +474,13 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
         Ciphertext decryption ((abstract method)).
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: an empty value of the bytearray type.
+        Return:
+            An empty value of the bytearray type.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         return GOST34132015Cipher.decrypt(self, data), bytearray()
@@ -491,12 +498,12 @@ class GOST34132015ecb(GOST34132015CipherPadding):
     Class that implements ECB mode of block encryption.
 
     Methods:
-        - decrypt(): decrypting a ciphertext.
-        - encrypt(): encrypting a plaintext.
-        - clear(): clearing the values of iterative cipher keys.
+        decrypt(): Decrypting a ciphertext.
+        encrypt(): Encrypting a plaintext.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
+        block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
@@ -509,12 +516,13 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         Plaintext encryption in ECB mode.
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: ciphertext data (as a byte object).
+        Return:
+            Ciphertext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         result, data = super().encrypt(data)
@@ -527,12 +535,13 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         Ciphertext decryption in ECB mode.
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: plaintext data (as a byte object).
+        Return:
+            Plaintext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         result = super().decrypt(data)
@@ -546,14 +555,14 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
     Class that implements CBC mode of block encryption.
 
     Methods:
-        - decrypt(): decrypting a ciphertext.
-        - encrypt(): encrypting a plaintext.
-        - clear(): clearing the values of iterative cipher keys.
+        decrypt(): Decrypting a ciphertext.
+        encrypt(): Encrypting a plaintext.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
+        block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
-        - iv: the initial value.
+        iv: The initial vector value.
     """
 
     def __init__(self, algorithm: str, key: bytearray,
@@ -567,12 +576,13 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         Plaintext encryption in CBC mode.
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: ciphertext data (as a byte object).
+        Return:
+            Ciphertext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         result, data = GOST34132015CipherPadding.encrypt(self, data)
@@ -588,12 +598,13 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         Ciphertext decryption in CBC mode.
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: plaintext data (as a byte object).
+        Return:
+            Plaintext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         result = GOST34132015CipherPadding.decrypt(self, data)
@@ -610,14 +621,14 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
     Class that implements CFB mode of block encryption.
 
     Methods:
-        - decrypt(): decrypting a ciphertext.
-        - encrypt(): encrypting a plaintext.
-        - clear(): clearing the values of iterative cipher keys.
+        decrypt(): Decrypting a ciphertext.
+        encrypt(): Encrypting a plaintext.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
-        - iv: the initial value.
+        block_size: An integer value the internal block size of the cipher
+           algorithm in bytes.
+        iv: The initial vector value.
     """
 
     def __init__(self, algorithm: str, key: bytearray,
@@ -630,12 +641,13 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         Plaintext encryption in CFB mode.
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: ciphertext data (as a byte object).
+        Return:
+            Ciphertext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         result, gamma = super().encrypt(data)
@@ -653,12 +665,13 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         Ciphertext decryption in CFB mode.
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: plaintext data (as a byte object).
+        Return:
+            Plaintext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         result, gamma = super().decrypt(data)
@@ -677,14 +690,14 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
     Class that implements OFB mode of block encryption.
 
     Methods:
-        - decrypt(): decrypting a ciphertext.
-        - encrypt(): encrypting a plaintext.
-        - clear(): clearing the values of iterative cipher keys.
+        decrypt(): Decrypting a ciphertext.
+        encrypt(): Encrypting a plaintext.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
-        - iv: the initial value.
+        block_size: An integer value the internal block size of the cipher
+            algorithm in bytes.
+        iv: The initial vector value.
     """
 
     def __init__(self, algorithm: str, key: bytearray,
@@ -697,12 +710,13 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         Plaintext encryption in OFB mode.
 
         Args:
-            - data: Plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: ciphertext data (as a byte object).
+        Return:
+            Ciphertext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data') - in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         result, gamma = super().encrypt(data)
@@ -720,12 +734,13 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         Ciphertext decryption in OFB mode.
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: plaintext data (as a byte object).
+        Return:
+            Plaintext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         super().decrypt(data)
@@ -736,14 +751,14 @@ class GOST34132015ctr(GOST34132015Cipher):
     Class that implements CTR mode of block encryption.
 
     Methods:
-        - decrypt(): decrypting a ciphertext.
-        - encrypt(): encrypting a plaintext.
-        - clear(): clearing the values of iterative cipher keys.
+        decrypt(): Decrypting a ciphertext.
+        encrypt(): Encrypting a plaintext.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
-    algorithm in bytes.
-        - counter: counter blocks.
+        block_size: An integer value the internal block size of the cipher
+           algorithm in bytes.
+        counter: The counter block value.
     """
 
     def __init__(self, algorithm: str, key: bytearray,
@@ -777,12 +792,13 @@ class GOST34132015ctr(GOST34132015Cipher):
         Plaintext encryption in CTR mode.
 
         Args:
-            - data: plaintext data to be encrypted (as a byte object).
+            data: Plaintext data to be encrypted (as a byte object).
 
-        Return: ciphertext data (as a byte object).
+        Return:
+            Ciphertext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+            GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
         result = super().encrypt(data)
@@ -804,12 +820,13 @@ class GOST34132015ctr(GOST34132015Cipher):
         Ciphertext decryption in CTR mode.
 
         Args:
-            - data: ciphertext data to be decrypted (as a byte object).
+            data: Ciphertext data to be decrypted (as a byte object).
 
-        Return: plaintext data (as a byte object).
+        Return:
+            Plaintext data (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+            GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
         super().decrypt(data)
@@ -821,15 +838,15 @@ class GOST34132015mac(GOST34132015):
     Class that implements MAC mode.
 
     Methods:
-        - update(): update the MAC object with the bytes-like object.
-        - digest(): calculating the Message authentication code of the data
+        update(): Update the MAC object with the bytes-like object.
+        digest(): Calculating the Message authentication code of the data
     passed to the 'update()' method so far.
-        - hexdigest(): calculating the Message authentication code of the data
+        hexdigest(): Calculating the Message authentication code of the data
     passed to the 'update()' method so far an return it of the hexadecimal.
-        - clear(): clearing the values of iterative cipher keys.
+        clear(): Clearing the values of iterative cipher keys.
 
     Attributes:
-        - block_size: an integer value the internal block size of the cipher
+        block_size: An integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
@@ -869,13 +886,13 @@ class GOST34132015mac(GOST34132015):
         Update the MAC object with the bytes-like object.
 
         Args:
-            - data: the data from which to get the MAC (as a byte object).
+            data: The data from which to get the MAC (as a byte object).
         Repeated calls are equivalent to a single call with the concatenation
         of all the arguments: 'm.update(a)'; 'm.update(b)' is equivalent to
         'm.update(a+b)'.
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid text data'): in case
+            GOSTCipherError('GOSTCipherError: invalid text data'): in case
         where the text data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -918,12 +935,12 @@ class GOST34132015mac(GOST34132015):
         calculation.
 
         Args:
-            - mac_size: message authentication code size (in bytes).
+            mac_size: Message authentication code size (in bytes).
 
         Return: message authentication code value (as a byte object).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid message authentication
+            GOSTCipherError('GOSTCipherError: invalid message authentication
         code size'): in case of the invalid message authentication code size.
         """
         temp = deepcopy(self)
@@ -938,10 +955,10 @@ class GOST34132015mac(GOST34132015):
 
         This method can be called after applying the 'update ()' method, or
         after calling the 'new ()' function with the data passed to it for MAC
-        calculation.
+        calculation.  The result is represented as a hexadecimal string.
 
         Args:
-            mac_size: message authentication code size (in bytes).
+            mac_size: Message authentication code size (in bytes).
 
         Return:
             Message authentication code value in hexadecimal (as a hexadecimal
