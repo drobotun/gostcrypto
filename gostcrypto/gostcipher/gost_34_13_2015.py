@@ -526,7 +526,7 @@ class GOST34132015ecb(GOST34132015CipherPadding):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
         case where the plaintext data is not byte object.
         """
-        result = bytearray() 
+        result = bytearray()
         data = super().encrypt(data)
         for i in range(get_num_block(data, self.block_size)):
             result = result + self._cipher_obj.encrypt(self._get_block(data, i))
