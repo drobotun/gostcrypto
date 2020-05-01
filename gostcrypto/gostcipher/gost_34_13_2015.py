@@ -27,20 +27,6 @@ from gostcrypto.utils import check_value
 from .gost_34_12_2015 import GOST34122015Kuznechik
 from .gost_34_12_2015 import GOST34122015Magma
 
-__all__ = (
-    'GOST34132015',
-    'new',
-    'MODE_ECB',
-    'MODE_CBC',
-    'MODE_CFB',
-    'MODE_OFB',
-    'MODE_CTR',
-    'MODE_MAC',
-    'PAD_MODE_1',
-    'PAD_MODE_2',
-    'GOSTCipherError'
-)
-
 MODE_ECB: int = 0x01  #Electronic Codebook mode
 MODE_CBC: int = 0x02  #Cipher Block Chaining mode
 MODE_CFB: int = 0x03  #Cipher Feedback mode
@@ -176,15 +162,15 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
     """
     Create a new ciphering object and returns it.
 
-    Parameters
-    - algorithm: the string with the name of the ciphering algorithm of the
+    Args:
+        - algorithm: the string with the name of the ciphering algorithm of the
     GOST R 34.12-201 ('kuznechik' with block size 128 bit or 'magma' with
     block size 64 bit).
-    - key: byte object with 256-bit encryption key.
-    - mode: mode of operation of the block encryption algorithm (valid value:
+        - key: byte object with 256-bit encryption key.
+        - mode: mode of operation of the block encryption algorithm (valid value:
     MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB,MODE_OFB or MODE_MAC).
 
-    Keyword args
+    Keyword args:
     - init_vect: byte object with initialization vector.  Used in MODE_CTR,
     MODE_OFB, MODE_CBC and MODE_CFB modes.  For MODE_CTR mode, the
     initialization vector length is equal to half the block size (default
@@ -200,7 +186,7 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
 
     Return: new ciphering object.
 
-    Exception
+    Raises:
     - GOSTCipherError('GOSTCipherError: unsupported cipher mode'): in case of
     unsupported cipher mode (is not MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB,
     MODE_CTR or MODE_MAC).
@@ -318,12 +304,12 @@ class GOST34132015Cipher(GOST34132015):
         """
         Plaintext encryption (base method).
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -336,12 +322,12 @@ class GOST34132015Cipher(GOST34132015):
         """
         Ciphertext decryption (base method).
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -377,12 +363,12 @@ class GOST34132015CipherPadding(GOST34132015Cipher):
         """
         Plaintext encryption (base method).
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -394,12 +380,12 @@ class GOST34132015CipherPadding(GOST34132015Cipher):
         """
         Ciphertext decryption (base method).
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -453,12 +439,12 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher):
         """
         Plaintext encryption (base method).
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: an empty two value of the bytearray type.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -468,12 +454,12 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher):
         """
         Ciphertext decryption (base method).
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -509,12 +495,12 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         """
         Plaintext encryption in ECB mode.
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: ciphertext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -527,12 +513,12 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         """
         Ciphertext decryption in ECB mode.
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: plaintext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -567,12 +553,12 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         """
         Plaintext encryption in CBC mode.
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: ciphertext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -588,12 +574,12 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         """
         Ciphertext decryption in CBC mode.
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: plaintext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -629,12 +615,12 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         """
         Plaintext encryption in CFB mode.
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: ciphertext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -652,12 +638,12 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         """
         Ciphertext decryption in CFB mode.
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: plaintext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -695,13 +681,13 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         """
         Plaintext encryption in OFB mode.
 
-        Parameters
+        Args
         :data: Plaintext data to be encrypted (as a byte object).
 
         Return:
         ciphertext data (as a byte object).
 
-        Exception:
+        Raises:
         - GOSTCipherError('GOSTCipherError: invalid plaintext data') - in case
         where the plaintext data is not byte object.
         """
@@ -719,12 +705,12 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         """
         Ciphertext decryption in OFB mode.
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: plaintext data (as a byte object).
 
-        Exception:
+        Raises:
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -775,12 +761,12 @@ class GOST34132015ctr(GOST34132015Cipher):
         """
         Plaintext encryption in CTR mode.
 
-        Parameters
+        Args
         - data: plaintext data to be encrypted (as a byte object).
 
         Return: ciphertext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
         where the plaintext data is not byte object.
         """
@@ -802,12 +788,12 @@ class GOST34132015ctr(GOST34132015Cipher):
         """
         Ciphertext decryption in CTR mode.
 
-        Parameters
+        Args
         - data: ciphertext data to be decrypted (as a byte object).
 
         Return: plaintext data (as a byte object).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
         where the ciphertext data is not byte object.
         """
@@ -867,13 +853,13 @@ class GOST34132015mac(GOST34132015):
         """
         Update the MAC object with the bytes-like object.
 
-        Parameters
+        Args
         - data: The data from which to get the MAC (as a byte object).  Repeated
         calls are equivalent to a single call with the concatenation of all the
         arguments: 'm.update(a)'; 'm.update(b)' is equivalent to
         'm.update(a+b)'.
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid text data'): in case where
         the text data is not byte object.
         """
@@ -916,12 +902,12 @@ class GOST34132015mac(GOST34132015):
         after calling the 'new ()' function with the data passed to it for MAC
         calculation.
 
-        Parameters
+        Args
         - mac_size: message authentication code size (in bytes).
 
         Return: message authentication code value (as a byte object).
 
-        Exception:
+        Raises:
         - GOSTCipherError('GOSTCipherError: invalid message authentication code
         size'): in case of the invalid message authentication code size.
         """
@@ -939,13 +925,13 @@ class GOST34132015mac(GOST34132015):
         after calling the 'new ()' function with the data passed to it for MAC
         calculation.  The result is represented as a hexadecimal string.
 
-        Parameters
+        Args
         - mac_size: message authentication code size (in bytes).
 
         Return: message authentication code value in hexadecimal (as a
         hexadecimal string).
 
-        Exception
+        Raises
         - GOSTCipherError('GOSTCipherError: invalid message authentication code
         size'): in case of the invalid message authentication code size.
         """
