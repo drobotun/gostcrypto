@@ -133,7 +133,7 @@ def compare(op_a: bytearray, op_b: bytearray) -> bool:
     return not res_check
 
 
-def compare_to_zero(value):
+def compare_to_zero(value: bytearray) -> bool:
     """Compare byte array with zero.
 
     This function, in contrast to the simple comparison operation '==', is
