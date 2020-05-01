@@ -70,67 +70,6 @@ CipherObjType = Union[
 ]
 
 
-def get_num_block(data: bytearray, block_size: int) -> int:
-    """Return the number of blocks in the data."""
-    return len(data) // block_size
-
-
-def get_pad_size(data: bytearray, block_size: int) -> int:
-    """Return the padding size."""
-    if len(data) < block_size:
-        result = block_size - len(data)
-    elif len(data) % block_size == 0:
-        result = 0
-    else:
-        result = block_size - len(data) % block_size
-    return result
-
-
-def set_pad_mode_1(data: bytearray, block_size: int) -> bytearray:
-    """
-    Set padding MODE_PAD_1 mode.
-
-    For MODE_ECB or MODE_CBC mode only.
-    """
-    return data + b'\x00' * get_pad_size(data, block_size)
-
-
-def set_pad_mode_2(data: bytearray, block_size: int) -> bytearray:
-    """
-    Set padding MODE_PAD_2 mode.
-
-    For MODE_ECB or MODE_CBC mode only.
-    """
-    return data + b'\x80' + b'\x00' * (block_size + get_pad_size(data, block_size) - 1)
-
-
-def set_pad_mode_3(data: bytearray, block_size: int) -> bytearray:
-    """
-    Set padding MODE_PAD_3 mode.
-
-    For MODE_MAC mode only.
-    """
-    if get_pad_size(data, block_size) == 0:
-        result = data
-    else:
-        result = data + b'\x80' + b'\x00' * (get_pad_size(data, block_size) - 1)
-    return result
-
-
-def set_padding(data: bytearray, block_size: int, pad_mode: int) -> bytearray:
-    """
-    Select and set padding.
-
-    For MODE_ECB or MODE_CBC mode only.
-    """
-    result = data
-    if pad_mode == PAD_MODE_1:
-        result = set_pad_mode_1(data, block_size)
-    elif pad_mode == PAD_MODE_2:
-        result = set_pad_mode_2(data, block_size)
-    return result
-
-
 def check_init_vect_value(init_vect: bytearray, block_size: int) -> bool:
     """
     Check the value of the initialization vector.
@@ -266,7 +205,19 @@ class GOST34132015(ABC):
         """
         self.clear()
 
-    def _get_block(self, data, count_block) -> bytearray:
+    def _get_num_block(self, data: bytearray) -> int:
+        return len(data) // self.block_size
+
+    def _get_pad_size(self, data: bytearray) -> int:
+        if len(data) < self.block_size:
+            result = self.block_size - len(data)
+        elif len(data) % self.block_size == 0:
+            result = 0
+        else:
+            result = self.block_size - len(data) % self.block_size
+        return result
+
+    def _get_block(self, data: bytearray, count_block: int) -> bytearray:
         return data[self.block_size * count_block:self.block_size + (self.block_size * count_block)]
 
     def clear(self) -> None:
@@ -369,6 +320,20 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
             raise GOSTCipherError('GOSTCipherError: invalid padding mode')
         self._pad_mode = pad_mode
 
+    def _set_pad_mode_1(self, data: bytearray) -> bytearray:
+        return data + b'\x00' * self._get_pad_size(data)
+
+    def _set_pad_mode_2(self, data: bytearray) -> bytearray:
+        return data + b'\x80' + b'\x00' * (self.block_size + self._get_pad_size(data) - 1)
+
+    def _set_padding(self, data: bytearray, pad_mode: int) -> bytearray:
+        result = data
+        if pad_mode == PAD_MODE_1:
+            result = self._set_pad_mode_1(data)
+        elif pad_mode == PAD_MODE_2:
+            result = self._set_pad_mode_2(data)
+        return result
+
     @abstractmethod
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -384,7 +349,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
             GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
               case where the plaintext data is not byte object.
         """
-        data = set_padding(GOST34132015Cipher.encrypt(self, data), self.block_size, self._pad_mode)
+        data = self._set_padding(GOST34132015Cipher.encrypt(self, data), self._pad_mode)
         return data
 
     @abstractmethod
@@ -443,7 +408,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
         self._init_vect[begin_iv_low:end_iv_low] = data
 
     def _get_final_block(self, data):
-        return data[self.block_size * get_num_block(data, self.block_size)::]
+        return data[self.block_size * self._get_num_block(data)::]
 
     def _final_cipher(self, data):
         gamma = self._get_gamma()
@@ -528,7 +493,7 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         """
         result = bytearray()
         data = super().encrypt(data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             result = result + self._cipher_obj.encrypt(self._get_block(data, i))
         return result
 
@@ -548,7 +513,7 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         """
         result = bytearray()
         data = super().decrypt(data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             result = result + self._cipher_obj.decrypt(self._get_block(data, i))
         return result
 
@@ -590,7 +555,7 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         """
         result = bytearray()
         data = GOST34132015CipherPadding.encrypt(self, data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             internal = add_xor(self._init_vect[0:self.block_size], self._get_block(data, i))
             cipher_block = self._cipher_obj.encrypt(internal)
             result = result + cipher_block
@@ -613,7 +578,7 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         """
         result = bytearray()
         data = GOST34132015CipherPadding.decrypt(self, data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             internal = self._cipher_obj.decrypt(self._get_block(data, i))
             cipher_block = add_xor(self._init_vect[0:self.block_size], internal)
             result = result + cipher_block
@@ -658,7 +623,7 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         result = bytearray()
         gamma = bytearray()
         data = super().encrypt(data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             gamma = self._get_gamma()
             cipher_block = add_xor(gamma, self._get_block(data, i))
             result = result + cipher_block
@@ -684,7 +649,7 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         result = bytearray()
         gamma = bytearray()
         data = super().decrypt(data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             gamma = self._get_gamma()
             cipher_block = self._get_block(data, i)
             result = result + add_xor(gamma, cipher_block)
@@ -731,7 +696,7 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         result = bytearray()
         gamma = bytearray()
         data = super().encrypt(data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             gamma = self._get_gamma()
             cipher_block = self._get_block(data, i)
             result = result + add_xor(gamma, cipher_block)
@@ -815,7 +780,7 @@ class GOST34132015ctr(GOST34132015Cipher):
         result = bytearray()
         gamma = bytearray()
         data = super().encrypt(data)
-        for i in range(get_num_block(data, self.block_size)):
+        for i in range(self._get_num_block(data)):
             gamma = self._cipher_obj.encrypt(self._counter)
             self._counter = self._inc_ctr(self._counter)
             result = result + add_xor(self._get_block(data, i), gamma)
@@ -823,7 +788,7 @@ class GOST34132015ctr(GOST34132015Cipher):
             gamma = self._cipher_obj.encrypt(self._counter)
             self._counter = self._inc_ctr(self._counter)
             result = result + add_xor(
-                data[self.block_size * get_num_block(data, self.block_size)::], gamma
+                data[self.block_size * self._get_num_block(data)::], gamma
             )
         return result
 
@@ -874,6 +839,13 @@ class GOST34132015mac(GOST34132015):
         if data is not None:
             self.update(data)
 
+    def _set_pad_mode_3(self, data: bytearray) -> bytearray:
+        if self._get_pad_size(data) == 0:
+            result = data
+        else:
+            result = data + b'\x80' + b'\x00' * (self._get_pad_size(data) - 1)
+        return result
+
     def _get_mac_key(self, value_r):
         value_b = b''
         if self.block_size == 16:
@@ -911,10 +883,10 @@ class GOST34132015mac(GOST34132015):
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid text data')
-        data = set_pad_mode_3(data, self.block_size)
+        data = self._set_pad_mode_3(data)
         block = bytearray()
         prev_block = self._cur_mac
-        for i in range(0, get_num_block(data, self.block_size) - 1):
+        for i in range(0, self._get_num_block(data) - 1):
             block = self._cipher_obj.encrypt(add_xor(prev_block, self._get_block(data, i)))
             prev_block = block
         block = (
@@ -924,15 +896,15 @@ class GOST34132015mac(GOST34132015):
         )
         self._cur_mac = block
         self._prev_mac = prev_block
-        self._buff = data[self.block_size * (get_num_block(data, self.block_size) - 1):]
+        self._buff = data[self.block_size * (self._get_num_block(data) - 1):]
 
     def mac_final(self) -> bytearray:
         """Return the final value of the MAC."""
-        if get_pad_size(self._buff, self.block_size) == 0:
+        if self._get_pad_size(self._buff) == 0:
             final_key = self._key_1
         else:
             final_key = self._key_2
-        self._buff = set_pad_mode_3(self._buff, self.block_size)
+        self._buff = self._set_pad_mode_3(self._buff)
         result = bytearray()
         result = self._cipher_obj.encrypt(
             add_xor(add_xor(self._prev_mac, self._buff), final_key)
