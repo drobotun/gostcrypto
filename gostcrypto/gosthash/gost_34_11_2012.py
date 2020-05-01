@@ -401,14 +401,7 @@ class GOST34112012:
 
     def reset(self) -> None:
         """Reset the values of all class attributes."""
-        self._buff = bytearray(b'')
-        self._num_block = 0
-        self._pad_block_size = 0
-        self._hash_h = bytearray(_BLOCK_SIZE)
-        self._hash_n = bytearray(_BLOCK_SIZE)
-        self._hash_sigma = bytearray(_BLOCK_SIZE)
-        if self._name == 'streebog256':
-            self._hash_h = bytearray(_BLOCK_SIZE * b'\x01')
+        self.__init__(self._name, bytearray(b''))
 
     def copy(self) -> 'GOST34112012':
         """
