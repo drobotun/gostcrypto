@@ -14,8 +14,8 @@ includes the GOSTCipherError class and several General functions.
 """
 
 from copy import deepcopy
-
 from typing import Any, Union
+from abc import ABC, abstractmethod
 
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import int_to_bytearray
@@ -171,37 +171,38 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
     MODE_CBC, MODE_CFB, MODE_CTR, MODE_ECB,MODE_OFB or MODE_MAC).
 
     Keyword args:
-    - init_vect: byte object with initialization vector.  Used in MODE_CTR,
+        - init_vect: byte object with initialization vector.  Used in MODE_CTR,
     MODE_OFB, MODE_CBC and MODE_CFB modes.  For MODE_CTR mode, the
     initialization vector length is equal to half the block size (default
     value iz '_DEFAULT_IV_CTR').  For MODE_CBC, MODE_OFB and MODE_CFB modes,
     it is a multiple of the block size (default value iz '_DEFAULT_IV').
-    - data: the data from which to get the MAC (as a byte object).  For MODE_MAC
-    mode only.  If this argument is passed to a function, you can immediately
-    use the 'digest' (or 'hexdigest') method to calculate the MAC value after
-    calling 'new'.  If the argument is not passed to the function, then you
-    must use the 'update(data)' method before the 'digest' (or 'hexdigest')
-    method.
-    - pad_mode: padding mode for ECB or CBC (the default value is PAD_MODE_1).
+        - data: the data from which to get the MAC (as a byte object).  For
+    MODE_MAC mode only.  If this argument is passed to a function, you can
+    immediately use the 'digest' (or 'hexdigest') method to calculate the MAC
+    value after calling 'new'.  If the argument is not passed to the function,
+    then you must use the 'update(data)' method before the 'digest'
+    (or 'hexdigest') method.
+        - pad_mode: padding mode for ECB or CBC (the default value is
+    PAD_MODE_1).
 
     Return: new ciphering object.
 
     Raises:
-    - GOSTCipherError('GOSTCipherError: unsupported cipher mode'): in case of
-    unsupported cipher mode (is not MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB,
+        - GOSTCipherError('GOSTCipherError: unsupported cipher mode'): in case
+    of unsupported cipher mode (is not MODE_ECB, MODE_CBC, MODE_CFB, MODE_OFB,
     MODE_CTR or MODE_MAC).
-    - GOSTCipherError('GOSTCipherError: unsupported cipher algorithm'): in case
-    of invalid value 'algorithm'.
-    - GOSTCipherError('GOSTCipherError: invalid key value'): in case of invalid
-    'key' value (the key value is not a byte object ('bytearray' or 'bytes') or
-    its length is not 256 bits).
-    - GOSTCipherError('GOSTCipherError: invalid padding mode'): in case padding
-    mode is incorrect (for MODE_ECB and MODE_CBC modes).
-    - GOSTCipherError('GOSTCipherError: invalid initialization vector value'):
-    in case initialization vector value is incorrect (for all modes except ECB
-    mode).
-    - GOSTCipherError('GOSTCipherError: invalid text data'): in case where the
-    text data is not byte object (for MODE_MAC mode).
+        - GOSTCipherError('GOSTCipherError: unsupported cipher algorithm'): in
+    case of invalid value 'algorithm'.
+        - GOSTCipherError('GOSTCipherError: invalid key value'): in case of
+    invalid 'key' value (the key value is not a byte object ('bytearray' or
+    'bytes') or its length is not 256 bits).
+        - GOSTCipherError('GOSTCipherError: invalid padding mode'): in case
+    padding mode is incorrect (for MODE_ECB and MODE_CBC modes).
+        - GOSTCipherError('GOSTCipherError: invalid initialization vector
+    value'): in case initialization vector value is incorrect (for all modes
+    except ECB mode).
+        - GOSTCipherError('GOSTCipherError: invalid text data'): in case where
+    the text data is not byte object (for MODE_MAC mode).
     """
     result: Any = None
     if mode == MODE_ECB:
@@ -229,18 +230,19 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
     return result
 
 
-class GOST34132015:
+class GOST34132015(ABC):
     """
     Base class of the cipher object.
 
     Methods
-    - clear(): clearing the values of iterative cipher keys.
+        - clear(): clearing the values of iterative cipher keys.
 
     Attributes
-    - block_size: an integer value the internal block size of the cipher
+        - block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
+    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray) -> None:
         """Initialize the ciphering object."""
         if algorithm not in ('magma', 'kuznechik'):
@@ -282,54 +284,57 @@ class GOST34132015:
         return self._cipher_obj.block_size
 
 
-class GOST34132015Cipher(GOST34132015):
+class GOST34132015Cipher(GOST34132015, ABC):
     """
-    Base class of the cipher object for encryption modes.
+    Base class of the cipher object for implementing encryption modes.
 
-    Methods
-    - encrypt(): base method for encrypting plaintext.
-    - decrypt(): base method for decrypting ciphertext.
-    - clear(): clearing the values of iterative cipher keys.
+    Methods:
+        - encrypt(): method for encrypting plaintext (abstract method).
+        - decrypt(): method for decrypting ciphertext (abstract method).
+        - clear(): clearing the values of iterative cipher keys.
 
-    Attributes
-    - block_size: an integer value the internal block size of the cipher
+    Attributes:
+        - block_size: an integer value the internal block size of the cipher
     algorithm in bytes.
     """
 
+    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray) -> None:
         """Initialize the ciphering object."""
         super().__init__(algorithm, key)
 
+    @abstractmethod
     def encrypt(self, data: bytearray) -> bytearray:
         """
-        Plaintext encryption (base method).
+        Plaintext encryption (abstract method).
 
-        Args
-        - data: plaintext data to be encrypted (as a byte object).
+        Args:
+            - data: plaintext data to be encrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Raises
-        - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in case
-        where the plaintext data is not byte object.
+        Raises:
+            - GOSTCipherError('GOSTCipherError: invalid plaintext data'): in
+        case where the plaintext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid plaintext data')
         return bytearray()
 
+    @abstractmethod
     def decrypt(self, data: bytearray) -> bytearray:
         """
-        Ciphertext decryption (base method).
+        Ciphertext decryption (abstract method).
 
-        Args
-        - data: ciphertext data to be decrypted (as a byte object).
+        Args:
+            - data: ciphertext data to be decrypted (as a byte object).
 
         Return: an empty value of the bytearray type.
 
-        Raises
-        - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in case
-        where the ciphertext data is not byte object.
+        Raises:
+            - GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
+        case where the ciphertext data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
@@ -337,12 +342,13 @@ class GOST34132015Cipher(GOST34132015):
         return bytearray()
 
 
-class GOST34132015CipherPadding(GOST34132015Cipher):
+class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
     """
-    Base class of the cipher object for encryption modes with padding.
+    Base class of the cipher object for implementing encryption modes with
+    padding.
 
     Methods
-    - encrypt(): base method for encrypting plaintext.
+    - encrypt(): method for encrypting plaintext.
     - decrypt(): base method for decrypting ciphertext.
     - clear(): clearing the values of iterative cipher keys.
 
@@ -351,6 +357,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher):
     algorithm in bytes.
     """
 
+    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray, pad_mode: int) -> None:
         """Initialize the ciphering object."""
         GOST34132015Cipher.__init__(self, algorithm, key)
@@ -359,6 +366,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher):
             raise GOSTCipherError('GOSTCipherError: invalid padding mode')
         self._pad_mode = pad_mode
 
+    @abstractmethod
     def encrypt(self, data: bytearray) -> bytearray:
         """
         Plaintext encryption (base method).
@@ -376,6 +384,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher):
         data = set_padding(data, self.block_size, self._pad_mode)
         return result, data
 
+    @abstractmethod
     def decrypt(self, data: bytearray) -> bytearray:
         """
         Ciphertext decryption (base method).
@@ -393,7 +402,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher):
         return result
 
 
-class GOST34132015CipherFeedBack(GOST34132015Cipher):
+class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
     """
     Base class of the cipher object for encryption modes with feedback.
 
@@ -408,6 +417,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher):
     - iv: the initial value.
     """
 
+    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """Initialize the ciphering object."""
         GOST34132015Cipher.__init__(self, algorithm, key)
@@ -435,6 +445,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher):
         cipher_blk = self._get_final_block(data)
         return add_xor(gamma, cipher_blk)
 
+    @abstractmethod
     def encrypt(self, data: bytearray) -> bytearray:
         """
         Plaintext encryption (base method).
@@ -450,6 +461,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher):
         """
         return GOST34132015Cipher.encrypt(self, data), bytearray()
 
+    @abstractmethod
     def decrypt(self, data: bytearray) -> bytearray:
         """
         Ciphertext decryption (base method).
