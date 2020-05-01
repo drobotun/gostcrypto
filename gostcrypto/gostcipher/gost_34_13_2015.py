@@ -611,7 +611,7 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
             GOSTCipherError('GOSTCipherError: invalid ciphertext data'): in
         case where the ciphertext data is not byte object.
         """
-        result = bytearray() 
+        result = bytearray()
         data = GOST34132015CipherPadding.decrypt(self, data)
         for i in range(get_num_block(data, self.block_size)):
             internal = self._cipher_obj.decrypt(self._get_block(data, i))
