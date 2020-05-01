@@ -185,7 +185,7 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
            'digest' (or 'hexdigest') method.
         pad_mode: Padding mode for ECB or CBC (the default value is PAD_MODE_1).
 
-    Return:
+    Returns:
         New ciphering object.
 
     Raises:
@@ -312,7 +312,7 @@ class GOST34132015Cipher(GOST34132015, ABC):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             An empty value of the bytearray type.
 
         Raises:
@@ -332,7 +332,7 @@ class GOST34132015Cipher(GOST34132015, ABC):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             An empty value of the bytearray type.
 
         Raises:
@@ -377,7 +377,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             An empty value of the bytearray type.
 
         Raises:
@@ -396,7 +396,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             An empty value of the bytearray type.
 
         Raises:
@@ -459,7 +459,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             An empty two value of the bytearray type.
 
         Raises:
@@ -476,7 +476,7 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             An empty value of the bytearray type.
 
         Raises:
@@ -518,7 +518,7 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             Ciphertext data (as a byte object).
 
         Raises:
@@ -537,7 +537,7 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             Plaintext data (as a byte object).
 
         Raises:
@@ -578,7 +578,7 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             Ciphertext data (as a byte object).
 
         Raises:
@@ -600,7 +600,7 @@ class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             Plaintext data (as a byte object).
 
         Raises:
@@ -643,7 +643,7 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             Ciphertext data (as a byte object).
 
         Raises:
@@ -667,7 +667,7 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             Plaintext data (as a byte object).
 
         Raises:
@@ -712,7 +712,7 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             Ciphertext data (as a byte object).
 
         Raises:
@@ -736,7 +736,7 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             Plaintext data (as a byte object).
 
         Raises:
@@ -794,7 +794,7 @@ class GOST34132015ctr(GOST34132015Cipher):
         Args:
             data: Plaintext data to be encrypted (as a byte object).
 
-        Return:
+        Returns:
             Ciphertext data (as a byte object).
 
         Raises:
@@ -822,7 +822,7 @@ class GOST34132015ctr(GOST34132015Cipher):
         Args:
             data: Ciphertext data to be decrypted (as a byte object).
 
-        Return:
+        Returns:
             Plaintext data (as a byte object).
 
         Raises:
@@ -937,7 +937,7 @@ class GOST34132015mac(GOST34132015):
         Args:
             mac_size: Message authentication code size (in bytes).
 
-        Return: message authentication code value (as a byte object).
+        Returns: message authentication code value (as a byte object).
 
         Raises:
             GOSTCipherError('GOSTCipherError: invalid message authentication
@@ -960,7 +960,7 @@ class GOST34132015mac(GOST34132015):
         Args:
             mac_size: Message authentication code size (in bytes).
 
-        Return:
+        Returns:
             Message authentication code value in hexadecimal (as a hexadecimal
             string).
 
