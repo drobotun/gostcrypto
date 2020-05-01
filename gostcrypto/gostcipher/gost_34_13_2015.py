@@ -941,14 +941,16 @@ class GOST34132015mac(GOST34132015):
         calculation.
 
         Args:
-            - mac_size: message authentication code size (in bytes).
+            mac_size: message authentication code size (in bytes).
 
-        Return: message authentication code value in hexadecimal (as a
-        hexadecimal string).
+        Return:
+            Message authentication code value in hexadecimal (as a hexadecimal
+            string).
 
         Raises:
-            - GOSTCipherError('GOSTCipherError: invalid message authentication
-        code size'): in case of the invalid message authentication code size.
+            GOSTCipherError('GOSTCipherError: invalid message authentication
+            code size'): in case of the invalid message authentication code
+            size.
         """
         return self.digest(mac_size).hex()
 
