@@ -242,7 +242,14 @@ class GOST34112012:
     """
 
     def __init__(self, name: str, data: bytearray) -> None:
-        """Initialize the hashing object."""
+        """
+        Initialize the hashing object.
+
+        Args:
+            name: String with the name of the hashing algorithm ('streebog256'
+              or 'streebog512')
+            data: The data from which to get the hash (as a byte object).
+        """
         self._name = name
         self._buff = bytearray(b'')
         self._num_block = 0
