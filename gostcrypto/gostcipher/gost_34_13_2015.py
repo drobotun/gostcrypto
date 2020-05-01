@@ -938,7 +938,7 @@ class GOST34132015mac(GOST34132015):
 
         This method can be called after applying the 'update ()' method, or
         after calling the 'new ()' function with the data passed to it for MAC
-        calculation.  The result is represented as a hexadecimal string.
+        calculation. The result is represented as a hexadecimal string.
 
         Args:
             - mac_size: message authentication code size (in bytes).
