@@ -71,7 +71,7 @@ class GOST34122015Kuznechik:
         Initialize the ciphering object.
 
         Args:
-            key: Encription key.
+            key: Encryption key.
         """
         self._cipher_c: List[bytearray] = []
         self._cipher_iter_key = []
@@ -256,7 +256,7 @@ class GOST34122015Magma:
         Initialize the ciphering object.
 
         Args:
-            key: Encription key.
+            key: Encryption key.
         """
         self._cipher_iter_key: List[bytearray] = []
         self._expand_iter_key(key)
