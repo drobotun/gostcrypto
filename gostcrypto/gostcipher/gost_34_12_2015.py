@@ -22,11 +22,6 @@ from gostcrypto.utils import zero_fill
 from gostcrypto.utils import S_BOX
 from gostcrypto.utils import S_BOX_REVERSE
 
-__all__ = (
-    'GOST34122015Kuznechik',
-    'GOST34122015Magma'
-)
-
 _BLOCK_SIZE_KUZNECHIK: int = 16
 _BLOCK_SIZE_MAGMA: int = 8
 _KEY_SIZE: int = 32
@@ -76,7 +71,7 @@ class GOST34122015Kuznechik:
         Initialize the ciphering object.
 
         Args:
-            key: cipher key.
+            key: Encription key.
         """
         self._cipher_c: List[bytearray] = []
         self._cipher_iter_key = []
@@ -201,7 +196,7 @@ class GOST34122015Kuznechik:
         Decrypting a block of ciphertext.
 
         Args:
-            block: the block of ciphertext to be decrypted (the block size is
+            block: The block of ciphertext to be decrypted (the block size is
               16 bytes).
 
         Returns:
@@ -220,7 +215,7 @@ class GOST34122015Kuznechik:
         Encrypting a block of plaintext.
 
         Args:
-            block: the block of plaintext to be encrypted (the block size is
+            block: The block of plaintext to be encrypted (the block size is
               16 bytes).
 
         Returns:
@@ -261,7 +256,7 @@ class GOST34122015Magma:
         Initialize the ciphering object.
 
         Args:
-            key: Cipher key.
+            key: Encription key.
         """
         self._cipher_iter_key: List[bytearray] = []
         self._expand_iter_key(key)
@@ -397,8 +392,8 @@ class GOST34122015Magma:
         Decrypting a block of ciphertext.
 
         Args:
-            block: the block of ciphertext to be decrypted (the block size is
-               8 bytes).
+            block: The block of ciphertext to be decrypted (the block size is
+              8 bytes).
 
         Returns:
             The block of plaintext.
