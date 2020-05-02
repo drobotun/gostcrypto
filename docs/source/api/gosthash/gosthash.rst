@@ -14,7 +14,7 @@ API principles
 
 .. figure:: gosthash.png
     :align: center
-    :figwidth: 50%
+    :figwidth: 60%
 
     Generic state diagram for a hash object
 
