@@ -821,7 +821,7 @@ class GOST34132015ctr(GOST34132015Cipher):
     def __init__(self, algorithm: str, key: bytearray,
                  init_vect: bytearray) -> None:
         """
-        Initialize the ciphering object in CTR mode.                
+        Initialize the ciphering object in CTR mode.
 
         Args:
             algorithm: The string with the name of the ciphering algorithm.
