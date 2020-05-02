@@ -23,7 +23,7 @@ The cipher mode (ECB, CBC, CFB, OFB and CTR)
 
 .. figure:: gostcipher.png
     :align: center
-    :figwidth: 70%
+    :figwidth: 80%
 
     General state diagram for the cipher object for ECB, CBC, CFB, OFB, and CTR modes
 
@@ -38,7 +38,7 @@ The message authentication code algorithm (MAC)
 
 .. figure:: gostcipher_mac.png
     :align: center
-    :figwidth: 50%
+    :figwidth: 60%
 
     General state diagram for the cipher object for MAC mode
 
