@@ -4,7 +4,9 @@ API of the 'gostcrypto.gostcipher' module
 Introduction
 """"""""""""
 
-The module implements the modes of operation of block encryption algorithms "magma" and "kuznechik", described in GOST 34.13-2015. This document defines several encryption modes using block ciphers (ECB, CBC, CFB, OFB and CTR) and a message authentication code generation mode (MAC). The module includes the base classes ``GOST3413205``, ``GOST3413205Cipher``, ``GOST3413205CipherPadding``, ``GOST3413205CipherFeedBack``, and classes ``GOST3413205ecb``, ``GOST3413205cbc``, ``GOST3413205cfb``, ``GOST3413205ofb``, ``GOST3413205ctr`` and ``GOST34132015mac``. In addition the module includes the ``GOSTCipherError`` class and ``new`` functions.
+The module implements the modes of operation of block encryption algorithms "magma" and "kuznechik", described in GOST 34.13-2015. This document defines several encryption modes using block ciphers (ECB, CBC, CFB, OFB and CTR) and a message authentication code generation mode (MAC).
+
+The module includes the base classes ``GOST3413205``, ``GOST3413205Cipher``, ``GOST3413205CipherPadding``, ``GOST3413205CipherFeedBack``, and classes ``GOST3413205ecb``, ``GOST3413205cbc``, ``GOST3413205cfb``, ``GOST3413205ofb``, ``GOST3413205ctr`` and ``GOST34132015mac``. In addition the module includes the ``GOSTCipherError`` class and ``new`` functions.
 
 .. figure:: gostcipher_classes.png
     :align: center
