@@ -9,7 +9,7 @@ The module implementing the calculating the hash-based message authentication co
 API principles
 """"""""""""""
 
-.. figure:: gosthmac.png
+.. figure:: gosthmac_.png
     :align: center
     :figwidth: 50%
 
