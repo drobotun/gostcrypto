@@ -197,10 +197,8 @@ def new(name: str, **kwargs) -> 'GOST34112012':
         name: The string with the name of the hashing algorithm ('streebog256'
           for the GOST R 34.11-2012 algorithm with the resulting hash length of
           32 bytes or 'streebog512' with the resulting hash length of 64 bytes.
-
-    Keyword args:
-        data: The data from which to get the hash (as a byte object).  If this
-          argument is passed to a function, you can immediately use the
+        **data: The data from which to get the hash (as a byte object).  If
+          this argument is passed to a function, you can immediately use the
           'digest()' (or 'hexdigest()') method to calculate the hash value
           after calling 'new()'.  If the argument is not passed to the
           function, then you must use the 'update()' method before the
@@ -210,9 +208,9 @@ def new(name: str, **kwargs) -> 'GOST34112012':
         New hashing object.
 
     Raises:
-        GOSTHashError('GOSTHashError: unsupported hash type'): in case of
+        GOSTHashError('GOSTHashError: unsupported hash type'): In case of
           invalid value 'name'.
-        GOSTHashError('GOSTHashError: invalid data value'): in case where the
+        GOSTHashError('GOSTHashError: invalid data value'): In case where the
           data is not byte object.
     """
     if name not in ('streebog512', 'streebog256'):
@@ -235,10 +233,10 @@ class GOST34112012:
         reset(): Resets the values of all class attributes.
 
     Attributes:
-        digest_size: an integer value the size of the resulting hash in bytes.
-        block_size: an integer value the internal block size of the hash
+        digest_size: An integer value the size of the resulting hash in bytes.
+        block_size: An integer value the internal block size of the hash
           algorithm in bytes.
-        name: a text string value the name of the hashing algorithm.
+        name: Text string value the name of the hashing algorithm.
     """
 
     def __init__(self, name: str, data: bytearray) -> None:
@@ -340,7 +338,7 @@ class GOST34112012:
               'm.update(a+b)'.
 
         Raises:
-            GOSTHashError('GOSTHashError: invalid data value'): in case where
+            GOSTHashError('GOSTHashError: invalid data value'): In case where
               the data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -448,5 +446,8 @@ class GOST34112012:
 
 class GOSTHashError(Exception):
     """
-    The class that implements exceptions.
+    The exception class.
+
+    This is a class that implements exceptions that can occur when input data
+    is incorrect.
     """

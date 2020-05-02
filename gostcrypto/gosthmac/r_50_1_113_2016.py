@@ -49,24 +49,22 @@ def new(name: str, key: bytearray, **kwargs) -> 'R5011132016':
         name: Name of the authentication code calculation mode
           ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512').
         key: Authentication key.
-
-    Keyword args:
-        data: The data from which to get the HMAC (as a byte object).  If this
-          argument is passed to a function, you can immediately use the 'digest'
-          (or 'hexdigest') method to calculate the HMAC value after calling
-          'new'.  If the argument is not passed to the function, then you must
-          use the 'update(data)' method before the 'digest' (or 'hexdigest')
-          method.
+        **data: The data from which to get the HMAC (as a byte object).  If
+          this argument is passed to a function, you can immediately use the
+          'digest' (or 'hexdigest') method to calculate the HMAC value after
+          calling 'new'.  If the argument is not passed to the function, then
+          you must use the 'update(data)' method before the 'digest' (or
+          'hexdigest') method.
 
     Returns:
         New authentication code calculation object.
 
     Raises:
-        GOSTHMACError('GOSTHMACError: unsupported mode'): in case of unsupported
+        GOSTHMACError('GOSTHMACError: unsupported mode'): In case of unsupported
           mode.
-        GOSTHMACError('GOSTHMACError: invalid key value'): in case of invalid
+        GOSTHMACError('GOSTHMACError: invalid key value'): In case of invalid
           key value.
-        GOSTHMACError('GOSTHMACError: invalid data value'): in case where the
+        GOSTHMACError('GOSTHMACError: invalid data value'): In case where the
           data is not byte object.
     """
     data = kwargs.get('data', bytearray(b''))
@@ -84,11 +82,11 @@ class R5011132016:
         copy(): Returns a copy (“clone”) of the HMAC object.
 
     Attributes:
-        digest_size: an integer value of the size of the resulting HMAC digest
+        digest_size: An integer value of the size of the resulting HMAC digest
           in bytes.
-        block_size: an integer value the internal block size of the hash
+        block_size: An integer value the internal block size of the hash
           algorithm in bytes.
-        name: a text string is the name of the authentication code calculation
+        name: Text string is the name of the authentication code calculation
           algorithm.
     """
 
@@ -136,13 +134,13 @@ class R5011132016:
         Update the HMAC object with the bytes-like object.
 
         Args:
-            data: the message for which want to calculate the authentication
+            data: The message for which want to calculate the authentication
               code.  Repeated calls are equivalent to a single call with the
               concatenation of all the arguments: 'm.update(a)'; 'm.update(b)'
               is equivalent to 'm.update(a+b)'.
 
         Raises:
-            GOSTHMACError('GOSTHMACError: invalid data value'): in case where
+            GOSTHMACError('GOSTHMACError: invalid data value'): In case where
               the data is not byte object.
         """
         if not isinstance(data, (bytes, bytearray)):
@@ -234,5 +232,8 @@ class R5011132016:
 
 class GOSTHMACError(Exception):
     """
-    The class that implements exceptions.
+    The exception class.
+
+    This is a class that implements exceptions that can occur when input data
+    is incorrect.
     """

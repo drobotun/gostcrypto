@@ -11,6 +11,11 @@ digital signature according to GOST 34.10-2012.  The module includes the
 GOST34102012 class, the GOSTSignatureError class, several general functions and
 set of the parameters of elliptic curves (in accordance with
 R 1323565.1.024-2019).
+
+Attributes:
+    MODE_256: Mode with 256 bit digest length.
+    MODE_512: Mode with 512 bit digest length.
+    CURVES_R_1323565_1_024_2019: Set of elliptic curve parameters.
 """
 import os
 from typing import Any, Tuple
@@ -461,10 +466,10 @@ def new(mode: int, curve: dict) -> 'GOST34102012':
         New signature object.
 
     Raises:
-        GOSTSignatureError('GOSTSignatureError: unsupported signature mode'): in
+        GOSTSignatureError('GOSTSignatureError: unsupported signature mode'): In
           case of unsupported signature mode.
         GOSTSignatureError('GOSTSignatureError: invalid parameters of the
-          elliptic curve'): if the elliptic curve parameters are incorrect.
+          elliptic curve'): If the elliptic curve parameters are incorrect.
     """
     if mode not in (MODE_256, MODE_512):
         raise GOSTSignatureError('GOSTSignatureError: unsupported signature mode')
@@ -644,10 +649,10 @@ class GOST34102012:
 
         Raises:
             GOSTSignatureError('GOSTSignatureError: invalid private key value'):
-              if the private key value is incorrect.
-            GOSTSignatureError('GOSTSignatureError: invalid digest value'): if
+              If the private key value is incorrect.
+            GOSTSignatureError('GOSTSignatureError: invalid digest value'): If
               the digest value is incorrect.
-            GOSTSignatureError('GOSTSignatureError: invalid random value'): if
+            GOSTSignatureError('GOSTSignatureError: invalid random value'): If
               the random value is incorrect.
         """
         if not check_value(private_key, self._size):
@@ -702,10 +707,10 @@ class GOST34102012:
 
         Raises:
             GOSTSignatureError('GOSTSignatureError: invalid public key value'):
-              if the public key value is incorrect.
+              If the public key value is incorrect.
             GOSTSignatureError('GOSTSignatureError: invalid signature value'):
-              if the signature value is incorrect.
-            GOSTSignatureError('GOSTSignatureError: invalid digest value'): if
+              If the signature value is incorrect.
+            GOSTSignatureError('GOSTSignatureError: invalid digest value'): If
               the digest value is incorrect.
         """
         if not check_value(public_key, self._size * 2):
@@ -743,7 +748,7 @@ class GOST34102012:
             Public key (as a byte object).
 
         Raises:
-            GOSTSignatureError('GOSTSignatureError: invalid private key'): if
+            GOSTSignatureError('GOSTSignatureError: invalid private key'): If
               the private key value is incorrect.
         """
         if not check_value(private_key, self._size):
@@ -758,5 +763,8 @@ class GOST34102012:
 
 class GOSTSignatureError(Exception):
     """
-    The class that implements exceptions.
+    The exception class.
+
+    This is a class that implements exceptions that can occur when input data
+    is incorrect.
     """

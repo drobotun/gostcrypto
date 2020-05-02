@@ -25,20 +25,18 @@ def new(password: bytearray, **kwargs) -> 'R5011112016':
 
     Args:
         password: Password that is a byte object at Unicode UTF-8 encoding.
-
-    Keyword args
-        salt: Random value.  If this argument is not passed to the function, the
-          'os.urandom' function is used to generate this value with the length
-          of the generated value of 32 bytes.
-        counter: Number of iterations.  The default value is 1000.
+        **salt: Random value.  If this argument is not passed to the function,
+          the 'os.urandom' function is used to generate this value with the
+          length of the generated value of 32 bytes.
+        **counter: Number of iterations.  The default value is 1000.
 
     Returns:
         New object for the password-based key derivation function.
 
     Raises:
-        GOSTPBKDFError('GOSTPBKDFError: invalid password value'): if the
+        GOSTPBKDFError('GOSTPBKDFError: invalid password value'): If the
           password value is incorrect.
-        GOSTPBKDFError('GOSTPBKDFError: invalid salt value'): if the salt value
+        GOSTPBKDFError('GOSTPBKDFError: invalid salt value'): If the salt value
           is incorrect.
     """
     salt = kwargs.get('salt', bytearray(b''))
@@ -61,7 +59,14 @@ class R5011112016:
 
     def __init__(self, password: bytearray, salt: bytearray,
                  iterations: int) -> None:
-        """Initialize the PBKDF object."""
+        """
+        Initialize the PBKDF object.
+
+        Args:
+            password:
+            salt: Random value.
+            iterations: Number of iterations.
+        """
         if not isinstance(password, (bytes, bytearray)):
             raise GOSTPBKDFError('GOSTPBKDFError: invalid password value')
         self._password = bytearray(password)
@@ -129,7 +134,7 @@ class R5011112016:
 
         Raises:
             GOSTPBKDFError('GOSTPBKDFError: invalid size of the derived key'):
-              if the size of the derived key is incorrect.
+              If the size of the derived key is incorrect.
         """
         if dk_len > (2 ** 32 - 1) * 64:
             raise GOSTPBKDFError('GOSTPBKDFError: invalid size of the derived key')
@@ -147,7 +152,7 @@ class R5011112016:
 
         Raises:
             GOSTPBKDFError(GOSTPBKDFError: 'invalid size of the derived key'):
-              if the size of the derived key is incorrect.
+              If the size of the derived key is incorrect.
         """
         if dk_len > (2 ** 32 - 1) * 64:
             raise GOSTPBKDFError('GOSTPBKDFError: invalid size of the derived key')
@@ -165,5 +170,8 @@ class R5011112016:
 
 class GOSTPBKDFError(Exception):
     """
-    The class that implements exceptions.
+    The exception class.
+
+    This is a class that implements exceptions that can occur when input data
+    is incorrect.
     """

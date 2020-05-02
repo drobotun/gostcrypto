@@ -8,6 +8,11 @@ The GOST pseudo-random sequence generation function.
 
 The module that implements pseudo-random sequence generation in accordance
 with R 1323565.1.006-2017.
+
+Attributes:
+    SIZE_S_384: The size of the initial filling (seed) is 384 bits.
+    SIZE_S_320: The size of the initial filling (seed) is 320 bits.
+    SIZE_S_256: The size of the initial filling (seed) is 256 bits.
 """
 import os
 
@@ -17,9 +22,9 @@ from gostcrypto.utils import int_to_bytearray
 from gostcrypto.utils import zero_fill
 from gostcrypto.utils import check_value
 
-SIZE_S_384: int = 48  #The size of the initial filling (seed) is 384 bits
-SIZE_S_320: int = 40  #The size of the initial filling (seed) is 320 bits
-SIZE_S_256: int = 32  #The size of the initial filling (seed) is 256 bits
+SIZE_S_384: int = 48
+SIZE_S_320: int = 40
+SIZE_S_256: int = 32
 
 _SIZE_M: int = 64
 _SIZE_H: int = 64
@@ -31,18 +36,16 @@ def new(rand_size: int, **kwargs) -> 'R132356510062017':
 
     Args:
         rand_size: Size of the generated random variable (in bytes).
-
-    Keyword args:
-        rand_k: Initial filling (seed).  If this argument is not passed to the
-          function, the 'os.urandom' function is used to generate the initial
-          filling.
-        size_s: Size of the initial filling (in bytes).
+        **rand_k: Initial filling (seed).  If this argument is not passed to
+          the function, the 'os.urandom' function is used to generate the
+          initial filling.
+        **size_s: Size of the initial filling (in bytes).
 
     Returns:
         New object of generate random value.
 
     Raises:
-        GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
+        GOSTRandomError('GOSTRandomError: invalid seed value'): In case of
           invalid value of initial filling.
     """
     rand_k = kwargs.get('rand_k', bytearray(b''))
@@ -117,8 +120,8 @@ class R132356510062017:
 
         Raises:
             GOSTRandomError ('GOSTRandomError: exceeded the limit value of the
-              counter'): when the counter limit is exceeded.
-            GOSTRandomError('GOSTRandomError: the seed value is zero'): if the
+              counter'): When the counter limit is exceeded.
+            GOSTRandomError('GOSTRandomError: the seed value is zero'): If the
               seed value is zero.
         """
         if bytearray_to_int(self._rand_u[:self._size_s]) == 0:
@@ -142,7 +145,7 @@ class R132356510062017:
               the initial filling.
 
         Raises:
-            GOSTRandomError('GOSTRandomError: invalid seed value'): in case of
+            GOSTRandomError('GOSTRandomError: invalid seed value'): In case of
               invalid value of initial filling.
         """
         if rand_k == bytearray(b''):
@@ -164,5 +167,8 @@ class R132356510062017:
 
 class GOSTRandomError(Exception):
     """
-    The class that implements exceptions.
+    The exception class.
+
+    This is a class that implements exceptions that can occur when input data
+    is incorrect.
     """
