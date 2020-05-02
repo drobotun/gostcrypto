@@ -12,7 +12,7 @@ The module that implements the 'Streebog' hash calculation algorithm in accordan
 API principles
 """"""""""""""
 
-.. figure:: gosthash.png
+.. figure:: gosthash_.png
     :align: center
     :figwidth: 60%
 

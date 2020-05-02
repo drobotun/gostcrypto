@@ -8,7 +8,7 @@ The module implements the modes of operation of block encryption algorithms "mag
 
 The module includes the base classes ``GOST3413205``, ``GOST3413205Cipher``, ``GOST3413205CipherPadding``, ``GOST3413205CipherFeedBack``, and classes ``GOST3413205ecb``, ``GOST3413205cbc``, ``GOST3413205cfb``, ``GOST3413205ofb``, ``GOST3413205ctr`` and ``GOST34132015mac``. In addition the module includes the ``GOSTCipherError`` class and ``new`` functions.
 
-.. figure:: gostcipher_classes.png
+.. figure:: gostcipher_classes_.png
     :align: center
     :figwidth: 100%
 
@@ -23,7 +23,7 @@ API principles
 The cipher mode (ECB, CBC, CFB, OFB and CTR)
 ''''''''''''''''''''''''''''''''''''''''''''
 
-.. figure:: gostcipher.png
+.. figure:: gostcipher_.png
     :align: center
     :figwidth: 80%
 
@@ -38,7 +38,7 @@ To decrypt data, you call the cipher object's ``decrypt()`` method with cipher t
 The message authentication code algorithm (MAC)
 '''''''''''''''''''''''''''''''''''''''''''''''
 
-.. figure:: gostcipher_mac.png
+.. figure:: gostcipher_mac_.png
     :align: center
     :figwidth: 60%
 
