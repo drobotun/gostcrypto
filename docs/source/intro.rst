@@ -321,7 +321,7 @@ Release History
 - Refactoring **gostcipher** module (changed the class hierarchy to remove code duplication)
 - Refactoring **gosthash** module (remove code duplication)
 - Fixed some minor bugs
-- Updated docstring in accordance with the Google style guide
+- Updated docstring in accordance with the Google Python Style Guide
 
 .. rubric:: 1.1.1 (20.04.2020)
 
