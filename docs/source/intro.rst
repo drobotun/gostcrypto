@@ -316,6 +316,13 @@ Package source code: https://github.com/drobotun/gostcrypto
 Release History
 ~~~~~~~~~~~~~~~
 
+.. rubric:: 1.1.2 (02.05.2020)
+
+- Refactoring **gostcipher** module (changed the class hierarchy to remove code duplication)
+- Refactoring **gosthash** module (remove code duplication)
+- Fixed some minor bugs
+- Updated docstring in accordance with the Google style guide
+
 .. rubric:: 1.1.1 (20.04.2020)
 
 - Use ``**kvargs`` in the ``new`` function with default parameters (**gostrandom**, **gosthash**, **gosthmac**, **gostpbkdf**)
