@@ -13,6 +13,6 @@ __all__ = (
     'new',
     'MODE_256',
     'MODE_512',
-    'CURVES_R_1323565_1_024_2019'
-    'GOSTSignatureError,'
+    'CURVES_R_1323565_1_024_2019',
+    'GOSTSignatureError'
 )
