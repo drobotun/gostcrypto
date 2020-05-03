@@ -6,9 +6,24 @@ Introduction
 
 The module implements the modes of operation of block encryption algorithms "magma" and "kuznechik", described in GOST 34.13-2015. This document defines several encryption modes using block ciphers (ECB, CBC, CFB, OFB and CTR) and a message authentication code generation mode (MAC).
 
-The module includes the base classes ``GOST3413205``, ``GOST3413205Cipher``, ``GOST3413205CipherPadding``, ``GOST3413205CipherFeedBack``, and classes ``GOST3413205ecb``, ``GOST3413205cbc``, ``GOST3413205cfb``, ``GOST3413205ofb``, ``GOST3413205ctr`` and ``GOST34132015mac``. In addition the module includes the ``GOSTCipherError`` class and ``new`` functions.
+The module includes:
 
-.. figure:: gostcipher_classes_.png
+- ``GOST34122015Kuznechik``: Class that implements the 'kuznechik' block encryption algorithm.
+- ``GOST34122015Magma``: Class that implements the 'magma' block encryption algorithm.
+- ``GOST3413205``: Base class of the cipher object.
+- ``GOST3413205Cipher``: Base class of the cipher object for implementing encryption modes.
+- ``GOST3413205CipherPadding``: Base class of the cipher object for implementing encryption modes with padding.
+- ``GOST3413205CipherFeedBack``: Base class of the cipher object for implementing encryption modes with feedback. 
+- ``GOST3413205ecb``: Class that implements ECB mode of block encryption.
+- ``GOST3413205cbc``: Class that implements CBC mode of block encryption.
+- ``GOST3413205cfb``: Class that implements CFB mode of block encryption.
+- ``GOST3413205ofb``: Class that implements OFB mode of block encryption.
+- ``GOST3413205ctr``: Class that implements CTR mode of block encryption.
+- ``GOST34132015mac``: Class that implements MAC mode.
+- ``GOSTCipherError``: The exception class.
+- ``new``: Function that creates a new encryption object and returns it.
+
+.. figure:: gostcipher_classes.png
     :align: center
     :figwidth: 100%
 
@@ -23,7 +38,7 @@ API principles
 The cipher mode (ECB, CBC, CFB, OFB and CTR)
 ''''''''''''''''''''''''''''''''''''''''''''
 
-.. figure:: gostcipher_.png
+.. figure:: gostcipher.png
     :align: center
     :figwidth: 80%
 
@@ -38,7 +53,7 @@ To decrypt data, you call the cipher object's ``decrypt()`` method with cipher t
 The message authentication code algorithm (MAC)
 '''''''''''''''''''''''''''''''''''''''''''''''
 
-.. figure:: gostcipher_mac_.png
+.. figure:: gostcipher_mac.png
     :align: center
     :figwidth: 60%
 
@@ -146,7 +161,7 @@ Classes
 
 GOST34122015Kuznechik
 '''''''''''''''''''''
-    Class that implements block encryption in accordance with GOST 34.12-2015 with a block size of 128 bits ('Kuznechik').
+    Class that implements block encryption in accordance with GOST 34.12-2015 with a block size of 128 bits ("Kuznechik"). An instance of this class is passed as the ``_cipher_obj`` attribute to the base class ``GOST34132015`` when the "Kuznechik" encryption algorithm is selected.
 
 .. rubric:: **Initialization parameter:**
 
@@ -271,7 +286,7 @@ key_size
 
 GOST34122015Magma
 '''''''''''''''''
-    Class that implements block encryption in accordance with GOST 34.12-2015 with a block size of 64 bits ('Magma').
+    Class that implements block encryption in accordance with GOST 34.12-2015 with a block size of 64 bits ("Magma"). An instance of this class is passed as the ``_cipher_obj`` attribute to the base class ``GOST34132015`` when the "Magma" encryption algorithm is selected.
 
 .. rubric:: **Initialization parameter:**
 
@@ -398,7 +413,7 @@ key_size
 
 GOST34132015
 ''''''''''''
-    Base class of the cipher object.
+    Base class of the cipher object. This class is a superclass for the ``GOST34132015Cipher`` and ``GOST34132015mac`` classes.
 
 Methods:
 --------
@@ -416,9 +431,193 @@ block_size
 
 *****
 
+GOST34132015Cipher
+''''''''''''''''''
+    Base class of the cipher object for implementing encryption modes. This class is the subclass of the ``GOST3413205`` class and inherits the ``clear()`` method and the ``block_size`` attribute. Class ``GOST34132015Cipher`` is a superclass for the ``GOST34132015CipherPadding``, ``GOST34132015CipherFeedBack`` and ``GOST34132015ctr`` classes.
+
+Methods:
+--------
+
+encrypt(data)
+~~~~~~~~~~~~~
+    Abstract method. Implements input data validation.
+
+This method must be redefined in subclasses of this class. For example:
+
+.. code-block:: python
+
+    # defining the 'encrypt' method in a subclass
+    def encrypt(self, data):
+        data = super().encrypt(data)
+        # ...further actions with data...
+
+.. rubric:: **Arguments:**
+
+- **data** - plaintext data to be encrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- If the ``data`` value is checked successfully returns this value unchanged.
+
+.. rubric:: **Exceptions:**
+
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+decrypt(data)
+~~~~~~~~~~~~~
+    Abstract method. Implements input data validation.
+
+This method must be redefined in subclasses of this class. For example:
+
+.. code-block:: python
+
+    # defining the 'decrypt' method in a subclass
+    def decrypt(self, data):
+        data = super().decrypt(data)
+        # ...further actions with data...
+
+.. rubric:: **Arguments:**
+
+- **data** - ciphertext data to be decrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- If the ``data`` value is checked successfully returns this value unchanged.
+
+.. rubric:: **Exceptions:**
+
+- GOSTCipherError('invalid ciphertext data') - in case where the plaintext data is not byte object.
+
+*****
+
+GOST34132015CipherPadding
+'''''''''''''''''''''''''
+    Base class of the cipher object for implementing encryption modes with padding. This class is the subclass of the ``GOST3413205Cipher`` class and inherits the ``clear()`` method and the ``block_size`` attribute. The ``encrypt()`` and ``decrypt()`` methods are redefined. Class ``GOST34132015CipherPadding`` is a superclass for the ``GOST34132015ecb`` and ``GOST34132015cbc`` classes.
+
+Methods:
+--------
+
+encrypt(data)
+~~~~~~~~~~~~~
+    Abstract method. Implementing input validation and the procedure of paddingю
+
+This method must be redefined in subclasses of this class. For example:
+
+.. code-block:: python
+
+    # defining the 'encrypt' method in a subclass
+    def encrypt(self, data):
+        data = super().encrypt(data)
+        # ...further actions with data...
+
+.. rubric:: **Arguments:**
+
+- **data** - plaintext data to be encrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- If the ``data`` value is checked successfully, the padding procedure is performed and the resulting value is returned.
+
+.. rubric:: **Exceptions:**
+
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+decrypt(data)
+~~~~~~~~~~~~~
+    Abstract method. Implements input data validation.
+
+This method must be redefined in subclasses of this class. For example:
+
+.. code-block:: python
+
+    # defining the 'decrypt' method in a subclass
+    def decrypt(self, data):
+        data = super().decrypt(data)
+        # ...further actions with data...
+
+.. rubric:: **Arguments:**
+
+- **data** - ciphertext data to be decrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- If the ``data`` value is checked successfully returns this value unchanged.
+
+.. rubric:: **Exceptions:**
+
+- GOSTCipherError('invalid ciphertext data') - in case where the plaintext data is not byte object.
+
+*****
+
+GOST34132015CipherFeedBack
+''''''''''''''''''''''''''
+    Base class of the cipher object for implementing encryption modes with feedback. This class is the subclass of the ``GOST3413205Cipher`` class and inherits the ``clear()`` method and the ``block_size`` attribute. The ``encrypt()`` and ``decrypt()`` methods are redefined. Class ``GOST34132015CipherFeedBack`` is a superclass for the ``GOST34132015cbc``, ``GOST34132015cfb`` and ``GOST34132015ofb`` classes.
+
+Methods:
+--------
+
+encrypt(data)
+~~~~~~~~~~~~~
+    Abstract method. Implements input data validation.
+
+This method must be redefined in subclasses of this class. For example:
+
+.. code-block:: python
+
+    # defining the 'encrypt' method in a subclass
+    def encrypt(self, data):
+        data = super().encrypt(data)
+        # ...further actions with data...
+
+.. rubric:: **Arguments:**
+
+- **data** - plaintext data to be encrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- If the ``data`` value is checked successfully returns this value unchanged.
+
+.. rubric:: **Exceptions:**
+
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+decrypt(data)
+~~~~~~~~~~~~~
+    Abstract method. Implements input data validation.
+
+This method must be redefined in subclasses of this class. For example:
+
+.. code-block:: python
+
+    # defining the 'decrypt' method in a subclass
+    def decrypt(self, data):
+        data = super().decrypt(data)
+        # ...further actions with data...
+
+.. rubric:: **Arguments:**
+
+- **data** - ciphertext data to be decrypted (as a byte object).
+
+.. rubric:: **Return:** 
+
+- If the ``data`` value is checked successfully returns this value unchanged.
+
+.. rubric:: **Exceptions:**
+
+- GOSTCipherError('invalid ciphertext data') - in case where the plaintext data is not byte object.
+
+Attributes:
+-----------
+
+iv
+~~
+    The byte object value of the initializing vector.
+
+*****
+
 GOST34132015ecb
 '''''''''''''''
-    Class that implements ECB block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205`` class and inherits the ``clear()`` method and the ``block_size`` attribute.
+    Class that implements ECB block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205CipherPadding`` class and inherits the ``clear()`` method and the ``block_size`` attribute. The ``encrypt()`` and ``decrypt()`` methods are redefined.
 
 Methods:
 --------
@@ -459,7 +658,7 @@ encrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid plaintext data') - in case where the plaintext data is not byte object.
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -497,13 +696,13 @@ decrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid ciphertext data') - in case where the ciphertext data is not byte object.
+- GOSTCipherError('invalid ciphertext data') - in case where the ciphertext data is not byte object.
 
 *****
 
 GOST34132015cbc
 '''''''''''''''
-    Class that implements CBC block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205`` class and inherits the ``clear()`` method and the ``block_size`` attribute.
+    Class that implements CBC block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205CipherPadding`` and ``GOST34132015CipherFeedBack`` classes and inherits the ``clear()`` method and the ``block_size`` and ``iv`` attributes. The ``encrypt()`` and ``decrypt()`` methods are redefined.
 
 Methods:
 --------
@@ -550,7 +749,7 @@ encrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid plaintext data') - in case where the plaintext data is not byte object.
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -594,20 +793,13 @@ decrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid ciphertext data') - in case where the ciphertext data is not byte object.
-
-Attributes:
------------
-
-iv
-~~
-    The byte object value of the initializing vector.
+- GOSTCipherError('invalid ciphertext data') - in case where the ciphertext data is not byte object.
 
 *****
 
 GOST34132015cfb
 '''''''''''''''
-    Class that implements CFB block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205`` class and inherits the ``clear()`` method and the ``block_size`` attribute.
+    Class that implements CFB block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST34132015CipherFeedBack`` class and inherits the ``clear()`` method and the ``block_size`` and ``iv`` attributes. The ``encrypt()`` and ``decrypt()`` methods are redefined.
 
 Methods:
 --------
@@ -653,7 +845,7 @@ encrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid plaintext data') - in case where the plaintext data is not byte object.
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -696,20 +888,13 @@ decrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid ciphertext data') - in case where the ciphertext data is not byte object.
-
-Attributes:
------------
-
-iv
-~~
-    The byte object value of the initializing vector.
+- GOSTCipherError('invalid ciphertext data') - in case where the ciphertext data is not byte object.
 
 *****
 
 GOST34132015ofb
 '''''''''''''''
-    Class that implements OFB block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205`` class and inherits the ``clear()`` method and the ``block_size`` attribute.
+    Class that implements OFB block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST34132015CipherFeedBack`` class and inherits the ``clear()`` method and the ``block_size`` and ``iv`` attributes. The ``encrypt()`` and ``decrypt()`` methods are redefined.
 
 Methods:
 --------
@@ -755,7 +940,7 @@ encrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid plaintext data') - in case where the plaintext data is not byte object.
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -798,20 +983,13 @@ decrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid ciphertext data') - in case where the ciphertext data is not byte object.
-
-Attributes:
------------
-
-iv
-~~
-    The byte object value of the initializing vector.
+- GOSTCipherError('invalid ciphertext data') - in case where the ciphertext data is not byte object.
 
 *****
 
 GOST34132015ctr
 '''''''''''''''
-    Class that implements CTR block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205`` class and inherits the ``clear()`` method and the ``block_size`` attribute.
+    Class that implements CTR block encryption mode in accordance with GOST 34.13-2015. This class is the subclass of the ``GOST3413205Cipher`` class and inherits the ``clear()`` method and the ``block_size`` attribute. The ``encrypt()`` and ``decrypt()`` methods are redefined.
 
 Methods:
 --------
@@ -856,7 +1034,7 @@ encrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid plaintext data') - in case where the plaintext data is not byte object.
+- GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -898,7 +1076,7 @@ decrypt(data)
 
 .. rubric:: **Exceptions:**
 
-- GOSTCipherError('iinvalid ciphertext data') - in case where the ciphertext data is not byte object.
+- GOSTCipherError('invalid ciphertext data') - in case where the ciphertext data is not byte object.
 
 Attributes:
 -----------
