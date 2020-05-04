@@ -120,8 +120,54 @@ class R5011132016:
         elif name == 'HMAC_GOSTR3411_2012_512':
             self._hasher_obj = GOST34112012('streebog512', data=bytearray(b''))
         self._counter = 0
+        self.oid = self.OID(name)
         if data != bytearray(b''):
             self.update(data)
+
+    class OID:
+        """
+        This class contains information about the OID of the HMAC mode used.
+
+        An instance of this class is passed as an attribute to the
+        'GOST34102012' class.  The '__str__' method is redefined and returns
+        the object ID in the dotted representations ASN.1.
+
+        Attributes:
+            name: Contains a string with the name of the OID.
+        """
+
+        def __init__(self, mode: str) -> None:
+            """
+            Initialize the OID.
+
+            Args:
+                mode: Signature generation or verification mode
+                ('HMAC_GOSTR3411_2012_256' or 'HMAC_GOSTR3411_2012_512').
+            """
+            if mode == 'HMAC_GOSTR3411_2012_256':
+                self._oid = '1.2.643.7.1.1.4.1'
+                self._name = 'id-tc26-hmac-gost-3411-12-256'
+            else:
+                self._oid = '1.2.643.7.1.1.4.2'
+                self._name = 'id-tc26-hmac-gost-3411-12-512'
+
+        def __str__(self) -> str:
+            """
+            Return the string with OID.
+
+            Respectively '1.2.643.7.1.1.4.1' or '1.2.643.7.1.1.4.2'.
+            """
+            return self._oid
+
+        @property
+        def name(self) -> str:
+            """
+            Return the string with the name of the HMAC mode.
+
+            Respectively 'id-tc26-hmac-gost-3411-12-256' or
+            'id-tc26-hmac-gost-3411-12-512'.
+            """
+            return self._name
 
     def __del__(self) -> None:
         """

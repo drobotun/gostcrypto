@@ -503,6 +503,7 @@ class GOST34102012:
             curve: Parameters of the elliptic curve.
         """
         self._set_size(mode)
+        self.oid = self.OID(mode)
         self._p = curve.get('p', 1)
         self._a = curve.get('a', 0)
         self._b = curve.get('b', 0)
@@ -518,6 +519,51 @@ class GOST34102012:
         if not self._check_curve():
             raise GOSTSignatureError('GOSTSignatureError: invalid parameters of the elliptic curve')
     # pylint: enable=too-many-instance-attributes
+
+    class OID:
+        """
+        This class contains information about the OID of the key size used.
+
+        An instance of this class is passed as an attribute to the
+        'GOST34102012' class.  The '__str__' method is redefined and returns
+        the object ID in the dotted representations ASN.1.
+
+        Attributes:
+            name: Contains a string with the name of the OID.
+        """
+
+        def __init__(self, mode: int) -> None:
+            """
+            Initialize the OID.
+
+            Args:
+                mode: Signature generation or verification mode ('MODE_256' or
+                  'MODE_512').
+            """
+            if mode == MODE_256:
+                self._oid = '1.2.643.7.1.1.3.2'
+                self._name = 'id-tc26-signwithdigest-gost3410-12-256'
+            else:
+                self._oid = '1.2.643.7.1.1.3.3'
+                self._name = 'id-tc26-signwithdigest-gost3410-12-512'
+
+        def __str__(self) -> str:
+            """
+            Return the string with OID.
+
+            Respectively '1.2.643.7.1.1.3.2' or '1.2.643.7.1.1.3.3'.
+            """
+            return self._oid
+
+        @property
+        def name(self) -> str:
+            """
+            Return the string with the name of the signed mode.
+
+            Respectively 'id-tc26-signwithdigest-gost3410-12-256' or
+            'id-tc26-signwithdigest-gost3410-12-512'.
+            """
+            return self._name
 
     def _set_size(self, mode: int) -> None:
         if mode == MODE_256:
