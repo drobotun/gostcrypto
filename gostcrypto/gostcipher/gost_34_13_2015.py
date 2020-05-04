@@ -301,8 +301,7 @@ class GOST34132015Cipher(GOST34132015, ABC):
 
 class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
     """
-    Base class of the cipher object for implementing encryption modes with
-    padding.
+    Base class of the cipher object with padding.
 
     This class is the subclass of the 'GOST3413205Cipher' class and inherits
     the 'clear()' method and the 'block_size' attribute.  The 'encrypt()' and
@@ -387,8 +386,7 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
 
 class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
     """
-    Base class of the cipher object for implementing encryption modes with
-    feedback.
+    Base class of the cipher object with feedback.
 
     This class is the subclass of the 'GOST3413205Cipher' class and inherits
     the 'clear()' method and the 'block_size' attribute.  The 'encrypt()' and
