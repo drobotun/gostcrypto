@@ -541,17 +541,17 @@ class GOST34102012:
                   'MODE_512').
             """
             if mode == MODE_256:
-                self._oid = '1.2.643.7.1.1.3.2'
-                self._name = 'id-tc26-signwithdigest-gost3410-12-256'
+                self._oid = '1.2.643.7.1.1.1.1'
+                self._name = 'id-tc26-gost3410-12-256'
             else:
-                self._oid = '1.2.643.7.1.1.3.3'
-                self._name = 'id-tc26-signwithdigest-gost3410-12-512'
+                self._oid = '1.2.643.7.1.1.1.2'
+                self._name = 'id-tc26-gost3410-12-512'
 
         def __str__(self) -> str:
             """
             Return the string with OID.
 
-            Respectively '1.2.643.7.1.1.3.2' or '1.2.643.7.1.1.3.3'.
+            Respectively '1.2.643.7.1.1.1.1' or '1.2.643.7.1.1.1.2'.
             """
             return self._oid
 
@@ -560,8 +560,8 @@ class GOST34102012:
             """
             Return the string with the name of the signed mode.
 
-            Respectively 'id-tc26-signwithdigest-gost3410-12-256' or
-            'id-tc26-signwithdigest-gost3410-12-512'.
+            Respectively 'id-tc26-gost3410-12-256' or
+            'id-tc26-gost3410-12-512'.
             """
             return self._name
 
