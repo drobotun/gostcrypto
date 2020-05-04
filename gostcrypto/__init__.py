@@ -1,9 +1,8 @@
-"""The GOST cryptographic functions.
-
-The package 'goscrypto' implements various cryptographic functions defined in
-the State standards of the Russian Federation. All cryptographic functionalities
-are organized in modules; each modules is dedicated to solving a specific class
-of problems.
+"""
+The GOST cryptographic functions. The package 'goscrypto' implements various
+cryptographic functions defined in the State standards of the Russian
+Federation.  All cryptographic functionalities are organized in modules; each
+modules is dedicated to solving a specific class of problems.
 
 This package includes modules:
     - gostcrypto.gosthash: The module implements functions for calculating hash
