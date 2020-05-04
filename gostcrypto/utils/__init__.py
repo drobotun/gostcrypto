@@ -1,4 +1,9 @@
-"""General features of the ghostcrypto package."""
+"""
+General features of the ghostcrypto package.
+
+The module that implements auxiliary functions for the operation of the
+gostcrypto module.
+"""
 
 from .utils import (
     check_value,
@@ -9,8 +14,4 @@ from .utils import (
     int_to_bytearray,
     compare,
     compare_to_zero
-)
-from .s_box import (
-    S_BOX,
-    S_BOX_REVERSE
 )

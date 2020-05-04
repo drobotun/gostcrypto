@@ -1,3 +1,5 @@
+# pylint: disable=duplicate-code
+
 #The GOST cryptographic functions.
 #
 #Author: Evgeny Drobotun (c) 2020
@@ -7,8 +9,11 @@
 The GOST password-based key derivation function.
 
 The module implementing the password-based key derivation function in
-accordance with R 50.1.111-2016.
+accordance with R 50.1.111-2016.  The module includes the 'R5011112016'
+class and 'GOSTPBKDFError' class and several general functions.
 """
+# pylint: enable=duplicate-code
+
 import os
 
 from gostcrypto.gosthmac import R5011132016

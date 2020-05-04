@@ -1,3 +1,6 @@
+# pylint: disable=duplicate-code
+# pylint: disable=too-many-lines
+
 #The GOST cryptographic functions.
 #
 #Author: Evgeny Drobotun (c) 2020
@@ -8,9 +11,9 @@ Block cipher modes according to GOST 34.13-2015.
 
 The module implements the modes of operation of block encryption algorithms
 "magma" and "kuznechik", described in GOST 34.13-2015.  The module includes
-the base classes GOST3413205, GOST3413205Cipher, GOST3413205CipherPadding,
-GOST3413205CipherFeedBack, and classes GOST3413205ecb, GOST3413205cbc,
-GOST3413205cfb, GOST3413205ofb and GOST3413205ctr.  In addition the module
+the base classes 'GOST3413205', 'GOST3413205Cipher', 'GOST3413205CipherPadding',
+'GOST3413205CipherFeedBack', and classes 'GOST3413205ecb', 'GOST3413205cbc',
+'GOST3413205cfb', 'GOST3413205ofb' and 'GOST3413205ctr'.  In addition the module
 includes the GOSTCipherError class and several general functions.
 
 Attributes:
@@ -25,6 +28,7 @@ Attributes:
     PAD_MODE_2: Message padding procedure No. 2 (paragraph 4.1.2
       GOST 34.13-2015)
 """
+# pylint: enable=duplicate-code
 
 from copy import deepcopy
 from typing import Any, Union
@@ -72,8 +76,7 @@ _B_128: bytearray = bytearray([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x87,
 ])
 
-CipherObjType = Union[
-    'GOST34132015',
+CipherType = Union[
     'GOST34132015ecb',
     'GOST34132015cbc',
     'GOST34132015cfb',
@@ -82,49 +85,13 @@ CipherObjType = Union[
     'GOST34132015mac'
 ]
 
-
-def check_init_vect_value(init_vect: bytearray, block_size: int) -> bool:
-    """
-    Check the value of the initialization vector.
-
-    It checks the type ('bytes' or 'bytearray') and matches the size (the size
-    must be a multiple of the block size).  For MODE_CBC, MODE_CFB or MODE_OFB
-    mode.
-
-    Args:
-        init_vect: Initialization vector value.
-        block_size: Block size value.
-
-    Returns:
-        Check result.
-    """
-    result = True
-    if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) % block_size != 0:
-        result = False
-    return result
+CipherObjType = Union[
+    'GOST34122015Kuznechik',
+    'GOST34122015Magma',
+]
 
 
-def check_init_vect_value_ctr(init_vect: bytearray, block_size: int) -> bool:
-    """
-    Check the value of the initialization vector in MODE_CTR mode.
-
-    It checks the type ('bytes' or 'bytearray') and matches the size (the size
-    must be equal to half the block size).
-
-    Args:
-        init_vect: Initialization vector value.
-        block_size: Block size value.
-
-    Returns:
-        Check result.
-    """
-    result = True
-    if (not isinstance(init_vect, (bytes, bytearray))) or len(init_vect) != block_size // 2:
-        result = False
-    return result
-
-
-def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherObjType:
+def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherType:
     """
     Create a new ciphering object and returns it.
 
@@ -200,6 +167,9 @@ class GOST34132015(ABC):
     """
     Base class of the cipher object.
 
+    This class is a superclass for the 'GOST34132015Cipher' and
+    'GOST34132015mac' classes.
+
     Methods:
         clear(): Clearing the values of iterative cipher keys.
 
@@ -208,7 +178,6 @@ class GOST34132015(ABC):
           algorithm in bytes.
     """
 
-    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray) -> None:
         """
         Initialize the ciphering object.
@@ -224,7 +193,7 @@ class GOST34132015(ABC):
             key = zero_fill(key)
             raise GOSTCipherError('GOSTCipherError: invalid key value')
         if algorithm == 'kuznechik':
-            self._cipher_obj = GOST34122015Kuznechik(key)
+            self._cipher_obj: CipherObjType = GOST34122015Kuznechik(key)
         elif algorithm == 'magma':
             self._cipher_obj = GOST34122015Magma(key)
 
@@ -250,7 +219,9 @@ class GOST34132015(ABC):
         return result
 
     def _get_block(self, data: bytearray, count_block: int) -> bytearray:
-        return data[self.block_size * count_block:self.block_size + (self.block_size * count_block)]
+        begin_block = self.block_size * count_block
+        end_block = self.block_size + (self.block_size * count_block)
+        return data[begin_block:end_block]
 
     def clear(self) -> None:
         """Сlearing the values of iterative encryption keys."""
@@ -272,6 +243,11 @@ class GOST34132015Cipher(GOST34132015, ABC):
     """
     Base class of the cipher object for implementing encryption modes.
 
+    This class is the subclass of the 'GOST3413205' class and inherits the
+    'clear()' method and the 'block_size' attribute.  Class 'GOST34132015Cipher'
+    is a superclass for the `'GOST34132015CipherPadding',
+    'GOST34132015CipherFeedBack' and 'GOST34132015ctr' classes.
+
     Methods:
         encrypt(): Encrypting plaintext (abstract method).
         decrypt(): Decrypting ciphertext (abstract method).
@@ -281,17 +257,6 @@ class GOST34132015Cipher(GOST34132015, ABC):
         block_size: An integer value the internal block size of the cipher
           algorithm in bytes.
     """
-
-    @abstractmethod
-    def __init__(self, algorithm: str, key: bytearray) -> None:
-        """
-        Initialize the ciphering object.
-
-        Args:
-            algorithm: The string with the name of the ciphering algorithm.
-            key: Encryption key.
-        """
-        super().__init__(algorithm, key)
 
     @abstractmethod
     def encrypt(self, data: bytearray) -> bytearray:
@@ -339,6 +304,11 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
     Base class of the cipher object for implementing encryption modes with
     padding.
 
+    This class is the subclass of the 'GOST3413205Cipher' class and inherits
+    the 'clear()' method and the 'block_size' attribute.  The 'encrypt()' and
+    'decrypt()' methods are redefined. Class 'GOST34132015CipherPadding' is a
+    superclass for the 'GOST34132015ecb' and 'GOST34132015cbc' classes.
+
     Methods:
         encrypt(): Encrypting plaintext (abstract method).
         decrypt(): Decrypting ciphertext (abstract method).
@@ -349,7 +319,6 @@ class GOST34132015CipherPadding(GOST34132015Cipher, ABC):
           algorithm in bytes.
     """
 
-    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray, pad_mode: int) -> None:
         """
         Initialize the ciphering object.
@@ -421,6 +390,12 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
     Base class of the cipher object for implementing encryption modes with
     feedback.
 
+    This class is the subclass of the 'GOST3413205Cipher' class and inherits
+    the 'clear()' method and the 'block_size' attribute.  The 'encrypt()' and
+    'decrypt()' methods are redefined. Class 'GOST34132015CipherFeedBack' is
+    a superclass for the 'GOST34132015cbc', 'GOST34132015cfb' and
+    'GOST34132015ofb' classes.
+
     Methods:
         encrypt(): Encrypting plaintext (abstract method).
         decrypt(): Decrypting ciphertext (abstract method).
@@ -432,7 +407,6 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
         iv: The initial vector value.
     """
 
-    @abstractmethod
     def __init__(self, algorithm: str, key: bytearray, init_vect: bytearray) -> None:
         """
         Initialize the ciphering object.
@@ -443,7 +417,8 @@ class GOST34132015CipherFeedBack(GOST34132015Cipher, ABC):
             init_vect: Initialization vector value.
         """
         GOST34132015Cipher.__init__(self, algorithm, key)
-        if not check_init_vect_value(init_vect, self.block_size):
+        check_init_vect = isinstance(init_vect, (bytes, bytearray))
+        if (not check_init_vect) or (len(init_vect) % self.block_size) != 0:
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
         self._init_vect = init_vect
@@ -515,6 +490,10 @@ class GOST34132015ecb(GOST34132015CipherPadding):
     """
     Class that implements ECB mode of block encryption.
 
+    This class is the subclass of the 'GOST3413205CipherPadding' class and
+    inherits the 'clear()' method and the 'block_size' attribute.  The
+    'encrypt()' and 'decrypt()' methods are redefined.
+
     Methods:
         decrypt(): Decrypting a ciphertext.
         encrypt(): Encrypting a plaintext.
@@ -524,17 +503,6 @@ class GOST34132015ecb(GOST34132015CipherPadding):
         block_size: An integer value the internal block size of the cipher
           algorithm in bytes.
     """
-
-    def __init__(self, algorithm: str, key: bytearray, pad_mode: int) -> None:
-        """
-        Initialize the ciphering object in ECB mode.
-
-        Args:
-            algorithm: The string with the name of the ciphering algorithm.
-            key: Encryption key.
-            pad_mode: Padding mode value.
-        """
-        super().__init__(algorithm, key, pad_mode)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -580,6 +548,11 @@ class GOST34132015ecb(GOST34132015CipherPadding):
 class GOST34132015cbc(GOST34132015CipherPadding, GOST34132015CipherFeedBack):
     """
     Class that implements CBC mode of block encryption.
+
+    This class is the subclass of the 'GOST3413205CipherPadding' and
+    'GOST34132015CipherFeedBack' classes and inherits the 'clear()' method and
+    the 'block_size' and 'iv' attributes.  The 'encrypt()' and 'decrypt()'
+    methods are redefined.
 
     Methods:
         decrypt(): Decrypting a ciphertext.
@@ -657,6 +630,10 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
     """
     Class that implements CFB mode of block encryption.
 
+    This class is the subclass of the 'GOST34132015CipherFeedBack' class and
+    inherits the 'clear()' method and the 'block_size' and 'iv' attributes.
+    The 'encrypt()' and 'decrypt()' methods are redefined.
+
     Methods:
         decrypt(): Decrypting a ciphertext.
         encrypt(): Encrypting a plaintext.
@@ -667,18 +644,6 @@ class GOST34132015cfb(GOST34132015CipherFeedBack):
           algorithm in bytes.
         iv: The initial vector value.
     """
-
-    def __init__(self, algorithm: str, key: bytearray,
-                 init_vect: bytearray) -> None:
-        """
-        Initialize the ciphering object in CFB mode.
-
-        Args:
-            algorithm: The string with the name of the ciphering algorithm.
-            key: Encryption key.
-            init_vect: Initialization vector value.
-        """
-        super().__init__(algorithm, key, init_vect)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -737,6 +702,10 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
     """
     Class that implements OFB mode of block encryption.
 
+    This class is the subclass of the 'GOST34132015CipherFeedBack' class and
+    inherits the 'clear()' method and the 'block_size' and 'iv' attributes.
+    The 'encrypt()' and 'decrypt()' methods are redefined.
+
     Methods:
         decrypt(): Decrypting a ciphertext.
         encrypt(): Encrypting a plaintext.
@@ -747,18 +716,6 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
           algorithm in bytes.
         iv: The initial vector value.
     """
-
-    def __init__(self, algorithm: str, key: bytearray,
-                 init_vect: bytearray) -> None:
-        """
-        Initialize the ciphering object in OFB mode.
-
-        Args:
-            algorithm: The string with the name of the ciphering algorithm.
-            key: Encryption key.
-            init_vect: Initialization vector value.
-        """
-        super().__init__(algorithm, key, init_vect)
 
     def encrypt(self, data: bytearray) -> bytearray:
         """
@@ -807,6 +764,10 @@ class GOST34132015ctr(GOST34132015Cipher):
     """
     Class that implements CTR mode of block encryption.
 
+    This class is the subclass of the 'GOST3413205Cipher' class and inherits
+    the 'clear()' method and the 'block_size' attribute.  The 'encrypt()' and
+    'decrypt()' methods are redefined.
+
     Methods:
         decrypt(): Decrypting a ciphertext.
         encrypt(): Encrypting a plaintext.
@@ -829,7 +790,8 @@ class GOST34132015ctr(GOST34132015Cipher):
             init_vect: Initialization vector value.
         """
         super().__init__(algorithm, key)
-        if not check_init_vect_value_ctr(init_vect, self.block_size):
+        check_init_vect = isinstance(init_vect, (bytes, bytearray))
+        if (not check_init_vect) or len(init_vect) != self.block_size // 2:
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid initialization vector value')
         self._init_vect = init_vect
@@ -901,6 +863,9 @@ class GOST34132015ctr(GOST34132015Cipher):
 class GOST34132015mac(GOST34132015):
     """
     Class that implements MAC mode.
+
+    This class is the subclass of the 'GOST3413205' class and inherits the \
+    'clear()' method and the 'block_size' attribute.
 
     Methods:
         update(): Update the MAC object with the bytes-like object.

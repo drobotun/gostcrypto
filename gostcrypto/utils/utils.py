@@ -1,3 +1,5 @@
+# pylint: disable=duplicate-code
+
 #The GOST cryptographic functions.
 #
 #Author: Evgeny Drobotun (c) 2020
@@ -9,6 +11,7 @@ General features of the ghostcrypto package.
 The module that implements auxiliary functions for the operation of the
 gostcrypto module.
 """
+# pylint: enable=duplicate-code
 
 
 def check_value(value: bytearray, size_value: int) -> bool:

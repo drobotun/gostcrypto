@@ -1,4 +1,33 @@
-"""The GOST cryptographic functions."""
+"""
+The GOST cryptographic functions.
+
+The package 'goscrypto' implements various cryptographic functions defined in
+the State standards of the Russian Federation. All cryptographic functionalities
+are organized in modules; each modules is dedicated to solving a specific class
+of problems.
+
+This package includes modules:
+    - gostcrypto.gosthash: The module implements functions for calculating hash
+      amounts in accordance with GOST R 34.11-2012.
+    - gostcrypto.gostcipher: The module implements block encryption functions in
+      accordance with GOST R 34.12-2015 and their use modes in accordance with
+      GOST R 34.13-201.
+    - gostcrypto.gostsignature: The module implements the functions of forming
+      and verifying an electronic digital signature in accordance with
+      GOST R 34.10-2012.
+    - gostcrypto.gostrandom: The module implements functions for generating
+      pseudo-random sequences in accordance with R 1323565.1.006-2017.
+    - gostcrypto.gosthmac: The module implements the functions of calculating
+      the HMAC message authentication code in accordance with R 50.1.113-2016.
+    - gostcrypto.gostpbkdf: The module implements the password-based key
+      derivation function in accordance with R 50.1.111-2016.
+
+Documentation:
+    https://gostcrypto.readthedocs.io/.
+
+Source code:
+    https://github.com/drobotun/gostcrypto.
+"""
 
 __title__ = 'gostcrypto'
 __version__ = '1.1.2'

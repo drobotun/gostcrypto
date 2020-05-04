@@ -1,3 +1,5 @@
+# pylint: disable=duplicate-code
+
 #The GOST cryptographic functions.
 #
 #Author: Evgeny Drobotun (c) 2020
@@ -8,15 +10,18 @@ The GOST digital signature functions.
 
 The module that implements processes for creating and verifying an electronic
 digital signature according to GOST 34.10-2012.  The module includes the
-GOST34102012 class, the GOSTSignatureError class, several general functions and
-set of the parameters of elliptic curves (in accordance with
+'GOST34102012' class, the 'GOSTSignatureError' class, several general functions
+and set of the parameters of elliptic curves (in accordance with
 R 1323565.1.024-2019).
 
 Attributes:
-    MODE_256: Mode with 256 bit digest length.
-    MODE_512: Mode with 512 bit digest length.
-    CURVES_R_1323565_1_024_2019: Set of elliptic curve parameters.
+    MODE_256: 256-bit key signing mode.
+    MODE_512: 512-bit key signing mode.
+    CURVES_R_1323565_1_024_2019: Set of elliptic curve parameters in accordance
+      R 1323565.1.024-2019.
 """
+# pylint: enable=duplicate-code
+
 import os
 from typing import Any, Tuple
 
@@ -30,6 +35,7 @@ from gostcrypto.utils import check_value
 MODE_256: int = 0x01
 MODE_512: int = 0x02
 
+# pylint: disable=R0801
 CURVES_R_1323565_1_024_2019: dict = {
     'id-tc26-gost-3410-2012-256-paramSetB': dict(
         p=bytearray_to_int(bytearray([
@@ -452,6 +458,7 @@ CURVES_R_1323565_1_024_2019: dict = {
         ])),
     ),
 }
+# pylint: enable=R0801
 
 
 def new(mode: int, curve: dict) -> 'GOST34102012':
