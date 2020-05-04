@@ -1,5 +1,4 @@
-"""
-The GOST cryptographic functions.
+"""The GOST cryptographic functions.
 
 The package 'goscrypto' implements various cryptographic functions defined in
 the State standards of the Russian Federation. All cryptographic functionalities
