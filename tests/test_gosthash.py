@@ -29,27 +29,6 @@ class Test(unittest.TestCase):
         result = gostcrypto.gosthash.GOST34112012._hash_add_512(op_a, op_b)
         self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
 
-    def test_hash_p(self):
-        test_hasher = gostcrypto.gosthash.new('streebog256')
-        test_msg = self.TEST_MSG_SHORT + b'\x01'
-        test_result = ('30383634323038363139373533313937323038363432303833313937353331393432303836343230353331393735333136343230383634323735333139373501')
-        result = test_hasher._hash_p(test_msg)
-        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
-
-    def test_hash_l(self):
-        test_hasher = gostcrypto.gosthash.new('streebog256')
-        test_msg = self.TEST_MSG_SHORT + b'\x01'
-        test_result = ('5e2a7862ae04af3627e702c039be3e73b9f661a6d680831976840907c18e8c907380b2ad67509bc15e2a7862ae04af3627e702c039be3e736350d1f348630177')
-        result = test_hasher._hash_l(test_msg)
-        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
-
-    def test_hash_s(self):
-        test_hasher = gostcrypto.gosthash.new('streebog256')
-        test_msg = self.TEST_MSG_SHORT + b'\x01'
-        test_result = ('058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402aee36a8fa0060b058402ee')
-        result = test_hasher._hash_s(test_msg)
-        self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
-
     def test_hash_get_key(self):
         test_hasher = gostcrypto.gosthash.new('streebog256')
         test_msg = self.TEST_MSG_SHORT + b'\x01'
@@ -87,7 +66,6 @@ class Test(unittest.TestCase):
         test_result = '1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28'
         result = test_hasher.digest()
         self.assertEqual(''.join(format(x, '02x') for x in result), test_result)
-        
 
     def test_new_raises(self):
         with self.assertRaises(GOSTHashError) as context:

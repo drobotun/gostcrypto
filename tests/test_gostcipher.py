@@ -181,13 +181,13 @@ class TestKuznechik(unittest.TestCase):
         self.assertEqual(test_cipher._cipher_iter_key[8], test_iter_key[8])
         self.assertEqual(test_cipher._cipher_iter_key[9], test_iter_key[9])
 
-    def test_encrypt(self):
-        test_cipher = gostcrypto.gostcipher.GOST34122015Kuznechik(self.TEST_KEY)
-        self.assertEqual(test_cipher.encrypt(self.ENCRYPT_TEST_STRING), self.DECRYPT_TEST_STRING)
-
     def test_decrypt(self):
         test_cipher = gostcrypto.gostcipher.GOST34122015Kuznechik(self.TEST_KEY)
         self.assertEqual(test_cipher.decrypt(self.DECRYPT_TEST_STRING), self.ENCRYPT_TEST_STRING)
+
+    def test_encrypt(self):
+        test_cipher = gostcrypto.gostcipher.GOST34122015Kuznechik(self.TEST_KEY)
+        self.assertEqual(test_cipher.encrypt(self.ENCRYPT_TEST_STRING), self.DECRYPT_TEST_STRING)
 
     def test_key_size(self):
         test_cipher = gostcrypto.gostcipher.GOST34122015Kuznechik(self.TEST_KEY)
