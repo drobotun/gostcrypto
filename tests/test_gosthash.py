@@ -4,6 +4,7 @@ import pytest
 import gostcrypto
 
 from gostcrypto.gosthash import GOSTHashError
+from gostcrypto.gostoid import ObjectIdentifier
 
 @pytest.mark.hasher
 class Test(unittest.TestCase):
@@ -154,6 +155,19 @@ class Test(unittest.TestCase):
         result = test_hasher.hexdigest()
         test_result = 'c766085540caaa8953bfcf7a1ba220619cee50d65dc242f82f23ba4b180b18e0'
         self.assertEqual(result, test_result)
+
+    def test_oid(self):
+        test_hasher = gostcrypto.gosthash.new('streebog256')
+        self.assertEqual(test_hasher.oid.__str__(), '1.2.643.7.1.1.2.2')
+        self.assertEqual(test_hasher.oid.digit, tuple([1, 2, 643, 7, 1, 1, 2, 2]))
+        self.assertEqual(test_hasher.oid.name, 'id-tc26-gost3411-12-256')
+        self.assertEqual(test_hasher.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x02, 0x02,]))
+        test_hasher = gostcrypto.gosthash.new('streebog512')
+        self.assertEqual(test_hasher.oid.__str__(), '1.2.643.7.1.1.2.3')
+        self.assertEqual(test_hasher.oid.digit, tuple([1, 2, 643, 7, 1, 1, 2, 3]))
+        self.assertEqual(test_hasher.oid.name, 'id-tc26-gost3411-12-512')
+        self.assertEqual(test_hasher.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x02, 0x03,]))
+        
 
 if __name__ == '__main__':
     unittest.main()

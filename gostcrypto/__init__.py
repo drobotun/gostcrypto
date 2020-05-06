@@ -42,3 +42,4 @@ from gostcrypto import gostsignature
 from gostcrypto import gostrandom
 from gostcrypto import gosthmac
 from gostcrypto import gostpbkdf
+from gostcrypto import gostoid

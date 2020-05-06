@@ -18,6 +18,7 @@ several general functions.
 from copy import deepcopy
 
 from gostcrypto.utils import add_xor
+from gostcrypto.gostoid import ObjectIdentifier
 
 _BLOCK_SIZE: int = 64
 
@@ -737,7 +738,10 @@ class GOST34112012:
         self._hash_n = bytearray()
         self._hash_sigma = bytearray()
         self._hash_init(name)
-        self.oid = self.OID(name)
+        if name == 'streebog256':
+            self.oid = ObjectIdentifier('1.2.643.7.1.1.2.2')
+        else:
+            self.oid = ObjectIdentifier('1.2.643.7.1.1.2.3')
         if data != bytearray(b''):
             self.update(data)
     # pylint: enable=too-many-instance-attributes
@@ -752,50 +756,6 @@ class GOST34112012:
         self._hash_sigma = bytearray(_BLOCK_SIZE)
         if self._name == 'streebog256':
             self._hash_h = bytearray(_BLOCK_SIZE * b'\x01')
-
-    class OID:
-        """
-        This class contains information about the OID of the algorithm used.
-
-        An instance of this class is passed as an attribute to the
-        'GOST34112012' class.  The '__str__' method is redefined and returns
-        the object ID in the dotted representations ASN.1.
-
-        Attributes:
-            name: Contains a string with the name of the OID.
-        """
-
-        def __init__(self, name_hash_alg: str) -> None:
-            """
-            Initialize the OID.
-
-            Args:
-                name_hash_alg: Name of the hashing algorithm ('streebog512' or
-                  'streebog256').
-            """
-            if name_hash_alg == 'streebog512':
-                self._oid = '1.2.643.7.1.1.2.3'
-                self._name = 'id-tc26-gost3411-12-512'
-            else:
-                self._oid = '1.2.643.7.1.1.2.2'
-                self._name = 'id-tc26-gost3411-12-256'
-
-        def __str__(self) -> str:
-            """
-            Return the string with OID.
-
-            Respectively '1.2.643.7.1.1.2.2' or '1.2.643.7.1.1.2.3'.
-            """
-            return self._oid
-
-        @property
-        def name(self) -> str:
-            """
-            Return the string with the name of the hashing algorithm.
-
-            Respectively 'id-tc26-gost3411-12-256' or 'id-tc26-gost3411-12-512'.
-            """
-            return self._name
 
     @staticmethod
     def _hash_add_512(op_a: bytearray, op_b: bytearray) -> bytearray:

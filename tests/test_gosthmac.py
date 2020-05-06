@@ -83,3 +83,15 @@ class TestHMAC(unittest.TestCase):
         test_hmac.update(TEST_DATA)
         test_hmac.update(TEST_DATA)
         self.assertEqual(test_hmac.digest(), TEST_HMAC_256_DOUBLE_UPDATE)
+
+    def test_oid(self):
+        test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_512', TEST_KEY)
+        self.assertEqual(test_hmac.oid.__str__(), '1.2.643.7.1.1.4.2')
+        self.assertEqual(test_hmac.oid.digit, tuple([1, 2, 643, 7, 1, 1, 4, 2]))
+        self.assertEqual(test_hmac.oid.name, 'id-tc26-hmac-gost-3411-12-512')
+        self.assertEqual(test_hmac.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x04, 0x02,]))
+        test_hmac = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', TEST_KEY)
+        self.assertEqual(test_hmac.oid.__str__(), '1.2.643.7.1.1.4.1')
+        self.assertEqual(test_hmac.oid.digit, tuple([1, 2, 643, 7, 1, 1, 4, 1]))
+        self.assertEqual(test_hmac.oid.name, 'id-tc26-hmac-gost-3411-12-256')
+        self.assertEqual(test_hmac.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x04, 0x01,]))

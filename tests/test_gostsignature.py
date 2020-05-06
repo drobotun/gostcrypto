@@ -374,3 +374,17 @@ class TestMODE512(unittest.TestCase):
         with mock.patch('os.urandom', os_urandom):
             test_result = test_sign.sign(TEST_PRIVATE_KEY_512, TEST_DIGEST_512)
         self.assertEqual(test_result, TEST_SIGNATURE_512)
+
+    def test_oid(self):
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+            TEST_CURVE['id-tc26-gost-3410-2012-256-paramSetTest'])
+        self.assertEqual(test_sign.oid.__str__(), '1.2.643.7.1.1.1.1')
+        self.assertEqual(test_sign.oid.digit, tuple([1, 2, 643, 7, 1, 1, 1, 1]))
+        self.assertEqual(test_sign.oid.name, 'id-tc26-gost3410-12-256')
+        self.assertEqual(test_sign.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x01, 0x01,]))
+        test_sign = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_512,
+            TEST_CURVE['id-tc26-gost-3410-2012-512-paramSetTest'])
+        self.assertEqual(test_sign.oid.__str__(), '1.2.643.7.1.1.1.2')
+        self.assertEqual(test_sign.oid.digit, tuple([1, 2, 643, 7, 1, 1, 1, 2]))
+        self.assertEqual(test_sign.oid.name, 'id-tc26-gost3410-12-512')
+        self.assertEqual(test_sign.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x01, 0x02,]))
