@@ -221,6 +221,17 @@ Generating a public key
 
     public_key = sign_obj.public_key_generate(private_key)
 
+Getting the ID of the signature mode object name
+------------------------------------------------
+
+.. code-block:: python
+
+    import gostcrypto
+
+    sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+        gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+    oid_name = sign_obj.oid.name
+
 Usage gostrandom module
 """""""""""""""""""""""
 
@@ -271,6 +282,17 @@ In this case the 'buffer_size' value must be a multiple of the 'block_size' valu
 
     hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key, data=data)
     hmac_result = hmac_obj.digest()
+
+Getting the name identifier of the HMAC algorithm object
+--------------------------------------------------------
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f1011121315161718191a1b1c1d1e1f')
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
+    oid_name = hmac_obj.oid.name
 
 Usage gostpbkdf module
 """"""""""""""""""""""
