@@ -221,8 +221,8 @@ Generating a public key
 
     public_key = sign_obj.public_key_generate(private_key)
 
-Getting the ID of the signature mode object name
-------------------------------------------------
+Getting the identifier of the signature mode object name
+--------------------------------------------------------
 
 .. code-block:: python
 
