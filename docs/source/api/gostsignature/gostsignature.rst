@@ -343,6 +343,17 @@ public_key_generate(private_key)
 
 *****
 
+Attributes:
+-----------
+
+oid
+~~~
+    An instance of the ``ObjectIdentifier`` class that contains information about the identifier of the  signature generation or verification mode object. For more information, see: :doc:`API of the 'gostcrypto.gostoid' module <../gostoid/gostoid>`.
+
+.. note:: For a 256 bit key, the OID is ``'1.2.643.7.1.1.2.2'``, and the OID name is ``'id-tc26-gost3411-12-256'``. For a 512 bit key, the OID is ``'1.2.643.7.1.1.2.3'``, and the OID name is ``'id-tc26-gost3411-12-512'``. 
+
+*****
+
 GOSTSignatureError
 ''''''''''''''''''
     The class that implements exceptions.

@@ -30,6 +30,7 @@ The package implements various cryptographic functions defined in the State stan
 - **gostrandom**: The module implements functions for generating pseudo-random sequences in accordance with R 1323565.1.006-2017.
 - **gosthmac**: The module implements the functions of calculating the HMAC message authentication code in accordance with R 50.1.113-2016.
 - **gostpbkdf**: The module implements the password-based key derivation function in accordance with R 50.1.111-2016.
+- **gostoid**: The module implements generating identifiers for cryptographic objects.
 
 Installation
 """"""""""""
@@ -70,6 +71,16 @@ In this case the 'buffer_size' value must be a multiple of the 'block_size' valu
             hash_obj.update(buffer)
             buffer = file.read(buffer_size)
     hash_result = hash_obj.hexdigest()
+
+Getting the name identifier of the hashing algorithm object
+-----------------------------------------------------------
+
+.. code-block:: python
+
+    import gostcrypto
+
+    hash_obj = gostcrypto.gosthash.new('streebog512')
+    oid_name = hash_obj.oid.name
 
 Usage gostcipher module
 """""""""""""""""""""""

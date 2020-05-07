@@ -21,6 +21,7 @@ from typing import List
 
 from gostcrypto.utils import add_xor
 from gostcrypto.utils import zero_fill
+from gostcrypto.gostoid import ObjectIdentifier
 
 _BLOCK_SIZE_KUZNECHIK: int = 16
 _BLOCK_SIZE_MAGMA: int = 8
@@ -410,6 +411,14 @@ class GOST34122015Kuznechik:
         block_size: An integer value the internal block size of the cipher
           algorithm in bytes.
         key_size: An integer value the cipher key size.
+        oid: String  with the dotted representation of the object identifier
+          respective to the encryption algorithm.
+        oid.name: String  with name of the object identifier respective to the
+          encryption algorithm.
+        oid.digit: The object identifier respective to the encryption algorithm
+          as a tuple of integers.
+        oid.octet: The object identifier respective to the encryption algorithm
+          as a byte object encoded ASN.1.
     """
 
     def __init__(self, key: bytearray):
@@ -422,6 +431,7 @@ class GOST34122015Kuznechik:
         self._cipher_c: List[bytearray] = []
         self._cipher_iter_key = []
         self._cipher_get_c()
+        self.oid = ObjectIdentifier('1.2.643.7.1.1.5.2')
         key_1 = key[:_KEY_SIZE // 2]
         key_2 = key[_KEY_SIZE // 2:]
         internal = bytearray(_KEY_SIZE // 2)
@@ -581,7 +591,14 @@ class GOST34122015Magma:
         block_size: An integer value the internal block size of the cipher
           algorithm in bytes.
         key_size: An integer value the cipher key size.
-
+        oid: String  with the dotted representation of the object identifier
+          respective to the encryption algorithm.
+        oid.name: String  with name of the object identifier respective to the
+          encryption algorithm.
+        oid.digit: The object identifier respective to the encryption algorithm
+          as a tuple of integers.
+        oid.octet: The object identifier respective to the encryption algorithm
+          as a byte object encoded ASN.1.
     """
 
     def __init__(self, key: bytearray):
@@ -591,6 +608,7 @@ class GOST34122015Magma:
         Args:
             key: Encryption key.
         """
+        self.oid = ObjectIdentifier('1.2.643.7.1.1.5.1')
         self._cipher_iter_key: List[bytearray] = []
         self._expand_iter_key(key)
         self._expand_iter_key(key)

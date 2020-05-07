@@ -492,6 +492,16 @@ class GOST34102012:
         sign(): Creating a signature.
         verify(): Signature verification.
         public_key_generate(): Generating a public key.
+
+    Attributes:
+        oid: String  with the dotted representation of the object identifier
+          respective to the signature generation or verification mode.
+        oid.name: String  with name of the object identifier respective to the
+          the signature generation or verification mode.
+        oid.digit: The object identifier respective the signature generation or
+          verification mode as a tuple of integers.
+        oid.octet: The object identifier respective the signature generation or
+          verification mode as a byte object encoded ASN.1.
     """
 
     # pylint: disable=too-many-instance-attributes

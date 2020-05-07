@@ -718,6 +718,14 @@ class GOST34112012:
         block_size: An integer value the internal block size of the hash
           algorithm in bytes.
         name: Text string value the name of the hashing algorithm.
+        oid: String  with the dotted representation of the object identifier
+          respective to the hash algorithm.
+        oid.name: String  with name of the object identifier respective to the
+          hash algorithm.
+        oid.digit: The object identifier respective to the hash algorithm as a
+          tuple of integers.
+        oid.octet: The object identifier respective to the hash algorithm as a
+          byte object encoded ASN.1.
     """
 
     # pylint: disable=too-many-instance-attributes

@@ -176,6 +176,14 @@ class GOST34132015(ABC):
     Attributes:
         block_size: An integer value the internal block size of the cipher
           algorithm in bytes.
+        oid: String  with the dotted representation of the object identifier
+          respective to the encryption algorithm.
+        oid.name: String  with name of the object identifier respective to the
+          encryption algorithm.
+        oid.digit: The object identifier respective to the encryption algorithm
+          as a tuple of integers.
+        oid.octet: The object identifier respective to the encryption algorithm
+          as a byte object encoded ASN.1.
     """
 
     def __init__(self, algorithm: str, key: bytearray) -> None:
@@ -196,6 +204,7 @@ class GOST34132015(ABC):
             self._cipher_obj: CipherObjType = GOST34122015Kuznechik(key)
         elif algorithm == 'magma':
             self._cipher_obj = GOST34122015Magma(key)
+        self.oid = self._cipher_obj.oid
 
     def __del__(self) -> None:
         """

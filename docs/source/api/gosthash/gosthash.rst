@@ -250,6 +250,14 @@ name
 
 *****
 
+oid
+~~~
+    An instance of the ``ObjectIdentifier`` class that contains information about the identifier of the hash algorithm object. For more information, see: :doc:`API of the 'gostcrypto.gostoid' module <../gostoid/gostoid>`.
+
+.. note:: For the '**streebog256**' hashing algorithm, the OID is ``'1.2.643.7.1.1.2.2'``, and the OID name is ``'id-tc26-gost3411-12-256'``. For the '**streebog512**' hashing algorithm, the OID is ``'1.2.643.7.1.1.2.3'``, and the OID name is ``'id-tc26-gost3411-12-512'``. 
+
+*****
+
 GOSTHashError
 '''''''''''''
     The class that implements exceptions.

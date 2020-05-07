@@ -637,6 +637,13 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
         test_counter = bytearray(test_counter)
         self.assertEqual(test_obj.counter, test_counter)
 
+    def test_oid(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
+        self.assertEqual(test_obj.oid.__str__(), '1.2.643.7.1.1.5.2')
+        self.assertEqual(test_obj.oid.digit, tuple([1, 2, 643, 7, 1, 1, 5, 2]))
+        self.assertEqual(test_obj.oid.name, 'id-tc26-cipher-gostr3412-2015-kuznyechik')
+        self.assertEqual(test_obj.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x05, 0x02]))
+
 
 @pytest.mark.cipher
 class TestGOST34132015Magma(unittest.TestCase):
@@ -819,6 +826,14 @@ class TestGOST34132015Magma(unittest.TestCase):
         test_counter = self.TEST_INIT_VECT_CTR + b'\x00' * (test_obj.block_size // 2)
         test_counter = bytearray(test_counter)
         self.assertEqual(test_obj.counter, test_counter)
+
+    def test_oid(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_ECB)
+        self.assertEqual(test_obj.oid.__str__(), '1.2.643.7.1.1.5.1')
+        self.assertEqual(test_obj.oid.digit, tuple([1, 2, 643, 7, 1, 1, 5, 1]))
+        self.assertEqual(test_obj.oid.name, 'id-tc26-cipher-gostr3412-2015-magma')
+        self.assertEqual(test_obj.oid.octet, bytearray([0x06, 0x08, 0x2a, 0x85, 0x03, 0x07, 0x01, 0x01, 0x05, 0x01]))
+        
 
 if __name__ == '__main__':
     unittest.main()

@@ -295,6 +295,14 @@ name
 
 *****
 
+oid
+~~~
+    An instance of the ``ObjectIdentifier`` class that contains information about the identifier of the HMAC algorithm object. For more information, see: :doc:`API of the 'gostcrypto.gostoid' module <../gostoid/gostoid>`.
+
+.. note:: For the '**HMAC_GOSTR3411_2012_256**' HMAC algorithm, the OID is ``'1.2.643.7.1.1.4.1'``, and the OID name is ``'id-tc26-hmac-gost-3411-12-256'``. For the '**HMAC_GOSTR3411_2012_512**' HMAC algorithm, the OID is ``'1.2.643.7.1.1.4.2'``, and the OID name is ``'id-tc26-hmac-gost-3411-12-512'``. 
+
+*****
+
 GOSTHMACError
 '''''''''''''
     The class that implements exceptions.

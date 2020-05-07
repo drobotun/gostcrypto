@@ -16,6 +16,7 @@ The package **goscrypto** implements various cryptographic functions defined in 
     :doc:`gostcrypto.gostrandom <api/gostrandom/gostrandom>`, "The module implements functions for generating pseudo-random sequences in accordance with `R 1323565.1.006-2017 <https://files.stroyinf.ru/Data2/1/4293740/4293740893.pdf>`_."
     :doc:`gostcrypto.gosthmac <api/gosthmac/gosthmac>`, "The module implements the functions of calculating the HMAC message authentication code in accordance with `R 50.1.113-2016 <https://files.stroyinf.ru/Data2/1/4293748/4293748842.pdf>`_."
     :doc:`gostcrypto.gostpbkdf <api/gostpbkdf/gostpbkdf>`, "The module implements the password-based key derivation function in accordance with `R 50.1.111-2016 <https://files.stroyinf.ru/Data2/1/4293748/4293748845.pdf>`_."
+	:doc:`gostcrypto.gostoid <api/gostoid/gostoid>`, "The module implements generating identifiers for cryptographic objects."
 
 Features
 """"""""
@@ -91,6 +92,16 @@ Getting a hash for a file
             hash_obj.update(buffer)
             buffer = file.read(buffer_size)
     hash_result = hash_obj.hexdigest()
+
+Getting the name identifier of the hashing algorithm object
+-----------------------------------------------------------
+
+.. code-block:: python
+
+    import gostcrypto
+
+    hash_obj = gostcrypto.gosthash.new('streebog512')
+    oid_name = hash_obj.oid.name
 
 Usage gostcipher module
 """""""""""""""""""""""
@@ -258,6 +269,17 @@ Generating a public key
 
     public_key = sign_obj.public_key_generate(private_key)
 
+Getting the ID of the signature mode object name
+------------------------------------------------
+
+.. code-block:: python
+
+    import gostcrypto
+
+    sign_obj = gostcrypto.gostsignature.new(gostcrypto.gostsignature.MODE_256,
+        gostcrypto.gostsignature.CURVES_R_1323565_1_024_2019['id-tc26-gost-3410-2012-256-paramSetB'])
+    oid_name = sign_obj.oid.name
+
 Usage gostrandom module
 """""""""""""""""""""""
 
@@ -313,6 +335,17 @@ Getting a HMAC for a file
             buffer = file.read(buffer_size)
     hmac_result = hmac_obj.hexdigest()
 
+Getting the name identifier of the HMAC algorithm object
+--------------------------------------------------------
+
+.. code-block:: python
+
+    import gostcrypto
+
+    key = bytearray.fromhex('000102030405060708090a0b0c0d0e0f1011121315161718191a1b1c1d1e1f')
+    hmac_obj = gostcrypto.gosthmac.new('HMAC_GOSTR3411_2012_256', key)
+    oid_name = hmac_obj.oid.name
+
 Usage gostpbkdf module
 """"""""""""""""""""""
 
@@ -338,6 +371,12 @@ Package source code: https://github.com/drobotun/gostcrypto
 
 Release History
 ~~~~~~~~~~~~~~~
+
+.. rubric:: 1.2.0 (07.05.2020)
+
+- Refactoring and code modification in module **gostcipher** to increase the performance of encryption algorithm 'kuznechik' (uses precomputation  values of the 'gf' function;  the performance of the encryption function has increased by an average of 5..10 times)
+- Refactoring and code modification in module **gosthash** to increase the performance of hasing (uses precomputation  values of the 'l, s and p-transformation',  function;  the performance of the encryption function has increased by an average of 2..7 times)
+- Added the **gostoid** module that implements generating cryptographic object IDs for the **gostcipher**, **gosthash**, **gosthmac** and **gostsignature**modules
 
 .. rubric:: 1.1.2 (02.05.2020)
 

@@ -228,6 +228,8 @@ decrypt(block)
 
 - The block of plaintext (as a byte object).
 
+*****
+
 clear()
 ~~~~~~~
     Сlearing the values of iterative encryption keys.
@@ -268,6 +270,8 @@ block_size
     cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
     block_size = cipher_obj.block_size
 
+*****
+
 key_size
 ~~~~~~~~
     An integer value the cipher key size.
@@ -283,6 +287,14 @@ key_size
 
     cipher_obj = gostcrypto.gostcipher.GOST34122015Kuznechik(key)
     key_size = cipher_obj.key_size
+
+*****
+
+oid
+~~~
+    An instance of the ``ObjectIdentifier`` class that contains information about the identifier of the encryption algorithm object. For more information, see: :doc:`API of the 'gostcrypto.gostoid' module <../gostoid/gostoid>`.
+
+*****
 
 GOST34122015Magma
 '''''''''''''''''
@@ -353,6 +365,8 @@ decrypt(block)
 
 - The block of plaintext (as a byte object).
 
+*****
+
 clear()
 ~~~~~~~
     Сlearing the values of iterative encryption keys.
@@ -393,6 +407,8 @@ block_size
     cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
     block_size = cipher_obj.block_size
 
+*****
+
 key_size
 ~~~~~~~~
     An integer value the cipher key size.
@@ -408,6 +424,12 @@ key_size
 
     cipher_obj = gostcrypto.gostcipher.GOST34122015Magma(key)
     key_size = cipher_obj.key_size
+
+*****
+
+oid
+~~~
+    An instance of the ``ObjectIdentifier`` class that contains information about the identifier of the encryption algorithm object. For more information, see: :doc:`API of the 'gostcrypto.gostoid' module <../gostoid/gostoid>`.
 
 *****
 
@@ -428,6 +450,14 @@ Attributes:
 block_size
 ~~~~~~~~~~
      An integer value the internal block size of the cipher algorithm in bytes. For the 'Kuznechik' algorithm this value is 16 and the 'Magma' algorithm, this value is 8.
+
+*****
+
+oid
+~~~
+    An instance of the ``ObjectIdentifier`` class that contains information about the identifier of the encryption algorithm object. For more information, see: :doc:`API of the 'gostcrypto.gostoid' module <../gostoid/gostoid>`.
+
+.. note:: For the '**kuznechik**' encrypting algorithm, the OID is ``'1.2.643.7.1.1.5.2'``, and the OID name is ``'id-tc26-cipher-gostr3412-2015-kuznyechik'``. For the '**magma**' encrypting algorithm, the OID is ``'1.2.643.7.1.1.5.1'``, and the OID name is ``'id-tc26-cipher-gostr3412-2015-magma'``. 
 
 *****
 
@@ -462,6 +492,8 @@ This method must be redefined in subclasses of this class. For example:
 .. rubric:: **Exceptions:**
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+*****
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -522,6 +554,8 @@ This method must be redefined in subclasses of this class. For example:
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
+*****
+
 decrypt(data)
 ~~~~~~~~~~~~~
     Abstract method. Implements input data validation.
@@ -580,6 +614,8 @@ This method must be redefined in subclasses of this class. For example:
 .. rubric:: **Exceptions:**
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+*****
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -659,6 +695,8 @@ encrypt(data)
 .. rubric:: **Exceptions:**
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+*****
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -750,6 +788,8 @@ encrypt(data)
 .. rubric:: **Exceptions:**
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
+
+*****
 
 decrypt(data)
 ~~~~~~~~~~~~~
@@ -847,6 +887,8 @@ encrypt(data)
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
+*****
+
 decrypt(data)
 ~~~~~~~~~~~~~
     Decrypting a ciphertext.
@@ -942,6 +984,8 @@ encrypt(data)
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
+*****
+
 decrypt(data)
 ~~~~~~~~~~~~~
     Decrypting a ciphertext.
@@ -1036,6 +1080,8 @@ encrypt(data)
 
 - GOSTCipherError('invalid plaintext data') - in case where the plaintext data is not byte object.
 
+*****
+
 decrypt(data)
 ~~~~~~~~~~~~~
     Decrypting a ciphertext.
@@ -1127,6 +1173,8 @@ update(data)
 
 - GOSTCipherError('invalid text data') - in case where the text data is not byte object.
 
+*****
+
 digest(mac_size)
 ~~~~~~~~~~~~~~~~
     Calculating the ``data`` message authentication code (MAC) after applying the ``update(data)`` method.
@@ -1164,6 +1212,8 @@ digest(mac_size)
 .. rubric:: **Exceptions:**
 
 - GOSTCipherError('invalid message authentication code size') - in case of the invalid message authentication code size.
+
+*****
 
 hexdigest(mac_size)
 ~~~~~~~~~~~~~~~~~~~

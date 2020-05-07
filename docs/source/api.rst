@@ -10,3 +10,5 @@ API documentation
    api/gostrandom/gostrandom
    api/gosthmac/gosthmac
    api/gostpbkdf/gostpbkdf
+   api/gostoid/gostoid
+   

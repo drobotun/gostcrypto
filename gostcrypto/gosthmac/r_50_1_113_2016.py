@@ -93,6 +93,14 @@ class R5011132016:
           algorithm in bytes.
         name: Text string is the name of the authentication code calculation
           algorithm.
+        oid: String  with the dotted representation of the object identifier
+          respective to the HMAC algorithm.
+        oid.name: String  with name of the object identifier respective to the
+          HMAC algorithm.
+        oid.digit: The object identifier respective to the HMAC algorithm as a
+          tuple of integers.
+        oid.octet: The object identifier respective to the HMAC algorithm as a
+          byte object encoded ASN.1.
     """
 
     def __init__(self, name: str, key: bytearray, data: bytearray) -> None:
