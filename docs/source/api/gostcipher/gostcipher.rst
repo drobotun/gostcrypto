@@ -30,7 +30,7 @@ The module includes:
     Class hierarchy of the **gostcipher** module
 
 .. note::
-    You can encrypting only **byte strings** or **byte arrays** (for example ``b'hash_text'`` or ``bytearray([0x68, 0x61, 0x73, 0x68, 0x5f, 0x74, 0x65, 0x78, 0x74])``).
+    You can encrypting only **byte strings** or **byte arrays** (for example ``b'cipher_text'`` or ``bytearray([0x68, 0x61, 0x73, 0x68, 0x5f, 0x74, 0x65, 0x78, 0x74])``).
 
 API principles
 """"""""""""""
