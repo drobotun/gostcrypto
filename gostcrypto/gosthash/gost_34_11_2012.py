@@ -780,37 +780,37 @@ class GOST34112012:
     def _hash_lps(data: bytearray) -> bytearray:
         internal = bytearray(_BLOCK_SIZE)
         internal[0::] = (
-            (_T[0][(data[0])] ^ _T[1][(data[8])] ^ _T[2][(data[16])]
-             ^ _T[3][(data[24])] ^ _T[4][(data[32])] ^ _T[5][(data[40])]
-             ^ _T[6][(data[48])] ^ _T[7][(data[56])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[0])] ^ _T[1][(data[8])] ^ _T[2][(data[16])] ^
+             _T[3][(data[24])] ^ _T[4][(data[32])] ^ _T[5][(data[40])] ^
+             _T[6][(data[48])] ^ _T[7][(data[56])]).to_bytes(8, byteorder='little'))
         internal[8::] = (
-            (_T[0][(data[1])] ^ _T[1][(data[9])] ^ _T[2][(data[17])]
-             ^ _T[3][(data[25])] ^ _T[4][(data[33])] ^ _T[5][(data[41])]
-             ^ _T[6][(data[49])] ^ _T[7][(data[57])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[1])] ^ _T[1][(data[9])] ^ _T[2][(data[17])] ^
+             _T[3][(data[25])] ^ _T[4][(data[33])] ^ _T[5][(data[41])] ^
+             _T[6][(data[49])] ^ _T[7][(data[57])]).to_bytes(8, byteorder='little'))
         internal[16::] = (
-            (_T[0][(data[2])] ^ _T[1][(data[10])] ^ _T[2][(data[18])]
-             ^ _T[3][(data[26])] ^ _T[4][(data[34])] ^ _T[5][(data[42])]
-             ^ _T[6][(data[50])] ^ _T[7][(data[58])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[2])] ^ _T[1][(data[10])] ^ _T[2][(data[18])] ^
+             _T[3][(data[26])] ^ _T[4][(data[34])] ^ _T[5][(data[42])] ^
+             _T[6][(data[50])] ^ _T[7][(data[58])]).to_bytes(8, byteorder='little'))
         internal[24::] = (
-            (_T[0][(data[3])] ^ _T[1][(data[11])] ^ _T[2][(data[19])]
-             ^ _T[3][(data[27])] ^ _T[4][(data[35])] ^ _T[5][(data[43])]
-             ^ _T[6][(data[51])] ^ _T[7][(data[59])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[3])] ^ _T[1][(data[11])] ^ _T[2][(data[19])] ^
+             _T[3][(data[27])] ^ _T[4][(data[35])] ^ _T[5][(data[43])] ^
+             _T[6][(data[51])] ^ _T[7][(data[59])]).to_bytes(8, byteorder='little'))
         internal[32::] = (
-            (_T[0][(data[4])] ^ _T[1][(data[12])] ^ _T[2][(data[20])]
-             ^ _T[3][(data[28])] ^ _T[4][(data[36])] ^ _T[5][(data[44])]
-             ^ _T[6][(data[52])] ^ _T[7][(data[60])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[4])] ^ _T[1][(data[12])] ^ _T[2][(data[20])] ^
+             _T[3][(data[28])] ^ _T[4][(data[36])] ^ _T[5][(data[44])] ^
+             _T[6][(data[52])] ^ _T[7][(data[60])]).to_bytes(8, byteorder='little'))
         internal[40::] = (
-            (_T[0][(data[5])] ^ _T[1][(data[13])] ^ _T[2][(data[21])]
-             ^ _T[3][(data[29])] ^ _T[4][(data[37])] ^ _T[5][(data[45])]
-             ^ _T[6][(data[53])] ^ _T[7][(data[61])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[5])] ^ _T[1][(data[13])] ^ _T[2][(data[21])] ^
+             _T[3][(data[29])] ^ _T[4][(data[37])] ^ _T[5][(data[45])] ^
+             _T[6][(data[53])] ^ _T[7][(data[61])]).to_bytes(8, byteorder='little'))
         internal[48::] = (
-            (_T[0][(data[6])] ^ _T[1][(data[14])] ^ _T[2][(data[22])]
-             ^ _T[3][(data[30])] ^ _T[4][(data[38])] ^ _T[5][(data[46])]
-             ^ _T[6][(data[54])] ^ _T[7][(data[62])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[6])] ^ _T[1][(data[14])] ^ _T[2][(data[22])] ^
+             _T[3][(data[30])] ^ _T[4][(data[38])] ^ _T[5][(data[46])] ^
+             _T[6][(data[54])] ^ _T[7][(data[62])]).to_bytes(8, byteorder='little'))
         internal[56::] = (
-            (_T[0][(data[7])] ^ _T[1][(data[15])] ^ _T[2][(data[23])]
-             ^ _T[3][(data[31])] ^ _T[4][(data[39])] ^ _T[5][(data[47])]
-             ^ _T[6][(data[55])] ^ _T[7][(data[63])]).to_bytes(8, byteorder='little'))
+            (_T[0][(data[7])] ^ _T[1][(data[15])] ^ _T[2][(data[23])] ^
+             _T[3][(data[31])] ^ _T[4][(data[39])] ^ _T[5][(data[47])] ^
+             _T[6][(data[55])] ^ _T[7][(data[63])]).to_bytes(8, byteorder='little'))
         return internal
 
     def _hash_get_key(self, k: bytearray, i: int) -> bytearray:

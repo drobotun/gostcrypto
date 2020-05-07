@@ -767,6 +767,7 @@ class GOST34132015ofb(GOST34132015CipherFeedBack):
         super().decrypt(data)
         return self.encrypt(data)
 
+
 class GOST34132015ctr(GOST34132015Cipher):
     """
     Class that implements CTR mode of block encryption.

@@ -20,60 +20,61 @@ Attributes:
 # pylint: enable=duplicate-code
 
 OBJECT_IDENTIFIER_TC26 = {
-        '1.2.643.7.1': 'id-tc26',
-        '1.2.643.7.1.0': 'modules',
-        '1.2.643.7.1.0.1': 'gostR3410-2012-ParamSetSyntax',
-        '1.2.643.7.1.0.2': 'gostR3410-2012-PKISyntax',
-        '1.2.643.7.1.0.3': 'gostR3410-2012-SignatureSyntax',
-        '1.2.643.7.1.0.4': 'gostR3410-2012-EncryptionSyntax',
-        '1.2.643.7.1.0.5': 'pkcs-12ruSyntax',
-        '1.2.643.7.1.1': 'id-tc26-algorithms',
-        '1.2.643.7.1.1.1': 'id-tc26-sign',
-        '1.2.643.7.1.1.1.1': 'id-tc26-gost3410-12-256',
-        '1.2.643.7.1.1.1.2': 'id-tc26-gost3410-12-512',
-        '1.2.643.7.1.1.2': 'id-tc26-digest',
-        '1.2.643.7.1.1.2.2': 'id-tc26-gost3411-12-256',
-        '1.2.643.7.1.1.2.3': 'id-tc26-gost3411-12-512',
-        '1.2.643.7.1.1.3': 'id-tc26-signwithdigest',
-        '1.2.643.7.1.1.3.2': 'id-tc26-signwithdigest-gost3410-12-256',
-        '1.2.643.7.1.1.3.3': 'id-tc26-signwithdigest-gost3410-12-512',
-        '1.2.643.7.1.1.4': 'id-tc26-mac',
-        '1.2.643.7.1.1.4.1': 'id-tc26-hmac-gost-3411-12-256',
-        '1.2.643.7.1.1.4.2': 'id-tc26-hmac-gost-3411-12-512',
-        '1.2.643.7.1.1.5': 'id-tc26-cipher',
-        '1.2.643.7.1.1.5.1': 'id-tc26-cipher-gostr3412-2015-magma',
-        '1.2.643.7.1.1.5.1.1': 'id-tc26-cipher-gostr3412-2015-magma-ctracpkm',
-        '1.2.643.7.1.1.5.1.2': 'id-tc26-cipher-gostr3412-2015-magma-ctracpkm-omac',
-        '1.2.643.7.1.1.5.2': 'id-tc26-cipher-gostr3412-2015-kuznyechik',
-        '1.2.643.7.1.1.5.2.1': 'id-tc26-cipher-gostr3412-2015-kuznyechik-ctracpkm',
-        '1.2.643.7.1.1.5.2.2': 'id-tc26-cipher-gostr3412-2015-kuznyechik-ctracpkm-omac',
-        '1.2.643.7.1.1.6': 'id-tc26-agreement',
-        '1.2.643.7.1.1.6.1': 'id-tc26-agreement-gost-3410-12-256',
-        '1.2.643.7.1.1.6.2': 'id-tc26-agreement-gost-3410-12-512',
-        '1.2.643.7.1.1.7': 'id-tc26-wrap',
-        '1.2.643.7.1.1.7.1': 'id-tc26-wrap-gostr3412-2015-magma',
-        '1.2.643.7.1.1.7.1.1': 'id-tc26-wrap-gostr3412-2015-magma-kexp15',
-        '1.2.643.7.1.1.7.2': 'id-tc26-wrap-gostr3412-2015-kuznyechik',
-        '1.2.643.7.1.1.7.2.1': 'id-tc26-wrap-gostr3412-2015-kuznyechik-kexp15',
-        '1.2.643.7.1.2': 'id-tc26-constants',
-        '1.2.643.7.1.2.1': 'id-tc26-sign-constants',
-        '1.2.643.7.1.2.1.1': 'id-tc26-gost-3410-12-256-constants',
-        '1.2.643.7.1.2.1.1.1': 'id-tc26-gost-3410-12-256-paramSetA',
-        '1.2.643.7.1.2.1.1.2': 'id-tc26-gost-3410-12-256-paramSetB',
-        '1.2.643.7.1.2.1.1.3': 'id-tc26-gost-3410-12-256-paramSetC',
-        '1.2.643.7.1.2.1.1.4': 'id-tc26-gost-3410-12-256-paramSetD',
-        '1.2.643.7.1.2.1.2': 'id-tc26-gost-3410-12-512-constants',
-        '1.2.643.7.1.2.1.2.0': 'id-tc26-gost-3410-12-512-paramSetTest',
-        '1.2.643.7.1.2.1.2.1': 'id-tc26-gost-3410-12-512-paramSetA',
-        '1.2.643.7.1.2.1.2.2': 'id-tc26-gost-3410-12-512-paramSetB',
-        '1.2.643.7.1.2.1.2.3': 'id-tc26-gost-3410-12-512-paramSetС',
-        '1.2.643.7.1.2.2': 'id-tc26-digset-constants',
-        '1.2.643.7.1.2.5': 'id-tc26-cipher-constants',
-        '1.2.643.7.1.2.5.1': 'id-tc26-gost-28147-constants',
-        '1.2.643.7.1.2.5.1.1': 'id-tc26-gost-28147-param-Z',
-    }
+    '1.2.643.7.1': 'id-tc26',
+    '1.2.643.7.1.0': 'modules',
+    '1.2.643.7.1.0.1': 'gostR3410-2012-ParamSetSyntax',
+    '1.2.643.7.1.0.2': 'gostR3410-2012-PKISyntax',
+    '1.2.643.7.1.0.3': 'gostR3410-2012-SignatureSyntax',
+    '1.2.643.7.1.0.4': 'gostR3410-2012-EncryptionSyntax',
+    '1.2.643.7.1.0.5': 'pkcs-12ruSyntax',
+    '1.2.643.7.1.1': 'id-tc26-algorithms',
+    '1.2.643.7.1.1.1': 'id-tc26-sign',
+    '1.2.643.7.1.1.1.1': 'id-tc26-gost3410-12-256',
+    '1.2.643.7.1.1.1.2': 'id-tc26-gost3410-12-512',
+    '1.2.643.7.1.1.2': 'id-tc26-digest',
+    '1.2.643.7.1.1.2.2': 'id-tc26-gost3411-12-256',
+    '1.2.643.7.1.1.2.3': 'id-tc26-gost3411-12-512',
+    '1.2.643.7.1.1.3': 'id-tc26-signwithdigest',
+    '1.2.643.7.1.1.3.2': 'id-tc26-signwithdigest-gost3410-12-256',
+    '1.2.643.7.1.1.3.3': 'id-tc26-signwithdigest-gost3410-12-512',
+    '1.2.643.7.1.1.4': 'id-tc26-mac',
+    '1.2.643.7.1.1.4.1': 'id-tc26-hmac-gost-3411-12-256',
+    '1.2.643.7.1.1.4.2': 'id-tc26-hmac-gost-3411-12-512',
+    '1.2.643.7.1.1.5': 'id-tc26-cipher',
+    '1.2.643.7.1.1.5.1': 'id-tc26-cipher-gostr3412-2015-magma',
+    '1.2.643.7.1.1.5.1.1': 'id-tc26-cipher-gostr3412-2015-magma-ctracpkm',
+    '1.2.643.7.1.1.5.1.2': 'id-tc26-cipher-gostr3412-2015-magma-ctracpkm-omac',
+    '1.2.643.7.1.1.5.2': 'id-tc26-cipher-gostr3412-2015-kuznyechik',
+    '1.2.643.7.1.1.5.2.1': 'id-tc26-cipher-gostr3412-2015-kuznyechik-ctracpkm',
+    '1.2.643.7.1.1.5.2.2': 'id-tc26-cipher-gostr3412-2015-kuznyechik-ctracpkm-omac',
+    '1.2.643.7.1.1.6': 'id-tc26-agreement',
+    '1.2.643.7.1.1.6.1': 'id-tc26-agreement-gost-3410-12-256',
+    '1.2.643.7.1.1.6.2': 'id-tc26-agreement-gost-3410-12-512',
+    '1.2.643.7.1.1.7': 'id-tc26-wrap',
+    '1.2.643.7.1.1.7.1': 'id-tc26-wrap-gostr3412-2015-magma',
+    '1.2.643.7.1.1.7.1.1': 'id-tc26-wrap-gostr3412-2015-magma-kexp15',
+    '1.2.643.7.1.1.7.2': 'id-tc26-wrap-gostr3412-2015-kuznyechik',
+    '1.2.643.7.1.1.7.2.1': 'id-tc26-wrap-gostr3412-2015-kuznyechik-kexp15',
+    '1.2.643.7.1.2': 'id-tc26-constants',
+    '1.2.643.7.1.2.1': 'id-tc26-sign-constants',
+    '1.2.643.7.1.2.1.1': 'id-tc26-gost-3410-12-256-constants',
+    '1.2.643.7.1.2.1.1.1': 'id-tc26-gost-3410-12-256-paramSetA',
+    '1.2.643.7.1.2.1.1.2': 'id-tc26-gost-3410-12-256-paramSetB',
+    '1.2.643.7.1.2.1.1.3': 'id-tc26-gost-3410-12-256-paramSetC',
+    '1.2.643.7.1.2.1.1.4': 'id-tc26-gost-3410-12-256-paramSetD',
+    '1.2.643.7.1.2.1.2': 'id-tc26-gost-3410-12-512-constants',
+    '1.2.643.7.1.2.1.2.0': 'id-tc26-gost-3410-12-512-paramSetTest',
+    '1.2.643.7.1.2.1.2.1': 'id-tc26-gost-3410-12-512-paramSetA',
+    '1.2.643.7.1.2.1.2.2': 'id-tc26-gost-3410-12-512-paramSetB',
+    '1.2.643.7.1.2.1.2.3': 'id-tc26-gost-3410-12-512-paramSetС',
+    '1.2.643.7.1.2.2': 'id-tc26-digset-constants',
+    '1.2.643.7.1.2.5': 'id-tc26-cipher-constants',
+    '1.2.643.7.1.2.5.1': 'id-tc26-gost-28147-constants',
+    '1.2.643.7.1.2.5.1.1': 'id-tc26-gost-28147-param-Z',
+}
 
 _TAG_OID: int = 0x06
+
 
 def _len_int(value: int, num_bit: int) -> int:
     result = value.bit_length() // num_bit
@@ -82,6 +83,7 @@ def _len_int(value: int, num_bit: int) -> int:
     if value.bit_length() % num_bit != 0:
         result = result + 1
     return result
+
 
 def _len_oid_octet(value: int) -> bytearray:
     if value < 0x80:
@@ -93,6 +95,7 @@ def _len_oid_octet(value: int) -> bytearray:
         value = value >> 8
     return result
 
+
 def _int_to_octet(value: int) -> bytearray:
     if value < 0x80:
         return bytearray(value.to_bytes(1, byteorder='big'))
@@ -102,6 +105,7 @@ def _int_to_octet(value: int) -> bytearray:
         value = value >> 7
     result[0] = result[0] | 0x80
     return result
+
 
 def _encode_octet(value: tuple) -> bytearray:
     result = bytearray()
