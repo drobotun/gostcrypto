@@ -1,6 +1,10 @@
 Release History
 """""""""""""""
 
+.. rubric:: 1.2.1 (13.05.2020)
+
+- Fixed a MAC calculation bug when using padding in the **gostcipher** module
+
 .. rubric:: 1.2.0 (07.05.2020)
 
 - Refactoring and code modification in module **gostcipher** to increase the performance of encryption algorithm 'kuznechik' (uses precomputation  values of the 'gf' function;  the performance of the encryption function has increased by an average of 5..10 times)
