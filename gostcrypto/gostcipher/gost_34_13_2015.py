@@ -951,7 +951,6 @@ class GOST34132015mac(GOST34132015):
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid text data')
-        data = self._set_pad_mode_3(data)
         block = bytearray()
         prev_block = self._cur_mac
         for i in range(0, self._get_num_block(data) - 1):
