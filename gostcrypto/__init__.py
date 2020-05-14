@@ -21,6 +21,8 @@ This package includes modules:
       the HMAC message authentication code in accordance with R 50.1.113-2016.
     - gostcrypto.gostpbkdf: The module implements the password-based key
       derivation function in accordance with R 50.1.111-2016.
+    - gostcrypto.gostoid: The module that implements functions for encoding and
+      converting object identifiers.
 
 Documentation:
     https://gostcrypto.readthedocs.io/.
