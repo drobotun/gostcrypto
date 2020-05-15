@@ -32,7 +32,7 @@ Source code:
 """
 
 __title__ = 'gostcrypto'
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 __author__ = 'Evgeny Drobotun'
 __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'

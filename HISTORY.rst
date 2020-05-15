@@ -1,6 +1,10 @@
 Release History
 """""""""""""""
 
+.. rubric:: 1.2.2 (15.05.2020)
+
+- Fixed a MAC calculation bug when using padding in the **gostcipher** module (in earlier versions (including 1.2.1), the MAC with padding was calculated incorrectly (the bug was in the 'msb' and 'update' functions))
+
 .. rubric:: 1.2.1 (13.05.2020)
 
 - Fixed a MAC calculation bug when using padding in the **gostcipher** module
