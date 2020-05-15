@@ -400,7 +400,11 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
     ])
 
     TEST_MAC_VALUE_PAD = bytearray([
-        0xc6, 0xc0, 0xae, 0x50, 0xc0, 0x74, 0x79, 0x49, 0x77, 0x10, 0x92, 0xcd, 0x86, 0x86, 0x01, 0xa4,
+        0x1f, 0x03, 0x17, 0x90, 0xa8, 0x32, 0x7e, 0x74, 0xc8, 0x34, 0x1e, 0xed, 0x4c, 0xda, 0x48, 0xbd,
+    ])
+
+    TEST_MAC_VALUE_DOUBLE_PAD = bytearray([
+        0x7d, 0x03, 0x47, 0xe5, 0x4b, 0x8f, 0x6b, 0xfa, 0xc9, 0x3f, 0x73, 0x5c, 0x0d, 0x72, 0xc2, 0x3b,
     ])
 
     def test_new_raises(self):
@@ -602,6 +606,15 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
             data=self.TEST_PLAIN_TEXT)
         test_obj.update(self.TEST_PLAIN_TEXT)
         self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE_DOUBLE)
+
+    def test_mac_calculate_double_padding(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
+        test_obj.update(self.TEST_PLAIN_TEXT_NO_MUL)
+        test_obj.update(self.TEST_PLAIN_TEXT_NO_MUL)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE_DOUBLE_PAD)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
+        test_obj.update(self.TEST_PLAIN_TEXT_NO_MUL + self.TEST_PLAIN_TEXT_NO_MUL)
+        self.assertEqual(test_obj.digest(test_obj.block_size), self.TEST_MAC_VALUE_DOUBLE_PAD)
 
     def test_mac_calculate_padding(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)

@@ -42,7 +42,7 @@ def msb(value: bytearray) -> int:
         value: The number for which you want to determine the value of the
           high order.
     """
-    return value[-1] & 0x80
+    return value[0] & 0x80
 
 
 def add_xor(op_a: bytearray, op_b: bytearray) -> bytearray:

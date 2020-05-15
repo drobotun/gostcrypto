@@ -97,7 +97,7 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherType:
 
     Args:
         algorithm: The string with the name of the ciphering algorithm of the
-          GOST R 34.12-201 ('kuznechik' with block size 128 bit or 'magma' with
+          GOST R 34.12-2015 ('kuznechik' with block size 128 bit or 'magma' with
           block size 64 bit).
         key: Byte object with 256-bit encryption key.
         mode: Mode of operation of the block encryption algorithm (valid value:
@@ -155,7 +155,7 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherType:
         init_vect = kwargs.get('init_vect', _DEFAULT_IV_CTR)
         result = GOST34132015ctr(algorithm, key, init_vect)
     elif mode == MODE_MAC:
-        data = kwargs.get('data', None)
+        data = kwargs.get('data', bytearray(b''))
         result = GOST34132015mac(algorithm, key, data)
     else:
         key = zero_fill(key)
@@ -193,6 +193,14 @@ class GOST34132015(ABC):
         Args:
             algorithm: The string with the name of the ciphering algorithm.
             key: The encryption key.
+
+        Raises:
+            GOSTCipherError('GOSTCipherError: unsupported cipher algorithm'): In
+              case of unsupported cipher algorithm (is not 'kuznechik' or
+              'magma').
+            GOSTCipherError('GOSTCipherError: invalid key value'): In case of
+              invalid 'key' value (the key value is not a byte object
+              ('bytearray' or 'bytes') or its length is not 256 bits).
         """
         if algorithm not in ('magma', 'kuznechik'):
             key = zero_fill(key)
@@ -901,10 +909,11 @@ class GOST34132015mac(GOST34132015):
         super().__init__(algorithm, key)
         value_r = self._cipher_obj.encrypt(bytearray(self._cipher_obj.block_size * b'\x00'))
         self._key_1, self._key_2 = self._get_mac_key(value_r)
-        self._buff = bytearray(self._cipher_obj.block_size)
+        self._fin_buff = bytearray()
+        self._iter_buf = bytearray()
         self._prev_mac = bytearray(self._cipher_obj.block_size)
         self._cur_mac = bytearray(self._cipher_obj.block_size)
-        if data is not None:
+        if data != bytearray(b''):
             self.update(data)
 
     def _set_pad_mode_3(self, data: bytearray) -> bytearray:
@@ -951,30 +960,44 @@ class GOST34132015mac(GOST34132015):
         if not isinstance(data, (bytes, bytearray)):
             self.clear()
             raise GOSTCipherError('GOSTCipherError: invalid text data')
+        data = self._iter_buf + data
         block = bytearray()
         prev_block = self._cur_mac
         for i in range(0, self._get_num_block(data) - 1):
             block = self._cipher_obj.encrypt(add_xor(prev_block, self._get_block(data, i)))
             prev_block = block
-        block = (
-            self._cipher_obj.encrypt(
-                add_xor(prev_block, data[len(data) - self.block_size:len(data)])
+        if self._get_pad_size(data) == 0:
+            block = (
+                self._cipher_obj.encrypt(
+                    add_xor(prev_block, data[len(data) - self.block_size:len(data)])
+                )
             )
-        )
-        self._cur_mac = block
-        self._prev_mac = prev_block
-        self._buff = data[self.block_size * (self._get_num_block(data) - 1):]
+            self._cur_mac = block
+            self._prev_mac = prev_block
+            self._iter_buf = bytearray(b'')
+        else:
+            begin_data = len(data) - 2 * self.block_size + self._get_pad_size(data)
+            end_data = len(data) - self.block_size + self._get_pad_size(data)
+            block = (
+                self._cipher_obj.encrypt(
+                    add_xor(prev_block, data[begin_data:end_data])
+                )
+            )
+            self._cur_mac = block
+            self._prev_mac = block
+            self._iter_buf = data[len(data) - self.block_size + self._get_pad_size(data):]
+        self._fin_buff = data[self.block_size * (self._get_num_block(data) - 1):]
 
     def mac_final(self) -> bytearray:
         """Return the final value of the MAC."""
-        if self._get_pad_size(self._buff) == 0:
+        if self._get_pad_size(self._fin_buff) == 0:
             final_key = self._key_1
         else:
             final_key = self._key_2
-        self._buff = self._set_pad_mode_3(self._buff)
+            self._fin_buff = self._set_pad_mode_3(self._fin_buff[self.block_size:])
         result = bytearray()
         result = self._cipher_obj.encrypt(
-            add_xor(add_xor(self._prev_mac, self._buff), final_key)
+            add_xor(add_xor(self._fin_buff, self._prev_mac), final_key)
         )
         return result
 
