@@ -31,8 +31,15 @@ Source code:
     https://github.com/drobotun/gostcrypto.
 """
 
+from sys import version_info
+from sys import exit as sys_exit
+
+if version_info.major < 3 or version_info.minor < 6:
+    print('Use python version 3.6 or higher')
+    sys_exit()
+
 __title__ = 'gostcrypto'
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 __author__ = 'Evgeny Drobotun'
 __author_email__ = 'drobotun@xakep.ru'
 __license__ = 'MIT'
