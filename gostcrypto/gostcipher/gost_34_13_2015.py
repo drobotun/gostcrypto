@@ -56,16 +56,31 @@ PAD_MODE_2: int = 0x800000f1
 
 _KEY_SIZE: int = 32
 
-_DEFAULT_IV_CTR: bytearray = bytearray([
+_DEFAULT_IV_CTR_KUZNECHIK: bytearray = bytearray([
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0,
 ])
 
-_DEFAULT_IV: bytearray = bytearray([
+_DEFAULT_IV_CTR_MAGMA: bytearray = bytearray([
+    0x12, 0x34, 0x56, 0x78,
+])
+
+_DEFAULT_IV_KUZNECHIK: bytearray = bytearray([
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0,
     0xa1, 0xb2, 0xc3, 0xd4, 0xe5, 0xf0, 0x01, 0x12,
     0x23, 0x34, 0x45, 0x56, 0x67, 0x78, 0x89, 0x90,
     0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19,
 ])
+
+_DEFAULT_IV_MAGMA: bytearray = bytearray([
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
+    0x23, 0x45, 0x67, 0x89, 0x0a, 0xbc, 0xde, 0xf1,
+])
+
+_DEFAULT_IV_CBC_MAGMA: bytearray = bytearray([
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,  
+    0x23, 0x45, 0x67, 0x89, 0x0a, 0xbc, 0xde, 0xf1,  
+    0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef, 0x12,
+    ])
 
 _B_64: bytearray = bytearray([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1b,
@@ -142,17 +157,25 @@ def new(algorithm: str, key: bytearray, mode: int, **kwargs) -> CipherType:
         pad_mode = kwargs.get('pad_mode', PAD_MODE_1)
         result = GOST34132015ecb(algorithm, key, pad_mode)
     elif mode == MODE_CBC:
-        init_vect = kwargs.get('init_vect', _DEFAULT_IV)
+        init_vect = kwargs.get('init_vect', _DEFAULT_IV_KUZNECHIK)
+        if algorithm == 'magma':
+            init_vect = kwargs.get('init_vect', _DEFAULT_IV_CBC_MAGMA)
         pad_mode = kwargs.get('pad_mode', PAD_MODE_1)
         result = GOST34132015cbc(algorithm, key, init_vect, pad_mode)
     elif mode == MODE_CFB:
-        init_vect = kwargs.get('init_vect', _DEFAULT_IV)
+        init_vect = kwargs.get('init_vect', _DEFAULT_IV_KUZNECHIK)
+        if algorithm == 'magma':
+            init_vect = kwargs.get('init_vect', _DEFAULT_IV_MAGMA)
         result = GOST34132015cfb(algorithm, key, init_vect)
     elif mode == MODE_OFB:
-        init_vect = kwargs.get('init_vect', _DEFAULT_IV)
+        init_vect = kwargs.get('init_vect', _DEFAULT_IV_KUZNECHIK)
+        if algorithm == 'magma':
+            init_vect = kwargs.get('init_vect', _DEFAULT_IV_MAGMA)
         result = GOST34132015ofb(algorithm, key, init_vect)
     elif mode == MODE_CTR:
-        init_vect = kwargs.get('init_vect', _DEFAULT_IV_CTR)
+        init_vect = kwargs.get('init_vect', _DEFAULT_IV_CTR_KUZNECHIK)
+        if algorithm == 'magma':
+            init_vect = kwargs.get('init_vect', _DEFAULT_IV_CTR_MAGMA)
         result = GOST34132015ctr(algorithm, key, init_vect)
     elif mode == MODE_MAC:
         data = kwargs.get('data', bytearray(b''))

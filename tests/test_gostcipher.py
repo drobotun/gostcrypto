@@ -488,13 +488,35 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
             test_obj.encrypt('test_plaintext')
         self.assertTrue('invalid plaintext data' in str(context.exception))
 
+    def test_ctr_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CTR)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CTR_NO_MUL)
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
+
     def test_ctr_decrypt(self):
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR), self.TEST_PLAIN_TEXT)
-        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR, init_vect=self.TEST_INIT_VECT_CTR)    
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
+            init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
         test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
             init_vect=self.TEST_INIT_VECT_CTR)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
+
+    def test_ctr_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)
         with self.assertRaises(GOSTCipherError) as context:
             test_obj.decrypt('test_ciphertext')
         self.assertTrue('invalid ciphertext data' in str(context.exception))
@@ -515,6 +537,19 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
             test_obj.encrypt('test_plaintext')
         self.assertTrue('invalid plaintext data' in str(context.exception))
 
+    def test_cbc_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CBC)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CBC_PAD_1)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CBC_PAD_2)
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
+
     def test_cbc_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
             init_vect=self.TEST_INIT_VECT)    
@@ -527,6 +562,19 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC_PAD_2), self.TEST_PLAIN_TEXT_PAD_2)
         test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
             init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
+
+    def test_cbc_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC_PAD_1), self.TEST_PLAIN_TEXT_PAD_1)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
+            pad_mode=gostcrypto.gostcipher.PAD_MODE_2)
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC_PAD_2), self.TEST_PLAIN_TEXT_PAD_2)
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)
         with self.assertRaises(GOSTCipherError) as context:
             test_obj.decrypt('test_ciphertext')
         self.assertTrue('invalid ciphertext data' in str(context.exception))
@@ -544,6 +592,16 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
             test_obj.encrypt('test_plaintext')
         self.assertTrue('invalid plaintext data' in str(context.exception))
 
+    def test_cfb_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CFB)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CFB_NO_MUL)
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
+
     def test_cfb_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
             init_vect=self.TEST_INIT_VECT)    
@@ -553,6 +611,16 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
         test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB,
             init_vect=self.TEST_INIT_VECT)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
+
+    def test_cfb_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
+        test_obj =  gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)
         with self.assertRaises(GOSTCipherError) as context:
             test_obj.decrypt('test_ciphertext')
         self.assertTrue('invalid ciphertext data' in str(context.exception))
@@ -570,6 +638,16 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
             test_obj.encrypt('test_plaintext')
         self.assertTrue('invalid plaintext data' in str(context.exception))
 
+    def test_ofb_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_OFB)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_OFB_NO_MUL)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.encrypt('test_plaintext')
+        self.assertTrue('invalid plaintext data' in str(context.exception))
+
     def test_ofb_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
             init_vect=self.TEST_INIT_VECT)
@@ -583,6 +661,15 @@ class TestGOST34132015Kuznechik(unittest.TestCase):
             test_obj.decrypt('test_ciphertext')
         self.assertTrue('invalid ciphertext data' in str(context.exception))
 
+    def test_ofb_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
+        test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        with self.assertRaises(GOSTCipherError) as context:
+            test_obj.decrypt('test_ciphertext')
+        self.assertTrue('invalid ciphertext data' in str(context.exception))
 
     def test_mac_calculate(self):
         test_obj = gostcrypto.gostcipher.new('kuznechik', self.TEST_KEY, gostcrypto.gostcipher.MODE_MAC)
@@ -773,6 +860,12 @@ class TestGOST34132015Magma(unittest.TestCase):
             init_vect=self.TEST_INIT_VECT_CTR)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CTR_NO_MUL)
 
+    def test_ctr_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CTR)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_CTR_NO_MUL)
+
     def test_ctr_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR,
             init_vect=self.TEST_INIT_VECT_CTR)    
@@ -781,14 +874,28 @@ class TestGOST34132015Magma(unittest.TestCase):
             init_vect=self.TEST_INIT_VECT_CTR)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
 
+    def test_ctr_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CTR)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CTR_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
+
     def test_cbc_encrypt(self):
         test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
             init_vect=self.TEST_INIT_VECT_CBC)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CBC)
 
+    def test_cbc_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_CBC)
+
     def test_cbc_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC,
             init_vect=self.TEST_INIT_VECT_CBC)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC), self.TEST_PLAIN_TEXT)
+
+    def test_cbc_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CBC)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CBC), self.TEST_PLAIN_TEXT)
 
     def test_cfb_encrypt(self):
@@ -807,6 +914,12 @@ class TestGOST34132015Magma(unittest.TestCase):
             init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
 
+    def test_cfb_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_CFB)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_CFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
+
     def test_ofb_encrypt(self):
         test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
             init_vect=self.TEST_INIT_VECT)
@@ -815,12 +928,24 @@ class TestGOST34132015Magma(unittest.TestCase):
             init_vect=self.TEST_INIT_VECT)
         self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_OFB_NO_MUL)
 
+    def test_ofb_encrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT), self.TEST_CIPHER_TEXT_OFB)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)
+        self.assertEqual(test_obj.encrypt(self.TEST_PLAIN_TEXT_NO_MUL), self.TEST_CIPHER_TEXT_OFB_NO_MUL)
+
     def test_ofb_decrypt(self):
         test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
             init_vect=self.TEST_INIT_VECT)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB), self.TEST_PLAIN_TEXT)
         test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB,
             init_vect=self.TEST_INIT_VECT)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
+
+    def test_ofb_decrypt_iv_default(self):
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)    
+        self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB), self.TEST_PLAIN_TEXT)
+        test_obj = gostcrypto.gostcipher.new('magma', self.TEST_KEY, gostcrypto.gostcipher.MODE_OFB)    
         self.assertEqual(test_obj.decrypt(self.TEST_CIPHER_TEXT_OFB_NO_MUL), self.TEST_PLAIN_TEXT_NO_MUL)
 
     def test_mac_calculate(self):
