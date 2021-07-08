@@ -3,8 +3,6 @@ GOST cryptographic functions
 
 .. image:: https://img.shields.io/github/license/drobotun/virustotalapi3?style=flat
     :target: http://doge.mit-license.org
-.. image:: https://img.shields.io/travis/drobotun/gostcrypto
-    :target: https://travis-ci.com/drobotun/gostcrypto
 .. image:: https://ci.appveyor.com/api/projects/status/3inl1huy5unq1q60?svg=true
     :target: https://ci.appveyor.com/project/drobotun/gostcrypto
 .. image:: https://img.shields.io/coveralls/github/drobotun/gostcrypto
