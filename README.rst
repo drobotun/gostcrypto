@@ -20,7 +20,7 @@ GOST cryptographic functions
 .. image:: https://zenodo.org/badge/253648045.svg
     :target: https://zenodo.org/badge/latestdoi/253648045
 
- The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
+The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
 - **gosthash**: The module implements functions for calculating hash amounts in accordance with GOST R 34.11-2012.
 - **gostcipher**: The module implements block encryption functions in accordance with GOST R 34.12-2015 and their use modes in accordance with GOST R 34.13-2015.
