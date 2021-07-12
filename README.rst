@@ -1,5 +1,5 @@
 GOST cryptographic functions
-============================
+=============================
 
 .. image:: https://img.shields.io/github/license/drobotun/virustotalapi3?style=flat
     :target: http://doge.mit-license.org
