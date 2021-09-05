@@ -234,7 +234,7 @@ class GOST34132015(ABC):
         if algorithm == 'kuznechik':
             self._cipher_obj: CipherObjType = GOST34122015Kuznechik(key)
         elif algorithm == 'magma':
-            self._cipher_obj = GOST34122015Magma(key)
+            self._cipher_obj : CipherObjType = GOST34122015Magma(key)
         self.oid = self._cipher_obj.oid
 
     def __del__(self) -> None:

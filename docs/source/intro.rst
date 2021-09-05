@@ -372,6 +372,10 @@ Package source code: https://github.com/drobotun/gostcrypto
 Release History
 ~~~~~~~~~~~~~~~
 
+.. rubric:: 1.2.5 (05.09.2021)
+
+- Fixed a several minor bugs
+
 .. rubric:: 1.2.4 (17.09.2020)
 
 - Fixed a default initial vector bug (added default initial vector for 'magma' algorithm)
