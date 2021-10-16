@@ -1,5 +1,3 @@
-.. image:: https://imgur.com/x0l7T1k
-
 GOST cryptographic functions
 =============================
 
