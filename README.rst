@@ -1,4 +1,4 @@
-.. image:: https://imgur.com/a/N9BtSPl
+.. image:: https://i.imgur.com/a/N9BtSPl.png
 
 GOST cryptographic functions
 =============================
