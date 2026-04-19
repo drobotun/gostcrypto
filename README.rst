@@ -19,8 +19,6 @@ GOST cryptographic functions
     :target: https://pypi.org/project/gostcrypto/
 .. image:: https://img.shields.io/pypi/dm/gostcrypto
     :target: https://pypi.org/project/gostcrypto/
-.. image:: https://zenodo.org/badge/253648045.svg
-    :target: https://zenodo.org/badge/latestdoi/253648045
 
 The package implements various cryptographic functions defined in the State standards of the Russian Federation. It includes the following modules:
 
