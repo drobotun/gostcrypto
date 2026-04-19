@@ -9,7 +9,5 @@ environment:
 install:
   - cmd: "C:\\Python37\\python.exe -m pip install pytest"
 build: off
-build_script:
-  - cmd: "C:\\Python37\\python.exe setup.py build"
 test_script:
   - cmd: "C:\\Python37\\python.exe setup.py test"
