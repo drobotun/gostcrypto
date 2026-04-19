@@ -59,8 +59,8 @@ html_static_path = ['_static']
 
 # Ensure that text wrapping works in a table, by overring some CSS.
 # See https://github.com/rtfd/sphinx_rtd_theme/issues/117
-def setup(app):
-    app.add_stylesheet('theme_overrides.css')
+# def setup(app):
+  # app.add_stylesheet('theme_overrides.css')
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -73,14 +73,14 @@ master_doc = 'index'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+# 'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+# 'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 'preamble': '\\usepackage[utf8]{inputenc}',
-#'babel': '\\usepackage[russian]{babel}',
+# 'babel': '\\usepackage[russian]{babel}',
 'cmappkg': '\\usepackage{cmap}',
 'fontenc': '\\usepackage[T1,T2A]{fontenc}',
 'utf8extra':'\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}',
