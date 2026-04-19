@@ -10,4 +10,4 @@ install:
   - cmd: "C:\\Python37\\python.exe -m pip install pytest"
 build: off
 test_script:
-  - cmd: "C:\\Python37\\python.exe setup.py test"
+  - cmd: "C:\\Python37\\python.exe test"
