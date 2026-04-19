@@ -1,13 +1,27 @@
+build: off
+
 environment:
   matrix:
-    - PYTHON: "C:\\Python36"
-    - PYTHON: "C:\\Python36-x64"
-    - PYTHON: "C:\\Python37"
-    - PYTHON: "C:\\Python37-x64"
-    - PYTHON: "C:\\Python38"
-    - PYTHON: "C:\\Python38-x64"
+    # Указываем версии Python, которые предустановлены в AppVeyor[citation:4]
+    - PYTHON: "C:\\Python39"
+      PYTHON_VERSION: "3.9"
+    - PYTHON: "C:\\Python310"
+      PYTHON_VERSION: "3.10"
+    - PYTHON: "C:\\Python311"
+      PYTHON_VERSION: "3.11"
+    # Можно добавить 32-битные версии
+    - PYTHON: "C:\\Python39"
+      PYTHON_VERSION: "3.9"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python310"
+      PYTHON_VERSION: "3.10"
+      PYTHON_ARCH: "32"
+      
 install:
-  - cmd: "C:\\Python37\\python -m pip install pytest"
-build: off
+  - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  #- cmd: "C:\\Python37\\python -m pip install pytest"
+  - pip install pytest
+
 test_script:
-  - cmd: "C:\\Python37\\python test"
+  - python -m pytest
+  #- cmd: "C:\\Python37\\python test"
